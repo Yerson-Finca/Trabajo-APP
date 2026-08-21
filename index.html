@@ -1,12 +1,13 @@
 #Calculation 
-# Crear un único archivo HTML con todo incluido (CSS, JS, HTML)
-single_file_content = '''<!DOCTYPE html>
+modern_html = '''<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#2c5f2d">
-    <title>Work Tracker - Campo</title>
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Work Tracker</title>
     <style>
         * {
             margin: 0;
@@ -14,126 +15,197 @@ single_file_content = '''<!DOCTYPE html>
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text: #1e293b;
+            --text-light: #64748b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            color: #333;
+            color: var(--text);
+            line-height: 1.6;
         }
 
         .app-container {
             max-width: 600px;
             margin: 0 auto;
-            background: white;
+            background: var(--bg);
             min-height: 100vh;
+            position: relative;
         }
 
+        /* Header Moderno */
         .header {
-            background: linear-gradient(135deg, #2c5f2d 0%, #97bc62 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 15px;
+            padding: 20px;
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
         }
 
         .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
             text-align: center;
+            letter-spacing: -0.5px;
         }
 
         .nav-tabs {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             overflow-x: auto;
+            padding-bottom: 5px;
         }
 
         .nav-tab {
             flex: 1;
-            padding: 8px 12px;
-            background: rgba(255,255,255,0.2);
+            min-width: 80px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: white;
-            border-radius: 5px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
             white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
         }
 
         .nav-tab.active {
             background: white;
-            color: #2c5f2d;
-            font-weight: bold;
+            color: var(--primary);
+            box-shadow: var(--shadow);
         }
 
+        /* Contenido de Tabs */
         .tab-content {
             display: none;
             padding: 20px;
+            animation: fadeIn 0.4s ease;
         }
 
         .tab-content.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* Cards de Resumen - Estilo Glassmorphism */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 15px;
-            border-radius: 10px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
         }
 
         .card h3 {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 10px;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .card .amount {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c5f2d;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--success);
+            margin: 0;
         }
 
         .card .amount.pending {
-            color: #e74c3c;
+            color: var(--danger);
         }
 
         .card .amount.expenses {
-            color: #f39c12;
+            color: var(--warning);
         }
 
         .card .number {
-            font-size: 28px;
-            font-weight: bold;
-            color: #3498db;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
         }
 
+        /* Botones Modernos */
         .btn {
-            padding: 12px 20px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -141,119 +213,176 @@ single_file_content = '''<!DOCTYPE html>
             color: white;
         }
 
+        .btn-secondary:hover {
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+            transform: translateY(-2px);
+        }
+
         .btn-icon {
-            background: none;
+            background: rgba(255, 255, 255, 0.9);
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            padding: 5px 10px;
-            color: #2c5f2d;
+            padding: 8px 12px;
+            color: var(--primary);
+            border-radius: 10px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-icon:hover {
+            background: white;
+            transform: scale(1.1);
         }
 
         .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
-        .quick-actions .btn {
-            flex: 1;
+        /* Lista de Trabajos - Diseño Moderno */
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .work-item, .expense-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .work-item:hover, .expense-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-lg);
         }
 
         .work-item.paid {
-            border-left-color: #27ae60;
+            border-left-color: var(--success);
         }
 
         .work-item.pending {
-            border-left-color: #e74c3c;
+            border-left-color: var(--danger);
         }
 
         .work-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .work-date {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 15px;
         }
 
         .work-amount {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c5f2d;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--success);
         }
 
         .work-location {
-            color: #666;
+            color: var(--text-light);
             font-size: 14px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .work-notes {
+            color: var(--text-light);
+            font-size: 13px;
+            font-style: italic;
+            margin-top: 5px;
         }
 
         .payment-status {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 12px;
-            font-weight: bold;
-            margin-top: 5px;
+            font-weight: 700;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
         }
 
         .payment-status.paid {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
         }
 
         .payment-status.pending {
-            background: #f8d7da;
-            color: #721c24;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
         }
 
         .delete-btn {
-            background: #e74c3c;
-            color: white;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
             border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
-            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s;
         }
 
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Calendario Moderno */
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
         }
 
         .calendar-header h2 {
-            color: #2c5f2d;
+            color: var(--text);
             font-size: 20px;
+            font-weight: 700;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
         .calendar-day-header {
             text-align: center;
-            font-weight: bold;
-            color: #666;
+            font-weight: 700;
+            color: var(--text-light);
             padding: 10px 5px;
             font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .calendar-day {
@@ -262,83 +391,148 @@ single_file_content = '''<!DOCTYPE html>
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #f8f9fa;
-            border-radius: 8px;
+            background: var(--card-bg);
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 600;
             position: relative;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            color: var(--text);
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            z-index: 10;
         }
 
         .calendar-day.has-work {
-            background: #d4edda;
-            border: 2px solid #27ae60;
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .calendar-day.has-work:hover {
+            background: var(--success);
+            color: white;
         }
 
         .calendar-day.selected {
-            background: #667eea;
+            background: var(--primary);
             color: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--primary);
+            font-weight: 700;
         }
 
         .day-indicator {
             position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 6px;
-            height: 6px;
-            background: #27ae60;
+            bottom: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
             border-radius: 50%;
+            box-shadow: 0 0 0 2px white;
         }
 
         .day-details {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 14px;
             margin-top: 15px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.3s ease;
         }
 
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .day-details h3 {
+            color: var(--text);
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Gastos - Diseño Moderno */
         .expenses-summary {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-            border-radius: 10px;
+            margin-bottom: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .expenses-summary h3 {
+            color: var(--text);
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .expenses-summary .amount.large {
-            font-size: 32px;
-            font-weight: bold;
-            color: #d63031;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--danger);
+            margin: 0;
         }
 
         .expense-item {
-            border-left-color: #f39c12;
+            border-left-color: var(--warning);
         }
 
         .expense-description {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--text);
             margin-bottom: 5px;
+            font-size: 15px;
         }
 
         .expense-amount {
-            font-size: 18px;
-            font-weight: bold;
-            color: #e74c3c;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--danger);
         }
 
+        /* Gráficos */
         .chart-container {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
         }
 
         .chart-container h3 {
-            color: #2c5f2d;
-            margin-bottom: 15px;
+            color: var(--text);
+            margin-bottom: 20px;
             text-align: center;
+            font-size: 18px;
+            font-weight: 700;
         }
 
+        .export-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Modal Moderno */
         .modal {
             display: none;
             position: fixed;
@@ -347,40 +541,65 @@ single_file_content = '''<!DOCTYPE html>
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
         }
 
         .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 25px;
-            border-radius: 15px;
+            background: white;
+            margin: 8% auto;
+            padding: 30px;
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50px) scale(0.9); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) scale(1); 
+                opacity: 1; 
+            }
         }
 
         .close {
-            color: #aaa;
+            color: var(--text-light);
             float: right;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 300;
             cursor: pointer;
+            transition: all 0.3s;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
         }
 
         .modal-content h2 {
-            color: #2c5f2d;
-            margin-bottom: 20px;
+            color: var(--text);
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 700;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .form-group input[type="text"],
@@ -388,32 +607,69 @@ single_file_content = '''<!DOCTYPE html>
         .form-group input[type="date"],
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             font-size: 16px;
+            transition: all 0.3s;
+            background: #f8fafc;
+            color: var(--text);
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .form-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
+            width: 22px;
+            height: 22px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: var(--primary);
         }
 
+        /* Responsive */
         @media (max-width: 480px) {
             .summary-cards {
                 grid-template-columns: 1fr;
             }
             
             .quick-actions {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
+            
+            .nav-tab {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
     </style>
 </head>
@@ -455,7 +711,7 @@ single_file_content = '''<!DOCTYPE html>
             </div>
 
             <div class="recent-work">
-                <h3>Trabajos Recientes</h3>
+                <h3 class="section-title">📋 Trabajos Recientes</h3>
                 <div id="recentWorkList"></div>
             </div>
         </section>
@@ -470,7 +726,7 @@ single_file_content = '''<!DOCTYPE html>
             <div class="day-details" id="dayDetails" style="display:none;">
                 <h3 id="selectedDate"></h3>
                 <div id="dayWorkList"></div>
-                <button class="btn btn-primary" onclick="showAddWorkModalForDay()" style="margin-top:10px;">➕ Agregar Trabajo</button>
+                <button class="btn btn-primary" onclick="showAddWorkModalForDay()" style="margin-top:15px;">➕ Agregar Trabajo este Día</button>
             </div>
         </section>
 
@@ -485,14 +741,16 @@ single_file_content = '''<!DOCTYPE html>
 
         <section id="stats" class="tab-content">
             <div class="chart-container">
-                <h3>Ingresos vs Gastos (Últimos 6 meses)</h3>
+                <h3>📊 Ingresos vs Gastos (Últimos 6 meses)</h3>
                 <canvas id="earningsChart"></canvas>
             </div>
             <div class="chart-container">
-                <h3>Días Trabajados por Mes</h3>
+                <h3>📅 Días Trabajados por Mes</h3>
                 <canvas id="daysChart"></canvas>
             </div>
-            <button class="btn btn-secondary" onclick="exportData()">📥 Exportar Datos (CSV)</button>
+            <div class="export-section">
+                <button class="btn btn-secondary" onclick="exportData()">📥 Exportar Datos (CSV)</button>
+            </div>
         </section>
 
         <div id="addWorkModal" class="modal">
@@ -513,15 +771,16 @@ single_file_content = '''<!DOCTYPE html>
                         <input type="number" id="workAmount" placeholder="0.00" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="workPaid"> ¿Ya pagado?
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="workPaid">
+                            <span>¿Ya pagado?</span>
                         </label>
                     </div>
                     <div class="form-group">
                         <label>Notas (opcional):</label>
                         <textarea id="workNotes" rows="3" placeholder="Descripción del trabajo..."></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Trabajo</button>
                 </form>
             </div>
         </div>
@@ -537,13 +796,13 @@ single_file_content = '''<!DOCTYPE html>
                     </div>
                     <div class="form-group">
                         <label>Descripción:</label>
-                        <input type="text" id="expenseDescription" placeholder="Ej: Combustible" required>
+                        <input type="text" id="expenseDescription" placeholder="Ej: Combustible, herramientas..." required>
                     </div>
                     <div class="form-group">
                         <label>Monto ($):</label>
                         <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Gasto</button>
                 </form>
             </div>
         </div>
@@ -639,10 +898,13 @@ single_file_content = '''<!DOCTYPE html>
             document.getElementById('pendingPayment').textContent = '$' + pending.toFixed(2);
             document.getElementById('monthExpenses').textContent = '$' + expenses.toFixed(2);
             
-            // Mostrar trabajos recientes (últimos 5)
             const recentWorks = Storage.getWorks().slice(-5).reverse();
             const container = document.getElementById('recentWorkList');
-            container.innerHTML = recentWorks.map(work => createWorkHTML(work)).join('');
+            if (recentWorks.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay trabajos registrados aún</p>';
+            } else {
+                container.innerHTML = recentWorks.map(work => createWorkHTML(work)).join('');
+            }
         }
 
         function createWorkHTML(work) {
@@ -684,7 +946,7 @@ single_file_content = '''<!DOCTYPE html>
             });
             
             for (let i = 0; i < firstDay; i++) {
-                html += '<div class="calendar-day"></div>';
+                html += '<div class="calendar-day" style="visibility:hidden;"></div>';
             }
             
             const today = new Date();
@@ -728,7 +990,7 @@ single_file_content = '''<!DOCTYPE html>
                 container.innerHTML = works.map(work => createWorkHTML(work)).join('');
                 document.getElementById('selectedDate').textContent = 'Trabajos del ' + formatDate(dateStr);
             } else {
-                container.innerHTML = '<p>No hay trabajos registrados este día</p>';
+                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">No hay trabajos este día</p>';
                 document.getElementById('selectedDate').textContent = formatDate(dateStr);
             }
             
@@ -745,12 +1007,12 @@ single_file_content = '''<!DOCTYPE html>
             
             const container = document.getElementById('expensesList');
             if (expenses.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No hay gastos registrados</p>';
+                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay gastos registrados</p>';
             } else {
                 container.innerHTML = expenses.slice().reverse().map(expense => `
                     <div class="expense-item">
                         <div class="expense-description">${expense.description}</div>
-                        <div>${formatDate(expense.date)}</div>
+                        <div style="color:#64748b;font-size:14px;margin-bottom:5px;">${formatDate(expense.date)}</div>
                         <div class="expense-amount">$${parseFloat(expense.amount).toFixed(2)}</div>
                         <button class="delete-btn" onclick="deleteExpense('${expense.id}')">Eliminar</button>
                     </div>
@@ -857,7 +1119,6 @@ single_file_content = '''<!DOCTYPE html>
                 days.push(monthDays);
             }
             
-            // Gráfico de ingresos vs gastos
             if (earningsChart) earningsChart.destroy();
             const ctx1 = document.getElementById('earningsChart').getContext('2d');
             earningsChart = new Chart(ctx1, {
@@ -867,22 +1128,38 @@ single_file_content = '''<!DOCTYPE html>
                     datasets: [{
                         label: 'Ingresos',
                         data: earnings,
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                        borderRadius: 8
                     }, {
                         label: 'Gastos',
                         data: expenses,
-                        backgroundColor: 'rgba(243, 156, 18, 0.8)'
+                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                        borderRadius: 8
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: { 
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
                     }
                 }
             });
             
-            // Gráfico de días trabajados
             if (daysChart) daysChart.destroy();
             const ctx2 = document.getElementById('daysChart').getContext('2d');
             daysChart = new Chart(ctx2, {
@@ -892,16 +1169,37 @@ single_file_content = '''<!DOCTYPE html>
                     datasets: [{
                         label: 'Días Trabajados',
                         data: days,
-                        borderColor: 'rgba(39, 174, 96, 1)',
-                        backgroundColor: 'rgba(39, 174, 96, 0.2)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.4,
-                        fill: true
+                        fill: true,
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: { 
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
                     }
                 }
             });
@@ -922,7 +1220,7 @@ single_file_content = '''<!DOCTYPE html>
                 csv += `Gasto,${e.date},${e.amount},"${e.description}",-\\n`;
             });
             
-            const blob = new Blob([csv], { type: 'text/csv' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -937,7 +1235,6 @@ single_file_content = '''<!DOCTYPE html>
             return date.toLocaleDateString('es-ES', options);
         }
 
-        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
@@ -948,26 +1245,29 @@ single_file_content = '''<!DOCTYPE html>
 </html>'''
 
 with open('work-tracker-app/index.html', 'w', encoding='utf-8') as f:
-    f.write(single_file_content)
+    f.write(modern_html)
 
-print("✅ Archivo único index.html creado exitosamente!")
-print("\n📁 Estructura final:")
-print("work-tracker-app/")
-print("└── index.html  (TODO en un solo archivo)")
-print("\n🚀 Para usar:")
-print("1. Abre el archivo index.html en tu navegador")
-print("2. Funciona 100% offline")
-print("3. Los datos se guardan automáticamente en tu navegador")
+print("✅ ¡Diseño moderno aplicado exitosamente!")
+print("\n🎨 Características del nuevo diseño:")
+print("   • Glassmorphism (efecto cristal)")
+print("   • Colores vibrantes y modernos")
+print("   • Sombras suaves y profundas")
+print("   • Animaciones fluidas")
+print("   • Tipografía limpia")
+print("   • Bordes redondeados")
+print("   • Hover effects elegantes")
+print("   • Totalmente responsive")
 
 result = 
-# Crear un único archivo HTML con todo incluido (CSS, JS, HTML)
-single_file_content = '''<!DOCTYPE html>
+modern_html = '''<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#2c5f2d">
-    <title>Work Tracker - Campo</title>
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Work Tracker</title>
     <style>
         * {
             margin: 0;
@@ -975,126 +1275,197 @@ single_file_content = '''<!DOCTYPE html>
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text: #1e293b;
+            --text-light: #64748b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            color: #333;
+            color: var(--text);
+            line-height: 1.6;
         }
 
         .app-container {
             max-width: 600px;
             margin: 0 auto;
-            background: white;
+            background: var(--bg);
             min-height: 100vh;
+            position: relative;
         }
 
+        /* Header Moderno */
         .header {
-            background: linear-gradient(135deg, #2c5f2d 0%, #97bc62 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 15px;
+            padding: 20px;
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
         }
 
         .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
             text-align: center;
+            letter-spacing: -0.5px;
         }
 
         .nav-tabs {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             overflow-x: auto;
+            padding-bottom: 5px;
         }
 
         .nav-tab {
             flex: 1;
-            padding: 8px 12px;
-            background: rgba(255,255,255,0.2);
+            min-width: 80px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: white;
-            border-radius: 5px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
             white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
         }
 
         .nav-tab.active {
             background: white;
-            color: #2c5f2d;
-            font-weight: bold;
+            color: var(--primary);
+            box-shadow: var(--shadow);
         }
 
+        /* Contenido de Tabs */
         .tab-content {
             display: none;
             padding: 20px;
+            animation: fadeIn 0.4s ease;
         }
 
         .tab-content.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* Cards de Resumen - Estilo Glassmorphism */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 15px;
-            border-radius: 10px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
         }
 
         .card h3 {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 10px;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .card .amount {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c5f2d;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--success);
+            margin: 0;
         }
 
         .card .amount.pending {
-            color: #e74c3c;
+            color: var(--danger);
         }
 
         .card .amount.expenses {
-            color: #f39c12;
+            color: var(--warning);
         }
 
         .card .number {
-            font-size: 28px;
-            font-weight: bold;
-            color: #3498db;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
         }
 
+        /* Botones Modernos */
         .btn {
-            padding: 12px 20px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -1102,119 +1473,176 @@ single_file_content = '''<!DOCTYPE html>
             color: white;
         }
 
+        .btn-secondary:hover {
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+            transform: translateY(-2px);
+        }
+
         .btn-icon {
-            background: none;
+            background: rgba(255, 255, 255, 0.9);
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            padding: 5px 10px;
-            color: #2c5f2d;
+            padding: 8px 12px;
+            color: var(--primary);
+            border-radius: 10px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-icon:hover {
+            background: white;
+            transform: scale(1.1);
         }
 
         .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
-        .quick-actions .btn {
-            flex: 1;
+        /* Lista de Trabajos - Diseño Moderno */
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .work-item, .expense-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .work-item:hover, .expense-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-lg);
         }
 
         .work-item.paid {
-            border-left-color: #27ae60;
+            border-left-color: var(--success);
         }
 
         .work-item.pending {
-            border-left-color: #e74c3c;
+            border-left-color: var(--danger);
         }
 
         .work-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .work-date {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 15px;
         }
 
         .work-amount {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c5f2d;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--success);
         }
 
         .work-location {
-            color: #666;
+            color: var(--text-light);
             font-size: 14px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .work-notes {
+            color: var(--text-light);
+            font-size: 13px;
+            font-style: italic;
+            margin-top: 5px;
         }
 
         .payment-status {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 12px;
-            font-weight: bold;
-            margin-top: 5px;
+            font-weight: 700;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
         }
 
         .payment-status.paid {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
         }
 
         .payment-status.pending {
-            background: #f8d7da;
-            color: #721c24;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
         }
 
         .delete-btn {
-            background: #e74c3c;
-            color: white;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
             border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
-            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s;
         }
 
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Calendario Moderno */
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
         }
 
         .calendar-header h2 {
-            color: #2c5f2d;
+            color: var(--text);
             font-size: 20px;
+            font-weight: 700;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
         .calendar-day-header {
             text-align: center;
-            font-weight: bold;
-            color: #666;
+            font-weight: 700;
+            color: var(--text-light);
             padding: 10px 5px;
             font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .calendar-day {
@@ -1223,83 +1651,148 @@ single_file_content = '''<!DOCTYPE html>
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #f8f9fa;
-            border-radius: 8px;
+            background: var(--card-bg);
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 600;
             position: relative;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            color: var(--text);
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            z-index: 10;
         }
 
         .calendar-day.has-work {
-            background: #d4edda;
-            border: 2px solid #27ae60;
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .calendar-day.has-work:hover {
+            background: var(--success);
+            color: white;
         }
 
         .calendar-day.selected {
-            background: #667eea;
+            background: var(--primary);
             color: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--primary);
+            font-weight: 700;
         }
 
         .day-indicator {
             position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 6px;
-            height: 6px;
-            background: #27ae60;
+            bottom: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
             border-radius: 50%;
+            box-shadow: 0 0 0 2px white;
         }
 
         .day-details {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 14px;
             margin-top: 15px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.3s ease;
         }
 
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .day-details h3 {
+            color: var(--text);
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Gastos - Diseño Moderno */
         .expenses-summary {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-            border-radius: 10px;
+            margin-bottom: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .expenses-summary h3 {
+            color: var(--text);
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .expenses-summary .amount.large {
-            font-size: 32px;
-            font-weight: bold;
-            color: #d63031;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--danger);
+            margin: 0;
         }
 
         .expense-item {
-            border-left-color: #f39c12;
+            border-left-color: var(--warning);
         }
 
         .expense-description {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--text);
             margin-bottom: 5px;
+            font-size: 15px;
         }
 
         .expense-amount {
-            font-size: 18px;
-            font-weight: bold;
-            color: #e74c3c;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--danger);
         }
 
+        /* Gráficos */
         .chart-container {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
         }
 
         .chart-container h3 {
-            color: #2c5f2d;
-            margin-bottom: 15px;
+            color: var(--text);
+            margin-bottom: 20px;
             text-align: center;
+            font-size: 18px;
+            font-weight: 700;
         }
 
+        .export-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Modal Moderno */
         .modal {
             display: none;
             position: fixed;
@@ -1308,40 +1801,65 @@ single_file_content = '''<!DOCTYPE html>
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
         }
 
         .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 25px;
-            border-radius: 15px;
+            background: white;
+            margin: 8% auto;
+            padding: 30px;
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50px) scale(0.9); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) scale(1); 
+                opacity: 1; 
+            }
         }
 
         .close {
-            color: #aaa;
+            color: var(--text-light);
             float: right;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 300;
             cursor: pointer;
+            transition: all 0.3s;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
         }
 
         .modal-content h2 {
-            color: #2c5f2d;
-            margin-bottom: 20px;
+            color: var(--text);
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 700;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .form-group input[type="text"],
@@ -1349,32 +1867,69 @@ single_file_content = '''<!DOCTYPE html>
         .form-group input[type="date"],
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             font-size: 16px;
+            transition: all 0.3s;
+            background: #f8fafc;
+            color: var(--text);
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .form-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
+            width: 22px;
+            height: 22px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: var(--primary);
         }
 
+        /* Responsive */
         @media (max-width: 480px) {
             .summary-cards {
                 grid-template-columns: 1fr;
             }
             
             .quick-actions {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
+            
+            .nav-tab {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
     </style>
 </head>
@@ -1416,7 +1971,7 @@ single_file_content = '''<!DOCTYPE html>
             </div>
 
             <div class="recent-work">
-                <h3>Trabajos Recientes</h3>
+                <h3 class="section-title">📋 Trabajos Recientes</h3>
                 <div id="recentWorkList"></div>
             </div>
         </section>
@@ -1431,7 +1986,7 @@ single_file_content = '''<!DOCTYPE html>
             <div class="day-details" id="dayDetails" style="display:none;">
                 <h3 id="selectedDate"></h3>
                 <div id="dayWorkList"></div>
-                <button class="btn btn-primary" onclick="showAddWorkModalForDay()" style="margin-top:10px;">➕ Agregar Trabajo</button>
+                <button class="btn btn-primary" onclick="showAddWorkModalForDay()" style="margin-top:15px;">➕ Agregar Trabajo este Día</button>
             </div>
         </section>
 
@@ -1446,14 +2001,16 @@ single_file_content = '''<!DOCTYPE html>
 
         <section id="stats" class="tab-content">
             <div class="chart-container">
-                <h3>Ingresos vs Gastos (Últimos 6 meses)</h3>
+                <h3>📊 Ingresos vs Gastos (Últimos 6 meses)</h3>
                 <canvas id="earningsChart"></canvas>
             </div>
             <div class="chart-container">
-                <h3>Días Trabajados por Mes</h3>
+                <h3>📅 Días Trabajados por Mes</h3>
                 <canvas id="daysChart"></canvas>
             </div>
-            <button class="btn btn-secondary" onclick="exportData()">📥 Exportar Datos (CSV)</button>
+            <div class="export-section">
+                <button class="btn btn-secondary" onclick="exportData()">📥 Exportar Datos (CSV)</button>
+            </div>
         </section>
 
         <div id="addWorkModal" class="modal">
@@ -1474,15 +2031,16 @@ single_file_content = '''<!DOCTYPE html>
                         <input type="number" id="workAmount" placeholder="0.00" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="workPaid"> ¿Ya pagado?
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="workPaid">
+                            <span>¿Ya pagado?</span>
                         </label>
                     </div>
                     <div class="form-group">
                         <label>Notas (opcional):</label>
                         <textarea id="workNotes" rows="3" placeholder="Descripción del trabajo..."></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Trabajo</button>
                 </form>
             </div>
         </div>
@@ -1498,13 +2056,13 @@ single_file_content = '''<!DOCTYPE html>
                     </div>
                     <div class="form-group">
                         <label>Descripción:</label>
-                        <input type="text" id="expenseDescription" placeholder="Ej: Combustible" required>
+                        <input type="text" id="expenseDescription" placeholder="Ej: Combustible, herramientas..." required>
                     </div>
                     <div class="form-group">
                         <label>Monto ($):</label>
                         <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Gasto</button>
                 </form>
             </div>
         </div>
@@ -1600,10 +2158,13 @@ single_file_content = '''<!DOCTYPE html>
             document.getElementById('pendingPayment').textContent = '$' + pending.toFixed(2);
             document.getElementById('monthExpenses').textContent = '$' + expenses.toFixed(2);
             
-            // Mostrar trabajos recientes (últimos 5)
             const recentWorks = Storage.getWorks().slice(-5).reverse();
             const container = document.getElementById('recentWorkList');
-            container.innerHTML = recentWorks.map(work => createWorkHTML(work)).join('');
+            if (recentWorks.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay trabajos registrados aún</p>';
+            } else {
+                container.innerHTML = recentWorks.map(work => createWorkHTML(work)).join('');
+            }
         }
 
         function createWorkHTML(work) {
@@ -1645,7 +2206,7 @@ single_file_content = '''<!DOCTYPE html>
             });
             
             for (let i = 0; i < firstDay; i++) {
-                html += '<div class="calendar-day"></div>';
+                html += '<div class="calendar-day" style="visibility:hidden;"></div>';
             }
             
             const today = new Date();
@@ -1689,7 +2250,7 @@ single_file_content = '''<!DOCTYPE html>
                 container.innerHTML = works.map(work => createWorkHTML(work)).join('');
                 document.getElementById('selectedDate').textContent = 'Trabajos del ' + formatDate(dateStr);
             } else {
-                container.innerHTML = '<p>No hay trabajos registrados este día</p>';
+                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">No hay trabajos este día</p>';
                 document.getElementById('selectedDate').textContent = formatDate(dateStr);
             }
             
@@ -1706,12 +2267,12 @@ single_file_content = '''<!DOCTYPE html>
             
             const container = document.getElementById('expensesList');
             if (expenses.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No hay gastos registrados</p>';
+                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay gastos registrados</p>';
             } else {
                 container.innerHTML = expenses.slice().reverse().map(expense => `
                     <div class="expense-item">
                         <div class="expense-description">${expense.description}</div>
-                        <div>${formatDate(expense.date)}</div>
+                        <div style="color:#64748b;font-size:14px;margin-bottom:5px;">${formatDate(expense.date)}</div>
                         <div class="expense-amount">$${parseFloat(expense.amount).toFixed(2)}</div>
                         <button class="delete-btn" onclick="deleteExpense('${expense.id}')">Eliminar</button>
                     </div>
@@ -1818,7 +2379,6 @@ single_file_content = '''<!DOCTYPE html>
                 days.push(monthDays);
             }
             
-            // Gráfico de ingresos vs gastos
             if (earningsChart) earningsChart.destroy();
             const ctx1 = document.getElementById('earningsChart').getContext('2d');
             earningsChart = new Chart(ctx1, {
@@ -1828,22 +2388,38 @@ single_file_content = '''<!DOCTYPE html>
                     datasets: [{
                         label: 'Ingresos',
                         data: earnings,
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                        borderRadius: 8
                     }, {
                         label: 'Gastos',
                         data: expenses,
-                        backgroundColor: 'rgba(243, 156, 18, 0.8)'
+                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                        borderRadius: 8
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: { 
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
                     }
                 }
             });
             
-            // Gráfico de días trabajados
             if (daysChart) daysChart.destroy();
             const ctx2 = document.getElementById('daysChart').getContext('2d');
             daysChart = new Chart(ctx2, {
@@ -1853,16 +2429,37 @@ single_file_content = '''<!DOCTYPE html>
                     datasets: [{
                         label: 'Días Trabajados',
                         data: days,
-                        borderColor: 'rgba(39, 174, 96, 1)',
-                        backgroundColor: 'rgba(39, 174, 96, 0.2)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.4,
-                        fill: true
+                        fill: true,
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: { 
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
                     }
                 }
             });
@@ -1883,7 +2480,7 @@ single_file_content = '''<!DOCTYPE html>
                 csv += `Gasto,${e.date},${e.amount},"${e.description}",-\\n`;
             });
             
-            const blob = new Blob([csv], { type: 'text/csv' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1898,7 +2495,6 @@ single_file_content = '''<!DOCTYPE html>
             return date.toLocaleDateString('es-ES', options);
         }
 
-        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
@@ -1909,26 +2505,19 @@ single_file_content = '''<!DOCTYPE html>
 </html>'''
 
 with open('work-tracker-app/index.html', 'w', encoding='utf-8') as f:
-    f.write(single_file_content)
+    f.write(modern_html)
 
-print("✅ Archivo único index.html creado exitosamente!")
-print("\n📁 Estructura final:")
-print("work-tracker-app/")
-print("└── index.html  (TODO en un solo archivo)")
-print("\n🚀 Para usar:")
-print("1. Abre el archivo index.html en tu navegador")
-print("2. Funciona 100% offline")
-print("3. Los datos se guardan automáticamente en tu navegador")
+print("✅ ¡Diseño moderno aplicado exitosamente!")
+print("\n🎨 Características del nuevo diseño:")
+print("   • Glassmorphism (efecto cristal)")
+print("   • Colores vibrantes y modernos")
+print("   • Sombras suaves y profundas")
+print("   • Animaciones fluidas")
+print("   • Tipografía limpia")
+print("   • Bordes redondeados")
+print("   • Hover effects elegantes")
+print("   • Totalmente responsive")
 
 
 #Return
-✅ Archivo único index.html creado exitosamente!
-
-📁 Estructura final:
-work-tracker-app/
-└── index.html  (TODO en un solo archivo)
-
-🚀 Para usar:
-1. Abre el archivo index.html en tu navegador
-2. Funciona 100% offline
-3. Los datos se guardan automáticamente en tu navegador
+execute error

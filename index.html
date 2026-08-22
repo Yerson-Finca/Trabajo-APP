@@ -6,110 +6,172 @@
     <title>Work Tracker</title>
     <style>
         :root {
-            --primary: #2563eb; /* Azul Profesional */
-            --success: #059669; /* Verde Sobrio */
-            --danger: #dc2626; /* Rojo Alerta */
-            --warning: #d97706; /* Naranja Aviso */
-            --bg: #f9fafb;      /* Gris Muy Claro */
-            --surface: #ffffff; /* Blanco Puro */
-            --text-main: #111827; /* Casi Negro */
-            --text-sec: #6b7280; /* Gris Medio */
-            --border: #f3f4f6;    /* Gris Borde */
-            --radius: 16px;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #ffffff;
+            --surface: #f9fafb;
+            --border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius-btn: 12px;
+            --radius-card: 16px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { background: var(--bg); color: var(--text-main); padding-bottom: 100px; line-height: 1.5; }
         .container { max-width: 600px; margin: 0 auto; min-height: 100vh; }
         
-        /* Header Limpio */
-        header { background: var(--surface); padding: 20px; position: sticky; top: 0; z-index: 90; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 20px; font-weight: 700; color: var(--text-main); }
-        .date-badge { font-size: 12px; color: var(--text-sec); background: var(--bg); padding: 6px 12px; border-radius: 20px; font-weight: 500; }
+        /* Header Ultra Limpio */
+        header { 
+            background: rgba(255,255,255,0.95); 
+            backdrop-filter: blur(10px);
+            padding: 16px 24px; 
+            position: sticky; top: 0; z-index: 90; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .date-badge { font-size: 12px; color: var(--text-muted); font-weight: 500; }
         
-        .content { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        .content { display: none; padding: 24px; animation: fadeIn 0.3s ease; }
         .content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Stats Equilibrados */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
-        .stat-card { background: var(--surface); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); }
-        .stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 6px; }
-        .stat-value { font-size: 20px; font-weight: 700; color: var(--text-main); }
-        .stat-value.success { color: var(--success); }
-        .stat-value.danger { color: var(--danger); }
-        .stat-value.warning { color: var(--warning); }
+        /* Grid de Stats Minimalista */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: var(--surface); padding: 20px; border-radius: var(--radius-card); border: 1px solid var(--border); }
+        .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
+        .stat-value { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-warning { color: #f59e0b; }
         
-        /* Calendario Limpio */
-        .calendar-wrapper { background: var(--surface); border-radius: var(--radius); padding: 16px; border: 1px solid var(--border); margin-bottom: 24px; }
+        /* Calendario Premium */
+        .calendar-wrapper { margin-bottom: 32px; }
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .calendar-nav h2 { font-size: 16px; font-weight: 600; }
-        .nav-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-main); padding: 5px; }
+        .calendar-nav h2 { font-size: 18px; font-weight: 600; }
+        .nav-btn { background: none; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .nav-btn:hover { background: var(--surface); border-color: var(--text-muted); }
         
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-        .day-name { font-size: 11px; color: var(--text-sec); font-weight: 500; margin-bottom: 8px; }
-        .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-main); cursor: pointer; border-radius: 8px; position: relative; }
-        .day.has-work { font-weight: 700; color: var(--primary); background: #eff6ff; }
-        .day.selected-range { background: var(--primary); color: white; }
-        .dot { position: absolute; bottom: 4px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .day-name { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 12px; }
+        .day { 
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
+            font-size: 14px; font-weight: 500; color: var(--text-main); 
+            cursor: pointer; border-radius: 10px; position: relative; transition: all 0.2s;
+        }
+        .day:hover { background: var(--surface); }
+        .day.has-work { background: var(--primary); color: white; font-weight: 600; }
+        .day.selected-range { background: #e0e7ff; color: var(--primary); border: 1px solid var(--primary); }
         
-        /* Listas y Tarjetas */
-        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
+        /* Tarjetas Uniformes */
+        .section-title { font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
         
-        .work-card { background: var(--surface); padding: 16px; border-radius: var(--radius); margin-bottom: 12px; border: 1px solid var(--border); position: relative; }
-        .work-card::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 4px 4px 0; background: var(--border); }
-        .work-card.paid::before { background: var(--success); }
-        .work-card.pending::before { background: var(--danger); }
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: var(--radius-card); 
+            border: 1px solid var(--border); 
+            margin-bottom: 16px; 
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        .card:active { transform: scale(0.99); }
         
-        .card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .card-title { font-weight: 600; font-size: 15px; }
-        .card-amount { font-weight: 700; color: var(--text-main); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .card-title { font-weight: 600; font-size: 16px; color: var(--text-main); }
+        .card-amount { font-weight: 700; font-size: 16px; color: var(--text-main); background: var(--surface); padding: 4px 10px; border-radius: 8px; }
         
-        .dates-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
-        .date-chip { background: var(--bg); padding: 4px 8px; border-radius: 6px; font-size: 12px; color: var(--text-sec); display: flex; align-items: center; gap: 4px; }
-        .date-chip button { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; padding: 0; }
+        .dates-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .date-pill { 
+            background: var(--surface); border: 1px solid var(--border);
+            padding: 6px 12px; border-radius: 20px; 
+            font-size: 13px; color: var(--text-muted); font-weight: 500;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .date-pill button { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; }
         
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; cursor: pointer; }
-        .status-badge.paid { background: #ecfdf5; color: var(--success); }
-        .status-badge.pending { background: #fef2f2; color: var(--danger); }
+        .status-tag { 
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 20px; 
+            font-size: 12px; font-weight: 600; cursor: pointer;
+        }
+        .status-tag.paid { background: #ecfdf5; color: var(--success); }
+        .status-tag.pending { background: #fef2f2; color: var(--danger); }
         
-        .card-actions { display: flex; gap: 8px; margin-top: 12px; }
-        .btn-sm { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--bg); color: var(--text-main); }
-        .btn-sm.delete { background: #fef2f2; color: var(--danger); }
+        /* Botones Uniformes */
+        .btn-group { display: flex; gap: 12px; margin-top: 16px; }
+        .btn { 
+            flex: 1; padding: 12px; 
+            border-radius: var(--radius-btn); 
+            border: 1px solid var(--border); 
+            background: white; color: var(--text-main);
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: var(--surface); }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-danger { color: var(--danger); border-color: #fee2e2; background: #fef2f2; }
+        .btn-danger:hover { background: #fee2e2; }
         
-        /* Buscador */
-        .search-bar { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; background: var(--surface); margin-bottom: 20px; outline: none; }
-        .search-bar:focus { border-color: var(--primary); }
+        /* Input Uniforme */
+        .input-group { margin-bottom: 20px; }
+        .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+        .input-field { 
+            width: 100%; padding: 14px 16px; 
+            border: 1px solid var(--border); border-radius: var(--radius-btn);
+            font-size: 15px; background: white; color: var(--text-main);
+            transition: all 0.2s;
+        }
+        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
         
-        /* Menú Flotante Minimalista */
-        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; height: 65px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 32px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; border: 1px solid rgba(0,0,0,0.05); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); font-size: 10px; font-weight: 500; cursor: pointer; width: 50px; }
+        /* Menú Flotante Uniforme */
+        .bottom-nav { 
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 380px; height: 64px;
+            background: white; border: 1px solid var(--border);
+            border-radius: 32px; display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); z-index: 1000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 500; cursor: pointer; width: 48px; }
         .nav-item.active { color: var(--primary); }
-        .nav-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; margin-bottom: 2px; }
+        .nav-icon svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.5; fill: none; margin-bottom: 4px; }
         
         .fab-container { position: relative; top: -20px; }
-        .fab-btn { width: 56px; height: 56px; background: var(--text-main); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; border: 4px solid var(--bg); }
-        .fab-btn svg { width: 24px; height: 24px; stroke: white; stroke-width: 2.5; fill: none; }
+        .fab-btn { 
+            width: 56px; height: 56px; background: var(--text-main); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); cursor: pointer;
+            border: 4px solid white; transition: transform 0.2s;
+        }
+        .fab-btn:active { transform: scale(0.9); }
+        .fab-btn svg { width: 24px; height: 24px; stroke: white; stroke-width: 2; fill: none; }
         
-        .fab-menu { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 8px; width: 180px; z-index: 999; }
-        .fab-option { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; }
+        .fab-menu { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 8px; width: 200px; z-index: 999; }
+        .fab-option { 
+            background: white; padding: 12px 16px; border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid var(--border);
+            font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; color: var(--text-main);
+        }
         
-        /* Modal Simple */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; }
-        .modal-content { background: white; margin: 15% auto; padding: 24px; border-radius: 20px; width: 90%; max-width: 450px; }
-        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; backdrop-filter: blur(4px); }
+        .modal-content { background: white; margin: 10% auto; padding: 28px; border-radius: 24px; width: 90%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-title { font-size: 20px; font-weight: 700; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); }
         
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--text-main); }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; background: var(--bg); }
-        input:focus { outline: none; border-color: var(--primary); }
+        .search-bar { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-btn); font-size: 15px; margin-bottom: 24px; background: white; }
+        .search-bar:focus { outline: none; border-color: var(--primary); }
         
-        .btn-submit { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        
-        .backup-section { margin-top: 30px; text-align: center; padding: 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); }
-        .btn-confirm-dates { width: 100%; padding: 12px; background: var(--success); color: white; border: none; border-radius: 10px; font-weight: 600; margin-top: 10px; display: none; cursor: pointer; }
+        .btn-confirm-dates { width: 100%; padding: 14px; background: var(--text-main); color: white; border: none; border-radius: var(--radius-btn); font-weight: 600; margin-top: 16px; display: none; cursor: pointer; }
+        .backup-area { margin-top: 40px; padding: 20px; background: var(--surface); border-radius: var(--radius-card); text-align: center; border: 1px dashed var(--border); }
     </style>
 </head>
 <body>
@@ -123,36 +185,41 @@
         <div id="home" class="content active">
             <div class="calendar-wrapper">
                 <div class="calendar-nav">
-                    <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+                    <button class="nav-btn" onclick="changeMonth(-1)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
                     <h2 id="monthYear"></h2>
-                    <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+                    <button class="nav-btn" onclick="changeMonth(1)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
                 </div>
                 <div class="calendar-grid" id="calGrid"></div>
-                <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Agregar Días Seleccionados</button>
+                <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Confirmar Días Seleccionados</button>
             </div>
             
-            <div class="section-title">Próximos (7 días)</div>
+            <div class="section-title">Próximos 7 días</div>
             <div id="upcomingList"></div>
             
-            <div style="margin-top: 24px;">
+            <div style="margin-top: 32px;">
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-label">Ganancia</div><div class="stat-value success" id="earnings">$0</div></div>
-                    <div class="stat-card"><div class="stat-label">Pendiente</div><div class="stat-value danger" id="pending">$0</div></div>
+                    <div class="stat-card"><div class="stat-label">Ganancia</div><div class="stat-value text-success" id="earnings">$0</div></div>
+                    <div class="stat-card"><div class="stat-label">Pendiente</div><div class="stat-value text-danger" id="pending">$0</div></div>
                     <div class="stat-card"><div class="stat-label">Días</div><div class="stat-value" id="days">0</div></div>
-                    <div class="stat-card"><div class="stat-label">Gastos</div><div class="stat-value warning" id="expensesTotal">$0</div></div>
+                    <div class="stat-card"><div class="stat-label">Gastos</div><div class="stat-value text-warning" id="expensesTotal">$0</div></div>
                 </div>
             </div>
         </div>
 
         <!-- TRABAJOS -->
         <div id="works" class="content">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar trabajo..." onkeyup="filterWorks()">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por lugar..." onkeyup="filterWorks()">
+            <div class="section-title">Todos los trabajos</div>
             <div id="allWorksList"></div>
             
-            <div class="backup-section">
-                <div style="font-weight:600; margin-bottom:10px;">Respaldo de Datos</div>
-                <button class="btn-sm" onclick="exportBackup()" style="background:var(--primary); color:white; width:auto; padding:8px 16px;">Descargar</button>
-                <label class="btn-sm" style="display:inline-block; width:auto; padding:8px 16px; cursor:pointer;">
+            <div class="backup-area">
+                <div style="font-weight:600; margin-bottom:12px;">Respaldo de Seguridad</div>
+                <button class="btn" onclick="exportBackup()" style="width:auto; display:inline-flex;">Descargar Datos</button>
+                <label class="btn" style="width:auto; display:inline-flex; cursor:pointer;">
                     Restaurar
                     <input type="file" id="restoreFile" onchange="importBackup(this)" style="display:none;" accept=".json">
                 </label>
@@ -161,25 +228,25 @@
 
         <!-- GASTOS -->
         <div id="expenses" class="content">
-            <div class="section-title">Gastos Recientes</div>
+            <div class="section-title">Historial de Gastos</div>
             <div id="expensesList"></div>
         </div>
 
         <!-- GRÁFICOS -->
         <div id="stats" class="content">
-            <div class="stat-card" style="margin-bottom:20px;"><h3 style="font-size:14px; text-align:center;">Ingresos vs Gastos</h3><canvas id="chart1"></canvas></div>
-            <button onclick="exportCSV()" class="btn-sm" style="width:100%; padding:14px;">Exportar CSV</button>
+            <div class="card"><h3 style="font-size:16px; text-align:center; margin-bottom:16px;">Ingresos vs Gastos</h3><canvas id="chart1"></canvas></div>
+            <button onclick="exportCSV()" class="btn" style="width:100%; margin-top:16px;">Exportar CSV</button>
         </div>
     </div>
 
     <!-- MENÚ FLOTANTE -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="showTab('home', this)">
-            <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>
+            <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
             <span>Inicio</span>
         </div>
         <div class="nav-item" onclick="showTab('works', this)">
-            <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect></svg></div>
+            <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></div>
             <span>Trabajos</span>
         </div>
         
@@ -198,7 +265,7 @@
             <span>Gastos</span>
         </div>
         <div class="nav-item" onclick="showTab('stats', this)">
-            <div class="nav-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line></svg></div>
+            <div class="nav-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></div>
             <span>Stats</span>
         </div>
     </div>
@@ -206,24 +273,27 @@
     <!-- MODAL TRABAJO -->
     <div id="workModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2 id="workModalTitle">Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
+            <div class="modal-header"><h2 class="modal-title" id="workModalTitle">Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
             <form onsubmit="saveWork(event)">
                 <input type="hidden" id="wId">
-                <div class="form-group"><label>Lugar / Nombre</label><input type="text" id="wLocation" required></div>
-                <div class="form-group"><label>Monto ($)</label><input type="number" id="wAmount" step="0.01" required></div>
-                <div class="form-group">
-                    <label>Agregar Fecha</label>
-                    <div style="display:flex; gap:8px;">
-                        <input type="date" id="wNewDate" style="flex:1;">
-                        <button type="button" class="btn-sm" onclick="addDateToTempList()" style="width:auto;">+</button>
+                <div class="input-group"><label class="input-label">Lugar / Nombre</label><input type="text" id="wLocation" class="input-field" required></div>
+                <div class="input-group"><label class="input-label">Monto Total ($)</label><input type="number" id="wAmount" class="input-field" step="0.01" required></div>
+                
+                <div class="input-group">
+                    <label class="input-label">Agregar Fecha</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="date" id="wNewDate" class="input-field" style="flex:1;">
+                        <button type="button" class="btn" onclick="addDateToTempList()" style="width:auto; padding:0 16px;">+</button>
                     </div>
                 </div>
-                <div id="tempDatesList" class="dates-list"></div>
-                <div class="form-group" style="display:flex; align-items:center; gap:10px; background:var(--bg); padding:10px; border-radius:10px;">
-                    <input type="checkbox" id="wPaid" style="width:18px; height:18px;">
-                    <label style="margin:0;">¿Pagado?</label>
+                
+                <div id="tempDatesList" class="dates-container"></div>
+
+                <div class="input-group" style="background:var(--surface); padding:16px; border-radius:var(--radius-btn); display:flex; align-items:center; gap:12px; border:1px solid var(--border);">
+                    <input type="checkbox" id="wPaid" style="width:18px; height:18px; accent-color:var(--primary);">
+                    <label class="input-label" style="margin:0;">¿Ya fue pagado?</label>
                 </div>
-                <button type="submit" class="btn-submit">Guardar</button>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Guardar Cambios</button>
             </form>
         </div>
     </div>
@@ -231,12 +301,12 @@
     <!-- MODAL GASTO -->
     <div id="expenseModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>Gasto</h2><button class="close-btn" onclick="closeModal('expenseModal')">&times;</button></div>
+            <div class="modal-header"><h2 class="modal-title">Gasto</h2><button class="close-btn" onclick="closeModal('expenseModal')">&times;</button></div>
             <form onsubmit="saveExpense(event)">
-                <div class="form-group"><label>Fecha</label><input type="date" id="eDate" required></div>
-                <div class="form-group"><label>Descripción</label><input type="text" id="eDesc" required></div>
-                <div class="form-group"><label>Monto ($)</label><input type="number" id="eAmount" step="0.01" required></div>
-                <button type="submit" class="btn-submit">Guardar</button>
+                <div class="input-group"><label class="input-label">Fecha</label><input type="date" id="eDate" class="input-field" required></div>
+                <div class="input-group"><label class="input-label">Descripción</label><input type="text" id="eDesc" class="input-field" required></div>
+                <div class="input-group"><label class="input-label">Monto ($)</label><input type="number" id="eAmount" class="input-field" step="0.01" required></div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Guardar Gasto</button>
             </form>
         </div>
     </div>
@@ -263,7 +333,7 @@
             updateExpenses();
             document.getElementById('eDate').valueAsDate = new Date();
             document.getElementById('wNewDate').valueAsDate = new Date();
-            document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+            document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
         });
 
         function showTab(name, element) {
@@ -356,11 +426,11 @@
 
             upcoming.sort((a,b) => new Date(a.date) - new Date(b.date));
             document.getElementById('upcomingList').innerHTML = upcoming.length ? upcoming.map(u => `
-                <div class="work-card" style="padding:12px; margin-bottom:8px; border-left: 3px solid ${u.paid ? 'var(--success)' : 'var(--danger)'}">
-                    <div style="font-size:12px; color:var(--text-sec);">${formatDate(u.date)}</div>
+                <div class="card" style="padding:16px; margin-bottom:12px; border-left: 3px solid ${u.paid ? 'var(--success)' : 'var(--danger)'}">
+                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">${formatDate(u.date)}</div>
                     <div style="font-weight:600;">${u.location}</div>
                 </div>
-            `).join('') : '<div style="color:var(--text-sec); font-size:13px; padding:10px;">Libre esta semana</div>';
+            `).join('') : '<div style="color:var(--text-muted); font-size:14px; padding:10px;">Sin actividades esta semana</div>';
 
             const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);
             document.getElementById('earnings').textContent = '$' + earnings.toFixed(0);
@@ -375,7 +445,7 @@
         }
 
         function renderWorkList(works) {
-            document.getElementById('allWorksList').innerHTML = works.length ? works.map(w => createWorkHTML(w)).join('') : '<div style="text-align:center;color:var(--text-sec);padding:20px;">Sin trabajos</div>';
+            document.getElementById('allWorksList').innerHTML = works.length ? works.map(w => createWorkHTML(w)).join('') : '<div style="text-align:center;color:var(--text-muted);padding:40px;">No hay registros</div>';
         }
 
         function filterWorks() {
@@ -386,18 +456,18 @@
         function createWorkHTML(work) {
             const isPaid = work.paid;
             const statusClass = isPaid ? 'paid' : 'pending';
-            const datesHtml = work.dates.sort().map(d => `<div class="date-chip">${formatDate(d)} <button onclick="removeDateFromWork(${work.id}, '${d}')">×</button></div>`).join('');
+            const datesHtml = work.dates.sort().map(d => `<div class="date-pill">${formatDate(d)} <button onclick="removeDateFromWork(${work.id}, '${d}')">×</button></div>`).join('');
             return `
-                <div class="work-card ${statusClass}">
+                <div class="card">
                     <div class="card-header">
                         <div class="card-title">${work.location}</div>
                         <div class="card-amount">$${parseFloat(work.amount).toFixed(0)}</div>
                     </div>
-                    <div class="dates-list">${datesHtml}</div>
-                    <span class="status-badge ${statusClass}" onclick="quickToggleStatus(${work.id})">${isPaid ? 'Pagado' : 'Pendiente'}</span>
-                    <div class="card-actions">
-                        <button class="btn-sm" onclick="editWork(${work.id})">Editar</button>
-                        <button class="btn-sm delete" onclick="deleteItem('works', ${work.id})">Borrar</button>
+                    <div class="dates-container">${datesHtml}</div>
+                    <span class="status-tag ${statusClass}" onclick="quickToggleStatus(${work.id})">${isPaid ? 'Pagado' : 'Pendiente'}</span>
+                    <div class="btn-group">
+                        <button class="btn" onclick="editWork(${work.id})">Editar</button>
+                        <button class="btn btn-danger" onclick="deleteItem('works', ${work.id})">Eliminar</button>
                     </div>
                 </div>
             `;
@@ -414,7 +484,7 @@
         }
 
         function renderTempDates() {
-            document.getElementById('tempDatesList').innerHTML = tempDates.sort().map(d => `<div class="date-chip">${formatDate(d)} <button onclick="removeTempDate('${d}')">×</button></div>`).join('');
+            document.getElementById('tempDatesList').innerHTML = tempDates.sort().map(d => `<div class="date-pill">${formatDate(d)} <button onclick="removeTempDate('${d}')">×</button></div>`).join('');
         }
 
         function removeTempDate(date) { tempDates = tempDates.filter(d => d !== date); renderTempDates(); }
@@ -518,7 +588,7 @@
                 expense.push(DB.get('expenses').filter(e => new Date(e.date).getMonth() === d.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0));
             }
             if(chart1) chart1.destroy();
-            chart1 = new Chart(document.getElementById('chart1'), { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: income, backgroundColor: '#2563eb' }, { label: 'Gastos', data: expense, backgroundColor: '#d97706' }] } });
+            chart1 = new Chart(document.getElementById('chart1'), { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: income, backgroundColor: '#4f46e5', borderRadius: 4 }, { label: 'Gastos', data: expense, backgroundColor: '#f59e0b', borderRadius: 4 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
         }
 
         function exportCSV() {

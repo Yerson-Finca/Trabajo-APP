@@ -20,14 +20,29 @@
             --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
 
+        /* Modo Oscuro Automático */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #111827;
+                --surface: #1f2937;
+                --border: #374151;
+                --text-main: #f9fafb;
+                --text-muted: #9ca3af;
+                --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+            }
+            .nav-btn:hover { background: #374151; }
+            .day:hover { background: #374151; }
+            .input-field { background: #1f2937; color: white; }
+            .fab-btn { border-color: var(--bg); }
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background: var(--bg); color: var(--text-main); padding-bottom: 100px; line-height: 1.5; }
+        body { background: var(--bg); color: var(--text-main); padding-bottom: 100px; line-height: 1.5; transition: background 0.3s; }
         .container { max-width: 600px; margin: 0 auto; min-height: 100vh; }
         
-        /* Header Ultra Limpio */
         header { 
-            background: rgba(255,255,255,0.95); 
+            background: rgba(255,255,255,0.05); 
             backdrop-filter: blur(10px);
             padding: 16px 24px; 
             position: sticky; top: 0; z-index: 90; 
@@ -41,7 +56,6 @@
         .content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Grid de Stats Minimalista */
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
         .stat-card { background: var(--surface); padding: 20px; border-radius: var(--radius-card); border: 1px solid var(--border); }
         .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
@@ -50,12 +64,10 @@
         .text-danger { color: var(--danger); }
         .text-warning { color: #f59e0b; }
         
-        /* Calendario Premium */
         .calendar-wrapper { margin-bottom: 32px; }
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .calendar-nav h2 { font-size: 18px; font-weight: 600; }
         .nav-btn { background: none; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .nav-btn:hover { background: var(--surface); border-color: var(--text-muted); }
         
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
         .day-name { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 12px; }
@@ -64,31 +76,29 @@
             font-size: 14px; font-weight: 500; color: var(--text-main); 
             cursor: pointer; border-radius: 10px; position: relative; transition: all 0.2s;
         }
-        .day:hover { background: var(--surface); }
+        .day.past { opacity: 0.3; cursor: not-allowed; background: repeating-linear-gradient(45deg, transparent, transparent 5px, var(--border) 5px, var(--border) 6px); }
         .day.has-work { background: var(--primary); color: white; font-weight: 600; }
         .day.selected-range { background: #e0e7ff; color: var(--primary); border: 1px solid var(--primary); }
+        @media (prefers-color-scheme: dark) { .day.selected-range { background: #312e81; color: #818cf8; } }
         
-        /* Tarjetas Uniformes */
         .section-title { font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
         
         .card { 
-            background: white; 
+            background: var(--surface); 
             padding: 20px; 
             border-radius: var(--radius-card); 
             border: 1px solid var(--border); 
             margin-bottom: 16px; 
             box-shadow: var(--shadow);
-            transition: transform 0.2s;
         }
-        .card:active { transform: scale(0.99); }
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .card-title { font-weight: 600; font-size: 16px; color: var(--text-main); }
-        .card-amount { font-weight: 700; font-size: 16px; color: var(--text-main); background: var(--surface); padding: 4px 10px; border-radius: 8px; }
+        .card-amount { font-weight: 700; font-size: 16px; color: var(--text-main); background: var(--bg); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border); }
         
         .dates-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
         .date-pill { 
-            background: var(--surface); border: 1px solid var(--border);
+            background: var(--bg); border: 1px solid var(--border);
             padding: 6px 12px; border-radius: 20px; 
             font-size: 13px; color: var(--text-muted); font-weight: 500;
             display: flex; align-items: center; gap: 6px;
@@ -102,42 +112,39 @@
         }
         .status-tag.paid { background: #ecfdf5; color: var(--success); }
         .status-tag.pending { background: #fef2f2; color: var(--danger); }
+        .status-tag.overdue { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; animation: pulse 2s infinite; }
+        @media (prefers-color-scheme: dark) { .status-tag.overdue { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; } }
         
-        /* Botones Uniformes */
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        
         .btn-group { display: flex; gap: 12px; margin-top: 16px; }
         .btn { 
             flex: 1; padding: 12px; 
             border-radius: var(--radius-btn); 
             border: 1px solid var(--border); 
-            background: white; color: var(--text-main);
+            background: var(--bg); color: var(--text-main);
             font-size: 14px; font-weight: 600; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: all 0.2s;
         }
-        .btn:hover { background: var(--surface); }
         .btn-primary { background: var(--primary); color: white; border: none; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-danger { color: var(--danger); border-color: #fee2e2; background: #fef2f2; }
-        .btn-danger:hover { background: #fee2e2; }
+        .btn-danger { color: var(--danger); border-color: var(--danger); background: transparent; }
         
-        /* Input Uniforme */
         .input-group { margin-bottom: 20px; }
         .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
         .input-field { 
             width: 100%; padding: 14px 16px; 
             border: 1px solid var(--border); border-radius: var(--radius-btn);
-            font-size: 15px; background: white; color: var(--text-main);
-            transition: all 0.2s;
+            font-size: 15px; background: var(--bg); color: var(--text-main);
         }
-        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        .input-field:focus { outline: none; border-color: var(--primary); }
         
-        /* Menú Flotante Uniforme */
         .bottom-nav { 
             position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 380px; height: 64px;
-            background: white; border: 1px solid var(--border);
+            background: var(--surface); border: 1px solid var(--border);
             border-radius: 32px; display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08); z-index: 1000;
+            box-shadow: var(--shadow); z-index: 1000;
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 500; cursor: pointer; width: 48px; }
         .nav-item.active { color: var(--primary); }
@@ -147,30 +154,26 @@
         .fab-btn { 
             width: 56px; height: 56px; background: var(--text-main); 
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); cursor: pointer;
-            border: 4px solid white; transition: transform 0.2s;
+            color: var(--bg); box-shadow: 0 8px 20px rgba(0,0,0,0.15); cursor: pointer;
+            border: 4px solid var(--bg); transition: transform 0.2s;
         }
-        .fab-btn:active { transform: scale(0.9); }
-        .fab-btn svg { width: 24px; height: 24px; stroke: white; stroke-width: 2; fill: none; }
+        .fab-btn svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; }
         
         .fab-menu { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 8px; width: 200px; z-index: 999; }
         .fab-option { 
-            background: white; padding: 12px 16px; border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid var(--border);
+            background: var(--surface); padding: 12px 16px; border-radius: 12px; 
+            box-shadow: var(--shadow); border: 1px solid var(--border);
             font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; color: var(--text-main);
         }
         
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 10% auto; padding: 28px; border-radius: 24px; width: 90%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--surface); margin: 10% auto; padding: 28px; border-radius: 24px; width: 90%; max-width: 450px; box-shadow: var(--shadow); border: 1px solid var(--border); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .modal-title { font-size: 20px; font-weight: 700; }
+        .modal-title { font-size: 20px; font-weight: 700; color: var(--text-main); }
         .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); }
         
-        .search-bar { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-btn); font-size: 15px; margin-bottom: 24px; background: white; }
-        .search-bar:focus { outline: none; border-color: var(--primary); }
-        
-        .btn-confirm-dates { width: 100%; padding: 14px; background: var(--text-main); color: white; border: none; border-radius: var(--radius-btn); font-weight: 600; margin-top: 16px; display: none; cursor: pointer; }
+        .search-bar { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-btn); font-size: 15px; margin-bottom: 24px; background: var(--surface); color: var(--text-main); }
+        .btn-confirm-dates { width: 100%; padding: 14px; background: var(--text-main); color: var(--bg); border: none; border-radius: var(--radius-btn); font-weight: 600; margin-top: 16px; display: none; cursor: pointer; }
         .backup-area { margin-top: 40px; padding: 20px; background: var(--surface); border-radius: var(--radius-card); text-align: center; border: 1px dashed var(--border); }
     </style>
 </head>
@@ -181,20 +184,15 @@
             <div class="date-badge" id="currentDateDisplay"></div>
         </header>
 
-        <!-- INICIO -->
         <div id="home" class="content active">
             <div class="calendar-wrapper">
                 <div class="calendar-nav">
-                    <button class="nav-btn" onclick="changeMonth(-1)">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    </button>
+                    <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
                     <h2 id="monthYear"></h2>
-                    <button class="nav-btn" onclick="changeMonth(1)">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </button>
+                    <button class="nav-btn" onclick="changeMonth(1)">▶</button>
                 </div>
                 <div class="calendar-grid" id="calGrid"></div>
-                <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Confirmar Días Seleccionados</button>
+                <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Confirmar Días</button>
             </div>
             
             <div class="section-title">Próximos 7 días</div>
@@ -210,14 +208,13 @@
             </div>
         </div>
 
-        <!-- TRABAJOS -->
         <div id="works" class="content">
             <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por lugar..." onkeyup="filterWorks()">
-            <div class="section-title">Todos los trabajos</div>
+            <div class="section-title">Historial de Trabajos</div>
             <div id="allWorksList"></div>
             
             <div class="backup-area">
-                <div style="font-weight:600; margin-bottom:12px;">Respaldo de Seguridad</div>
+                <div style="font-weight:600; margin-bottom:12px; color:var(--text-main);">Respaldo de Seguridad</div>
                 <button class="btn" onclick="exportBackup()" style="width:auto; display:inline-flex;">Descargar Datos</button>
                 <label class="btn" style="width:auto; display:inline-flex; cursor:pointer;">
                     Restaurar
@@ -226,20 +223,17 @@
             </div>
         </div>
 
-        <!-- GASTOS -->
         <div id="expenses" class="content">
-            <div class="section-title">Historial de Gastos</div>
+            <div class="section-title">Gastos Recientes</div>
             <div id="expensesList"></div>
         </div>
 
-        <!-- GRÁFICOS -->
         <div id="stats" class="content">
-            <div class="card"><h3 style="font-size:16px; text-align:center; margin-bottom:16px;">Ingresos vs Gastos</h3><canvas id="chart1"></canvas></div>
+            <div class="card"><h3 style="font-size:16px; text-align:center; margin-bottom:16px; color:var(--text-main);">Ingresos vs Gastos</h3><canvas id="chart1"></canvas></div>
             <button onclick="exportCSV()" class="btn" style="width:100%; margin-top:16px;">Exportar CSV</button>
         </div>
     </div>
 
-    <!-- MENÚ FLOTANTE -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="showTab('home', this)">
             <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
@@ -270,7 +264,6 @@
         </div>
     </div>
 
-    <!-- MODAL TRABAJO -->
     <div id="workModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2 class="modal-title" id="workModalTitle">Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
@@ -280,7 +273,7 @@
                 <div class="input-group"><label class="input-label">Monto Total ($)</label><input type="number" id="wAmount" class="input-field" step="0.01" required></div>
                 
                 <div class="input-group">
-                    <label class="input-label">Agregar Fecha</label>
+                    <label class="input-label">Agregar Fecha (Solo presente/futuro)</label>
                     <div style="display:flex; gap:10px;">
                         <input type="date" id="wNewDate" class="input-field" style="flex:1;">
                         <button type="button" class="btn" onclick="addDateToTempList()" style="width:auto; padding:0 16px;">+</button>
@@ -289,7 +282,7 @@
                 
                 <div id="tempDatesList" class="dates-container"></div>
 
-                <div class="input-group" style="background:var(--surface); padding:16px; border-radius:var(--radius-btn); display:flex; align-items:center; gap:12px; border:1px solid var(--border);">
+                <div class="input-group" style="background:var(--bg); padding:16px; border-radius:var(--radius-btn); display:flex; align-items:center; gap:12px; border:1px solid var(--border);">
                     <input type="checkbox" id="wPaid" style="width:18px; height:18px; accent-color:var(--primary);">
                     <label class="input-label" style="margin:0;">¿Ya fue pagado?</label>
                 </div>
@@ -298,7 +291,6 @@
         </div>
     </div>
 
-    <!-- MODAL GASTO -->
     <div id="expenseModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2 class="modal-title">Gasto</h2><button class="close-btn" onclick="closeModal('expenseModal')">&times;</button></div>
@@ -325,8 +317,13 @@
         let chart1;
         let tempDates = [];
         let selectedRangeDates = [];
+        const today = new Date().toISOString().split('T')[0];
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Configurar inputs de fecha para no permitir pasado
+            document.getElementById('wNewDate').min = today;
+            document.getElementById('eDate').max = today; // Gastos sí pueden ser pasados
+            
             renderCalendar();
             updateHome();
             updateAllWorks();
@@ -371,12 +368,16 @@
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
                 const hasWork = workDates.has(dateStr);
                 const isSelected = selectedRangeDates.includes(dateStr);
+                const isPast = dateStr < today;
                 
                 let classes = 'day';
-                if (hasWork) classes += ' has-work';
-                if (isSelected) classes += ' selected-range';
+                if (isPast) classes += ' past';
+                else {
+                    if (hasWork) classes += ' has-work';
+                    if (isSelected) classes += ' selected-range';
+                }
                 
-                html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
+                html += `<div class="${classes}" onclick="${isPast ? '' : `toggleDateSelection('${dateStr}')`}">${day}</div>`;
             }
             document.getElementById('calGrid').innerHTML = html;
         }
@@ -426,7 +427,7 @@
 
             upcoming.sort((a,b) => new Date(a.date) - new Date(b.date));
             document.getElementById('upcomingList').innerHTML = upcoming.length ? upcoming.map(u => `
-                <div class="card" style="padding:16px; margin-bottom:12px; border-left: 3px solid ${u.paid ? 'var(--success)' : 'var(--danger)'}">
+                <div class="card" style="padding:16px; margin-bottom:12px; border-left: 3px solid ${u.paid ? 'var(--success)' : 'var(--primary)'}">
                     <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">${formatDate(u.date)}</div>
                     <div style="font-weight:600;">${u.location}</div>
                 </div>
@@ -455,7 +456,20 @@
 
         function createWorkHTML(work) {
             const isPaid = work.paid;
-            const statusClass = isPaid ? 'paid' : 'pending';
+            let statusClass = isPaid ? 'paid' : 'pending';
+            let statusText = isPaid ? 'Pagado' : 'Pendiente';
+            
+            // Lógica de Cobros Vencidos (15 días)
+            if (!isPaid) {
+                const lastDate = new Date(work.dates[work.dates.length - 1]);
+                const diffTime = Math.abs(new Date() - lastDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                if (diffDays > 15) {
+                    statusClass = 'overdue';
+                    statusText = `Vencido (${diffDays} días)`;
+                }
+            }
+
             const datesHtml = work.dates.sort().map(d => `<div class="date-pill">${formatDate(d)} <button onclick="removeDateFromWork(${work.id}, '${d}')">×</button></div>`).join('');
             return `
                 <div class="card">
@@ -464,7 +478,7 @@
                         <div class="card-amount">$${parseFloat(work.amount).toFixed(0)}</div>
                     </div>
                     <div class="dates-container">${datesHtml}</div>
-                    <span class="status-tag ${statusClass}" onclick="quickToggleStatus(${work.id})">${isPaid ? 'Pagado' : 'Pendiente'}</span>
+                    <span class="status-tag ${statusClass}" onclick="quickToggleStatus(${work.id})">${statusText}</span>
                     <div class="btn-group">
                         <button class="btn" onclick="editWork(${work.id})">Editar</button>
                         <button class="btn btn-danger" onclick="deleteItem('works', ${work.id})">Eliminar</button>

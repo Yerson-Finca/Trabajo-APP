@@ -53,9 +53,10 @@
         .item-amount { font-weight: 700; font-size: 18px; color: var(--success); }
         .item-location { color: var(--gray); font-size: 13px; margin-bottom: 5px; }
         
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 5px; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 5px; cursor: pointer; }
         .badge.paid { background: rgba(5, 150, 105, 0.1); color: var(--success); }
         .badge.pending { background: rgba(220, 38, 38, 0.1); color: var(--danger); }
+        
         .delete { background: transparent; border: none; color: var(--danger); font-size: 12px; margin-top: 8px; cursor: pointer; }
         
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--bg); padding: 12px; border-radius: 10px; }
@@ -92,14 +93,33 @@
         <header>
             <h1>🌾 Work Tracker</h1>
             <div class="tabs">
-                <button class="tab-btn active" onclick="showTab('home')">Inicio</button>
-                <button class="tab-btn" onclick="showTab('calendar')">Calendario</button>
+                <button class="tab-btn active" onclick="showTab('calendar')">Calendario</button>
+                <button class="tab-btn" onclick="showTab('home')">Resumen</button>
                 <button class="tab-btn" onclick="showTab('expenses')">Gastos</button>
                 <button class="tab-btn" onclick="showTab('stats')">Gráficos</button>
             </div>
         </header>
 
-        <div id="home" class="content active">
+        <!-- CALENDARIO (Pantalla Principal) -->
+        <div id="calendar" class="content active">
+            <div class="calendar-nav">
+                <button class="nav-arrow" onclick="changeMonth(-1)">◀</button>
+                <h2 id="monthYear"></h2>
+                <button class="nav-arrow" onclick="changeMonth(1)">▶</button>
+            </div>
+            <div class="calendar-grid" id="calGrid"></div>
+            
+            <div id="dayDetails" style="display:none; margin-top: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3 id="selectedDayTitle"></h3>
+                    <button class="btn btn-primary" style="width:auto; padding:8px 15px; margin:0;" onclick="openModalForSelectedDay()">+ Agregar</button>
+                </div>
+                <div id="dayWorks"></div>
+            </div>
+        </div>
+
+        <!-- RESUMEN -->
+        <div id="home" class="content">
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-label">Ganancia Mes</div><div class="stat-value success" id="earnings">$0</div></div>
                 <div class="stat-card"><div class="stat-label">Días Trabajados</div><div class="stat-value" id="days">0</div></div>
@@ -114,19 +134,7 @@
             <div id="recentList"></div>
         </div>
 
-        <div id="calendar" class="content">
-            <div class="calendar-nav">
-                <button class="nav-arrow" onclick="changeMonth(-1)">◀</button>
-                <h2 id="monthYear"></h2>
-                <button class="nav-arrow" onclick="changeMonth(1)">▶</button>
-            </div>
-            <div class="calendar-grid" id="calGrid"></div>
-            <div id="dayDetails" style="display:none; margin-top: 20px;">
-                <h3 id="selectedDayTitle"></h3>
-                <div id="dayWorks"></div>
-            </div>
-        </div>
-
+        <!-- GASTOS -->
         <div id="expenses" class="content">
             <div class="stat-card" style="margin-bottom: 20px;">
                 <div class="stat-label">Total Gastos Mes</div>
@@ -136,6 +144,7 @@
             <div id="expensesList"></div>
         </div>
 
+        <!-- GRÁFICOS -->
         <div id="stats" class="content">
             <div class="chart-box"><h3>Ingresos vs Gastos</h3><canvas id="chart1"></canvas></div>
             <div class="chart-box"><h3>Días Trabajados</h3><canvas id="chart2"></canvas></div>
@@ -143,10 +152,12 @@
         </div>
     </div>
 
+    <!-- MODAL TRABAJO -->
     <div id="workModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>Nuevo Trabajo</h2><span class="close" onclick="closeModal('workModal')">&times;</span></div>
+            <div class="modal-header"><h2 id="workModalTitle">Nuevo Trabajo</h2><span class="close" onclick="closeModal('workModal')">&times;</span></div>
             <form onsubmit="saveWork(event)">
+                <input type="hidden" id="wId">
                 <div class="form-group"><label>Fecha</label><input type="date" id="wDate" required></div>
                 <div class="form-group"><label>Lugar</label><input type="text" id="wLocation" placeholder="Ej: Finca El Roble" required></div>
                 <div class="form-group"><label>Monto ($)</label><input type="number" id="wAmount" step="0.01" required></div>
@@ -157,6 +168,7 @@
         </div>
     </div>
 
+    <!-- MODAL GASTO -->
     <div id="expenseModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Nuevo Gasto</h2><span class="close" onclick="closeModal('expenseModal')">&times;</span></div>
@@ -180,6 +192,10 @@
                 data.push(item);
                 this.set(key, data);
             },
+            update(key, id, newData) {
+                const data = this.get(key).map(i => i.id == id ? {...i, ...newData} : i);
+                this.set(key, data);
+            },
             remove(key, id) {
                 const data = this.get(key).filter(i => i.id !== id);
                 this.set(key, data);
@@ -191,8 +207,8 @@
         let chart1, chart2;
 
         document.addEventListener('DOMContentLoaded', () => {
-            updateHome();
             renderCalendar();
+            updateHome();
             updateExpenses();
             document.getElementById('wDate').valueAsDate = new Date();
             document.getElementById('eDate').valueAsDate = new Date();
@@ -203,57 +219,14 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(name).classList.add('active');
             event.target.classList.add('active');
-            if (name === 'home') updateHome();
+            
             if (name === 'calendar') renderCalendar();
+            if (name === 'home') updateHome();
             if (name === 'expenses') updateExpenses();
             if (name === 'stats') updateCharts();
         }
 
-        function updateHome() {
-            const now = new Date();
-            const works = DB.get('works').filter(w => {
-                const d = new Date(w.date);
-                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-            });
-            
-            const earnings = works.reduce((s, w) => s + parseFloat(w.amount), 0);
-            const pending = works.filter(w => !w.paid).reduce((s, w) => s + parseFloat(w.amount), 0);
-            const days = new Set(works.map(w => w.date)).size;
-            
-            const expenses = DB.get('expenses').filter(e => {
-                const d = new Date(e.date);
-                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-            }).reduce((s, e) => s + parseFloat(e.amount), 0);
-
-            document.getElementById('earnings').textContent = '$' + earnings.toFixed(0);
-            document.getElementById('days').textContent = days;
-            document.getElementById('pending').textContent = '$' + pending.toFixed(0);
-            document.getElementById('expensesTotal').textContent = '$' + expenses.toFixed(0);
-
-            const recent = DB.get('works').slice(-5).reverse();
-            document.getElementById('recentList').innerHTML = recent.length ? 
-                recent.map(w => createItemHTML(w, 'work')).join('') : 
-                '<p style="text-align:center;color:#999;padding:20px;">Sin registros</p>';
-        }
-
-        function createItemHTML(item, type) {
-            const isPaid = item.paid;
-            const statusClass = type === 'work' ? (isPaid ? 'paid' : 'pending') : 'expense';
-            const statusText = type === 'work' ? (isPaid ? '✓ Pagado' : '⏳ Pendiente') : '';
-            
-            return `
-                <div class="item ${statusClass}">
-                    <div class="item-header">
-                        <span class="item-date">${formatDate(item.date)}</span>
-                        <span class="item-amount">$${parseFloat(item.amount).toFixed(0)}</span>
-                    </div>
-                    <div class="item-location">${type === 'work' ? '📍 ' + item.location : item.description}</div>
-                    ${statusText ? `<span class="badge ${isPaid ? 'paid' : 'pending'}">${statusText}</span>` : ''}
-                    <button class="delete" onclick="deleteItem('${type}', ${item.id})">Eliminar</button>
-                </div>
-            `;
-        }
-
+        // CALENDARIO
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -304,16 +277,89 @@
         function selectDay(date) {
             selectedDate = date;
             renderCalendar();
-            
+            loadDayDetails(date);
+        }
+
+        function loadDayDetails(date) {
             const works = DB.get('works').filter(w => w.date === date);
-            document.getElementById('dayWorks').innerHTML = works.length ?
+            const container = document.getElementById('dayWorks');
+            
+            container.innerHTML = works.length ?
                 works.map(w => createItemHTML(w, 'work')).join('') :
-                '<p style="color:#999;text-align:center;">Sin trabajos</p>';
+                '<p style="color:#999;text-align:center;padding:20px;">Sin trabajos este día</p>';
             
             document.getElementById('selectedDayTitle').textContent = formatDate(date);
             document.getElementById('dayDetails').style.display = 'block';
         }
 
+        function openModalForSelectedDay() {
+            if (selectedDate) {
+                document.getElementById('wDate').value = selectedDate;
+            }
+            openModal('work');
+        }
+
+        // HOME / RESUMEN
+        function updateHome() {
+            const now = new Date();
+            const works = DB.get('works').filter(w => {
+                const d = new Date(w.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+            
+            const earnings = works.reduce((s, w) => s + parseFloat(w.amount), 0);
+            const pending = works.filter(w => !w.paid).reduce((s, w) => s + parseFloat(w.amount), 0);
+            const days = new Set(works.map(w => w.date)).size;
+            
+            const expenses = DB.get('expenses').filter(e => {
+                const d = new Date(e.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            }).reduce((s, e) => s + parseFloat(e.amount), 0);
+
+            document.getElementById('earnings').textContent = '$' + earnings.toFixed(0);
+            document.getElementById('days').textContent = days;
+            document.getElementById('pending').textContent = '$' + pending.toFixed(0);
+            document.getElementById('expensesTotal').textContent = '$' + expenses.toFixed(0);
+
+            const recent = DB.get('works').slice(-5).reverse();
+            document.getElementById('recentList').innerHTML = recent.length ? 
+                recent.map(w => createItemHTML(w, 'work')).join('') : 
+                '<p style="text-align:center;color:#999;padding:20px;">Sin registros</p>';
+        }
+
+        // ITEMS HTML
+        function createItemHTML(item, type) {
+            const isPaid = item.paid;
+            const statusClass = type === 'work' ? (isPaid ? 'paid' : 'pending') : 'expense';
+            const statusText = type === 'work' ? (isPaid ? '✓ Pagado' : '⏳ Pendiente') : '';
+            
+            let actionButtons = `<button class="delete" onclick="deleteItem('${type}', ${item.id})">Eliminar</button>`;
+            
+            // Si es trabajo, agregamos botón para editar estado de pago
+            if (type === 'work') {
+                actionButtons = `
+                    <div style="display:flex; gap:10px; margin-top:8px;">
+                        <button class="btn btn-secondary" style="padding:8px; font-size:12px; margin:0;" onclick="editWork(${item.id})">Editar</button>
+                        <button class="delete" onclick="deleteItem('${type}', ${item.id})">Eliminar</button>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="item ${statusClass}">
+                    <div class="item-header">
+                        <span class="item-date">${formatDate(item.date)}</span>
+                        <span class="item-amount">$${parseFloat(item.amount).toFixed(0)}</span>
+                    </div>
+                    <div class="item-location">${type === 'work' ? '📍 ' + item.location : item.description}</div>
+                    ${type === 'work' && item.notes ? `<div style="font-size:12px;color:#999;margin-top:4px;">${item.notes}</div>` : ''}
+                    ${statusText ? `<span class="badge ${isPaid ? 'paid' : 'pending'}">${statusText}</span>` : ''}
+                    ${actionButtons}
+                </div>
+            `;
+        }
+
+        // GASTOS
         function updateExpenses() {
             const now = new Date();
             const expenses = DB.get('expenses').filter(e => {
@@ -329,27 +375,64 @@
                 '<p style="text-align:center;color:#999;padding:20px;">Sin gastos</p>';
         }
 
+        // MODALES
         function openModal(type) {
+            if (type === 'work') {
+                document.getElementById('workModalTitle').textContent = 'Nuevo Trabajo';
+                document.getElementById('wId').value = '';
+                document.getElementById('wDate').valueAsDate = new Date();
+                document.getElementById('wLocation').value = '';
+                document.getElementById('wAmount').value = '';
+                document.getElementById('wPaid').checked = false;
+                document.getElementById('wNotes').value = '';
+            } else {
+                document.getElementById('eDate').valueAsDate = new Date();
+                document.getElementById('eDesc').value = '';
+                document.getElementById('eAmount').value = '';
+            }
             document.getElementById(type + 'Modal').style.display = 'block';
         }
 
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
-            document.querySelector('#' + id + ' form').reset();
+        }
+
+        function editWork(id) {
+            const work = DB.get('works').find(w => w.id == id);
+            if (!work) return;
+            
+            document.getElementById('workModalTitle').textContent = 'Editar Trabajo';
+            document.getElementById('wId').value = work.id;
+            document.getElementById('wDate').value = work.date;
+            document.getElementById('wLocation').value = work.location;
+            document.getElementById('wAmount').value = work.amount;
+            document.getElementById('wPaid').checked = work.paid;
+            document.getElementById('wNotes').value = work.notes || '';
+            
+            document.getElementById('workModal').style.display = 'block';
         }
 
         function saveWork(e) {
             e.preventDefault();
-            DB.add('works', {
+            const id = document.getElementById('wId').value;
+            const workData = {
                 date: document.getElementById('wDate').value,
                 location: document.getElementById('wLocation').value,
                 amount: document.getElementById('wAmount').value,
                 paid: document.getElementById('wPaid').checked,
                 notes: document.getElementById('wNotes').value
-            });
+            };
+            
+            if (id) {
+                DB.update('works', id, workData);
+            } else {
+                DB.add('works', workData);
+            }
+            
             closeModal('workModal');
             updateHome();
             renderCalendar();
+            if (selectedDate) loadDayDetails(selectedDate);
         }
 
         function saveExpense(e) {
@@ -365,14 +448,16 @@
         }
 
         function deleteItem(type, id) {
-            if (confirm('¿Eliminar?')) {
+            if (confirm('¿Eliminar este registro?')) {
                 DB.remove(type === 'work' ? 'works' : 'expenses', id);
                 updateHome();
                 renderCalendar();
                 updateExpenses();
+                if (selectedDate) loadDayDetails(selectedDate);
             }
         }
 
+        // GRÁFICOS
         function updateCharts() {
             const labels = [];
             const income = [];
@@ -428,13 +513,14 @@
             });
         }
 
+        // EXPORTAR
         function exportCSV() {
-            let csv = 'TIPO,FECHA,MONTO,DETALLE\n';
+            let csv = 'TIPO,FECHA,MONTO,DETALLE,ESTADO\n';
             DB.get('works').forEach(w => {
-                csv += `Trabajo,${w.date},${w.amount},${w.location}\n`;
+                csv += `Trabajo,${w.date},${w.amount},${w.location},${w.paid ? 'Pagado' : 'Pendiente'}\n`;
             });
             DB.get('expenses').forEach(e => {
-                csv += `Gasto,${e.date},${e.amount},${e.description}\n`;
+                csv += `Gasto,${e.date},${e.amount},${e.description},-\n`;
             });
             
             const blob = new Blob([csv], { type: 'text/csv' });
@@ -447,7 +533,7 @@
 
         function formatDate(dateStr) {
             const d = new Date(dateStr + 'T00:00:00');
-            return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+            return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
         }
 
         window.onclick = function(e) {

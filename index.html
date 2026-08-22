@@ -1,2523 +1,460 @@
-#Calculation 
-modern_html = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work Tracker</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text: #1e293b;
-            --text-light: #64748b;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        .app-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--bg);
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* Header Moderno */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            text-align: center;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .nav-tab {
-            flex: 1;
-            min-width: 80px;
-            padding: 10px 15px;
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-tab:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .nav-tab.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: var(--shadow);
-        }
-
-        /* Contenido de Tabs */
-        .tab-content {
-            display: none;
-            padding: 20px;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(10px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-
-        /* Cards de Resumen - Estilo Glassmorphism */
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card h3 {
-            font-size: 11px;
-            color: var(--text-light);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .card .amount {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--success);
-            margin: 0;
-        }
-
-        .card .amount.pending {
-            color: var(--danger);
-        }
-
-        .card .amount.expenses {
-            color: var(--warning);
-        }
-
-        .card .number {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 0;
-        }
-
-        /* Botones Modernos */
-        .btn {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .btn-icon {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 8px 12px;
-            color: var(--primary);
-            border-radius: 10px;
-            transition: all 0.3s;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-icon:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        /* Lista de Trabajos - Diseño Moderno */
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .work-item, .expense-item {
-            background: var(--card-bg);
-            padding: 18px;
-            border-radius: 14px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--primary);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .work-item:hover, .expense-item:hover {
-            transform: translateX(5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .work-item.paid {
-            border-left-color: var(--success);
-        }
-
-        .work-item.pending {
-            border-left-color: var(--danger);
-        }
-
-        .work-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .work-date {
-            font-weight: 600;
-            color: var(--text);
-            font-size: 15px;
-        }
-
-        .work-amount {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--success);
-        }
-
-        .work-location {
-            color: var(--text-light);
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .work-notes {
-            color: var(--text-light);
-            font-size: 13px;
-            font-style: italic;
-            margin-top: 5px;
-        }
-
-        .payment-status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .payment-status.paid {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .payment-status.pending {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .delete-btn {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-
-        .delete-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Calendario Moderno */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 14px;
-            box-shadow: var(--shadow);
-        }
-
-        .calendar-header h2 {
-            color: var(--text);
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .calendar-day-header {
-            text-align: center;
-            font-weight: 700;
-            color: var(--text-light);
-            padding: 10px 5px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--card-bg);
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            color: var(--text);
-        }
-
-        .calendar-day:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.1);
-            z-index: 10;
-        }
-
-        .calendar-day.has-work {
-            background: rgba(16, 185, 129, 0.15);
-            border: 2px solid var(--success);
-            color: var(--success);
-        }
-
-        .calendar-day.has-work:hover {
-            background: var(--success);
-            color: white;
-        }
-
-        .calendar-day.selected {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
-        }
-
-        .calendar-day.today {
-            border: 2px solid var(--primary);
-            font-weight: 700;
-        }
-
-        .day-indicator {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px white;
-        }
-
-        .day-details {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 14px;
-            margin-top: 15px;
-            box-shadow: var(--shadow);
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .day-details h3 {
-            color: var(--text);
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        /* Gastos - Diseño Moderno */
-        .expenses-summary {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 25px;
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-        }
-
-        .expenses-summary h3 {
-            color: var(--text);
-            margin-bottom: 10px;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .expenses-summary .amount.large {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--danger);
-            margin: 0;
-        }
-
-        .expense-item {
-            border-left-color: var(--warning);
-        }
-
-        .expense-description {
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 5px;
-            font-size: 15px;
-        }
-
-        .expense-amount {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--danger);
-        }
-
-        /* Gráficos */
-        .chart-container {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-container h3 {
-            color: var(--text);
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .export-section {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        /* Modal Moderno */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-content {
-            background: white;
-            margin: 8% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: var(--shadow-lg);
-            animation: slideIn 0.4s ease;
-        }
-
-        @keyframes slideIn {
-            from { 
-                transform: translateY(-50px) scale(0.9); 
-                opacity: 0; 
-            }
-            to { 
-                transform: translateY(0) scale(1); 
-                opacity: 1; 
-            }
-        }
-
-        .close {
-            color: var(--text-light);
-            float: right;
-            font-size: 32px;
-            font-weight: 300;
-            cursor: pointer;
-            transition: all 0.3s;
-            line-height: 1;
-        }
-
-        .close:hover {
-            color: var(--danger);
-            transform: rotate(90deg);
-        }
-
-        .modal-content h2 {
-            color: var(--text);
-            margin-bottom: 25px;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group input[type="date"],
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background: #f8fafc;
-            color: var(--text);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .form-group input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            margin-right: 10px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-tab {
-                font-size: 13px;
-                padding: 8px 12px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-        }
-
-        /* Scrollbar personalizado */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
+            --primary: #2563eb;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --bg: #f1f5f9;
+            --white: #ffffff;
+            --text: #0f172a;
+            --gray: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--text); }
+        .container { max-width: 500px; margin: 0 auto; background: var(--white); min-height: 100vh; }
+        
+        header { background: var(--primary); color: white; padding: 20px; position: sticky; top: 0; z-index: 100; }
+        h1 { text-align: center; font-size: 22px; margin-bottom: 15px; }
+        
+        .tabs { display: flex; gap: 8px; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 10px; background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
+        .tab-btn.active { background: white; color: var(--primary); }
+        
+        .content { display: none; padding: 20px; }
+        .content.active { display: block; }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--bg); padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-label { font-size: 11px; color: var(--gray); text-transform: uppercase; margin-bottom: 5px; }
+        .stat-value { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .stat-value.danger { color: var(--danger); }
+        .stat-value.success { color: var(--success); }
+        .stat-value.warning { color: var(--warning); }
+        
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--bg); color: var(--text); }
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        
+        .item { background: var(--bg); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .item.paid { border-left-color: var(--success); }
+        .item.pending { border-left-color: var(--danger); }
+        .item.expense { border-left-color: var(--warning); }
+        
+        .item-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .item-date { font-weight: 600; font-size: 14px; }
+        .item-amount { font-weight: 700; font-size: 18px; color: var(--success); }
+        .item-location { color: var(--gray); font-size: 13px; margin-bottom: 5px; }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 5px; }
+        .badge.paid { background: rgba(5, 150, 105, 0.1); color: var(--success); }
+        .badge.pending { background: rgba(220, 38, 38, 0.1); color: var(--danger); }
+        .delete { background: transparent; border: none; color: var(--danger); font-size: 12px; margin-top: 8px; cursor: pointer; }
+        
+        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--bg); padding: 12px; border-radius: 10px; }
+        .calendar-nav h2 { font-size: 18px; }
+        .nav-arrow { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px 10px; }
+        
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .day-name { text-align: center; font-size: 11px; color: var(--gray); padding: 8px 0; font-weight: 600; }
+        .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--bg); border-radius: 8px; font-size: 14px; cursor: pointer; position: relative; }
+        .day.has-work { background: rgba(5, 150, 105, 0.1); color: var(--success); font-weight: 600; }
+        .day.selected { background: var(--primary); color: white; }
+        .dot { position: absolute; bottom: 4px; width: 4px; height: 4px; background: var(--success); border-radius: 50%; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background: white; margin: 15% auto; padding: 25px; border-radius: 15px; width: 90%; max-width: 450px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close { font-size: 28px; cursor: pointer; color: var(--gray); }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 600; }
+        input, textarea { width: 100%; padding: 12px; border: 2px solid var(--bg); border-radius: 8px; font-size: 15px; }
+        input:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; }
+        .checkbox-group input { width: 20px; height: 20px; }
+        
+        .chart-box { background: var(--bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .chart-box h3 { text-align: center; margin-bottom: 15px; font-size: 16px; }
+        
+        @media (max-width: 480px) { .stats-grid, .actions { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
+    <div class="container">
+        <header>
             <h1>🌾 Work Tracker</h1>
-            <nav class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('dashboard')">Inicio</button>
-                <button class="nav-tab" onclick="showTab('calendar')">Calendario</button>
-                <button class="nav-tab" onclick="showTab('expenses')">Gastos</button>
-                <button class="nav-tab" onclick="showTab('stats')">Estadísticas</button>
-            </nav>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('home')">Inicio</button>
+                <button class="tab-btn" onclick="showTab('calendar')">Calendario</button>
+                <button class="tab-btn" onclick="showTab('expenses')">Gastos</button>
+                <button class="tab-btn" onclick="showTab('stats')">Gráficos</button>
+            </div>
         </header>
 
-        <section id="dashboard" class="tab-content active">
-            <div class="summary-cards">
-                <div class="card">
-                    <h3>Ganancia del Mes</h3>
-                    <p class="amount" id="monthEarnings">$0</p>
-                </div>
-                <div class="card">
-                    <h3>Días Trabajados</h3>
-                    <p class="number" id="monthDays">0</p>
-                </div>
-                <div class="card">
-                    <h3>Pendiente de Pago</h3>
-                    <p class="amount pending" id="pendingPayment">$0</p>
-                </div>
-                <div class="card">
-                    <h3>Gastos del Mes</h3>
-                    <p class="amount expenses" id="monthExpenses">$0</p>
-                </div>
+        <div id="home" class="content active">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">Ganancia Mes</div><div class="stat-value success" id="earnings">$0</div></div>
+                <div class="stat-card"><div class="stat-label">Días Trabajados</div><div class="stat-value" id="days">0</div></div>
+                <div class="stat-card"><div class="stat-label">Pendiente Pago</div><div class="stat-value danger" id="pending">$0</div></div>
+                <div class="stat-card"><div class="stat-label">Gastos Mes</div><div class="stat-value warning" id="expensesTotal">$0</div></div>
             </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="openModal('work')">+ Trabajo</button>
+                <button class="btn btn-secondary" onclick="openModal('expense')">+ Gasto</button>
+            </div>
+            <h3 style="margin-bottom: 15px;">Recientes</h3>
+            <div id="recentList"></div>
+        </div>
 
-            <div class="quick-actions">
-                <button class="btn btn-primary" onclick="showAddWorkModal()">➕ Agregar Trabajo</button>
-                <button class="btn btn-secondary" onclick="showAddExpenseModal()">💰 Agregar Gasto</button>
+        <div id="calendar" class="content">
+            <div class="calendar-nav">
+                <button class="nav-arrow" onclick="changeMonth(-1)">◀</button>
+                <h2 id="monthYear"></h2>
+                <button class="nav-arrow" onclick="changeMonth(1)">▶</button>
             </div>
-
-            <div class="recent-work">
-                <h3 class="section-title">📋 Trabajos Recientes</h3>
-                <div id="recentWorkList"></div>
-            </div>
-        </section>
-
-        <section id="calendar" class="tab-content">
-            <div class="calendar-header">
-                <button class="btn-icon" onclick="changeMonth(-1)">◀</button>
-                <h2 id="currentMonth"></h2>
-                <button class="btn-icon" onclick="changeMonth(1)">▶</button>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-            <div class="day-details" id="dayDetails" style="display:none;">
-                <h3 id="selectedDate"></h3>
-                <div id="dayWorkList"></div>
-                <button class="btn btn-primary" onclick="showAddWorkModalForDay()" style="margin-top:15px;">➕ Agregar Trabajo este Día</button>
-            </div>
-        </section>
-
-        <section id="expenses" class="tab-content">
-            <div class="expenses-summary">
-                <h3>Total Gastos del Mes</h3>
-                <p class="amount large" id="totalExpensesMonth">$0</p>
-            </div>
-            <button class="btn btn-primary" onclick="showAddExpenseModal()">➕ Agregar Gasto</button>
-            <div id="expensesList"></div>
-        </section>
-
-        <section id="stats" class="tab-content">
-            <div class="chart-container">
-                <h3>📊 Ingresos vs Gastos (Últimos 6 meses)</h3>
-                <canvas id="earningsChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>📅 Días Trabajados por Mes</h3>
-                <canvas id="daysChart"></canvas>
-            </div>
-            <div class="export-section">
-                <button class="btn btn-secondary" onclick="exportData()">📥 Exportar Datos (CSV)</button>
-            </div>
-        </section>
-
-        <div id="addWorkModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('addWorkModal')">&times;</span>
-                <h2>Agregar Trabajo</h2>
-                <form id="workForm" onsubmit="saveWork(event)">
-                    <div class="form-group">
-                        <label>Fecha:</label>
-                        <input type="date" id="workDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Lugar/Ubicación:</label>
-                        <input type="text" id="workLocation" placeholder="Ej: Finca Los Pinos" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Monto ($):</label>
-                        <input type="number" id="workAmount" placeholder="0.00" step="0.01" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="workPaid">
-                            <span>¿Ya pagado?</span>
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label>Notas (opcional):</label>
-                        <textarea id="workNotes" rows="3" placeholder="Descripción del trabajo..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Trabajo</button>
-                </form>
+            <div class="calendar-grid" id="calGrid"></div>
+            <div id="dayDetails" style="display:none; margin-top: 20px;">
+                <h3 id="selectedDayTitle"></h3>
+                <div id="dayWorks"></div>
             </div>
         </div>
 
-        <div id="addExpenseModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('addExpenseModal')">&times;</span>
-                <h2>Agregar Gasto</h2>
-                <form id="expenseForm" onsubmit="saveExpense(event)">
-                    <div class="form-group">
-                        <label>Fecha:</label>
-                        <input type="date" id="expenseDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción:</label>
-                        <input type="text" id="expenseDescription" placeholder="Ej: Combustible, herramientas..." required>
-                    </div>
-                    <div class="form-group">
-                        <label>Monto ($):</label>
-                        <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Gasto</button>
-                </form>
+        <div id="expenses" class="content">
+            <div class="stat-card" style="margin-bottom: 20px;">
+                <div class="stat-label">Total Gastos Mes</div>
+                <div class="stat-value warning" id="totalExpenses">$0</div>
             </div>
+            <button class="btn btn-primary" onclick="openModal('expense')" style="margin-bottom: 20px;">+ Agregar Gasto</button>
+            <div id="expensesList"></div>
+        </div>
+
+        <div id="stats" class="content">
+            <div class="chart-box"><h3>Ingresos vs Gastos</h3><canvas id="chart1"></canvas></div>
+            <div class="chart-box"><h3>Días Trabajados</h3><canvas id="chart2"></canvas></div>
+            <button class="btn btn-secondary" onclick="exportCSV()">📥 Exportar CSV</button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <div id="workModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Nuevo Trabajo</h2><span class="close" onclick="closeModal('workModal')">&times;</span></div>
+            <form onsubmit="saveWork(event)">
+                <div class="form-group"><label>Fecha</label><input type="date" id="wDate" required></div>
+                <div class="form-group"><label>Lugar</label><input type="text" id="wLocation" placeholder="Ej: Finca El Roble" required></div>
+                <div class="form-group"><label>Monto ($)</label><input type="number" id="wAmount" step="0.01" required></div>
+                <div class="form-group checkbox-group"><input type="checkbox" id="wPaid"><label>¿Ya pagado?</label></div>
+                <div class="form-group"><label>Notas</label><textarea id="wNotes" rows="2"></textarea></div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="expenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Nuevo Gasto</h2><span class="close" onclick="closeModal('expenseModal')">&times;</span></div>
+            <form onsubmit="saveExpense(event)">
+                <div class="form-group"><label>Fecha</label><input type="date" id="eDate" required></div>
+                <div class="form-group"><label>Descripción</label><input type="text" id="eDesc" placeholder="Ej: Combustible" required></div>
+                <div class="form-group"><label>Monto ($)</label><input type="number" id="eAmount" step="0.01" required></div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // ==================== ALMACENAMIENTO ====================
-        const Storage = {
-            getWorks() {
-                return JSON.parse(localStorage.getItem('works') || '[]');
+        const DB = {
+            get(key) { return JSON.parse(localStorage.getItem(key) || '[]'); },
+            set(key, data) { localStorage.setItem(key, JSON.stringify(data)); },
+            add(key, item) {
+                const data = this.get(key);
+                item.id = Date.now();
+                data.push(item);
+                this.set(key, data);
             },
-            saveWork(work) {
-                const works = this.getWorks();
-                work.id = Date.now().toString();
-                works.push(work);
-                localStorage.setItem('works', JSON.stringify(works));
-                return work;
-            },
-            deleteWork(id) {
-                const works = this.getWorks().filter(w => w.id !== id);
-                localStorage.setItem('works', JSON.stringify(works));
-            },
-            getExpenses() {
-                return JSON.parse(localStorage.getItem('expenses') || '[]');
-            },
-            saveExpense(expense) {
-                const expenses = this.getExpenses();
-                expense.id = Date.now().toString();
-                expenses.push(expense);
-                localStorage.setItem('expenses', JSON.stringify(expenses));
-                return expense;
-            },
-            deleteExpense(id) {
-                const expenses = this.getExpenses().filter(e => e.id !== id);
-                localStorage.setItem('expenses', JSON.stringify(expenses));
-            },
-            getWorksByMonth(year, month) {
-                return this.getWorks().filter(w => {
-                    const d = new Date(w.date);
-                    return d.getFullYear() === year && d.getMonth() === month;
-                });
-            },
-            getExpensesByMonth(year, month) {
-                return this.getExpenses().filter(e => {
-                    const d = new Date(e.date);
-                    return d.getFullYear() === year && d.getMonth() === month;
-                });
+            remove(key, id) {
+                const data = this.get(key).filter(i => i.id !== id);
+                this.set(key, data);
             }
         };
 
-        // ==================== VARIABLES GLOBALES ====================
-        let currentDate = new Date();
+        let currentMonth = new Date();
         let selectedDate = null;
-        let earningsChart = null;
-        let daysChart = null;
+        let chart1, chart2;
 
-        // ==================== INICIALIZACIÓN ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDashboard();
+        document.addEventListener('DOMContentLoaded', () => {
+            updateHome();
             renderCalendar();
-            updateExpensesView();
-            document.getElementById('workDate').valueAsDate = new Date();
-            document.getElementById('expenseDate').valueAsDate = new Date();
+            updateExpenses();
+            document.getElementById('wDate').valueAsDate = new Date();
+            document.getElementById('eDate').valueAsDate = new Date();
         });
 
-        // ==================== NAVEGACIÓN ====================
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
+        function showTab(name) {
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(name).classList.add('active');
             event.target.classList.add('active');
-            
-            if (tabName === 'dashboard') updateDashboard();
-            if (tabName === 'calendar') renderCalendar();
-            if (tabName === 'expenses') updateExpensesView();
-            if (tabName === 'stats') updateCharts();
+            if (name === 'home') updateHome();
+            if (name === 'calendar') renderCalendar();
+            if (name === 'expenses') updateExpenses();
+            if (name === 'stats') updateCharts();
         }
 
-        // ==================== DASHBOARD ====================
-        function updateDashboard() {
+        function updateHome() {
             const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth();
+            const works = DB.get('works').filter(w => {
+                const d = new Date(w.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
             
-            const earnings = Storage.getWorksByMonth(year, month).reduce((sum, w) => sum + parseFloat(w.amount), 0);
-            const expenses = Storage.getExpensesByMonth(year, month).reduce((sum, e) => sum + parseFloat(e.amount), 0);
-            const pending = Storage.getWorksByMonth(year, month).filter(w => !w.paid).reduce((sum, w) => sum + parseFloat(w.amount), 0);
-            const days = new Set(Storage.getWorksByMonth(year, month).map(w => w.date)).size;
+            const earnings = works.reduce((s, w) => s + parseFloat(w.amount), 0);
+            const pending = works.filter(w => !w.paid).reduce((s, w) => s + parseFloat(w.amount), 0);
+            const days = new Set(works.map(w => w.date)).size;
             
-            document.getElementById('monthEarnings').textContent = '$' + earnings.toFixed(2);
-            document.getElementById('monthDays').textContent = days;
-            document.getElementById('pendingPayment').textContent = '$' + pending.toFixed(2);
-            document.getElementById('monthExpenses').textContent = '$' + expenses.toFixed(2);
-            
-            const recentWorks = Storage.getWorks().slice(-5).reverse();
-            const container = document.getElementById('recentWorkList');
-            if (recentWorks.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay trabajos registrados aún</p>';
-            } else {
-                container.innerHTML = recentWorks.map(work => createWorkHTML(work)).join('');
-            }
+            const expenses = DB.get('expenses').filter(e => {
+                const d = new Date(e.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            }).reduce((s, e) => s + parseFloat(e.amount), 0);
+
+            document.getElementById('earnings').textContent = '$' + earnings.toFixed(0);
+            document.getElementById('days').textContent = days;
+            document.getElementById('pending').textContent = '$' + pending.toFixed(0);
+            document.getElementById('expensesTotal').textContent = '$' + expenses.toFixed(0);
+
+            const recent = DB.get('works').slice(-5).reverse();
+            document.getElementById('recentList').innerHTML = recent.length ? 
+                recent.map(w => createItemHTML(w, 'work')).join('') : 
+                '<p style="text-align:center;color:#999;padding:20px;">Sin registros</p>';
         }
 
-        function createWorkHTML(work) {
-            const statusClass = work.paid ? 'paid' : 'pending';
-            const statusText = work.paid ? '✓ Pagado' : '⏳ Pendiente';
+        function createItemHTML(item, type) {
+            const isPaid = item.paid;
+            const statusClass = type === 'work' ? (isPaid ? 'paid' : 'pending') : 'expense';
+            const statusText = type === 'work' ? (isPaid ? '✓ Pagado' : '⏳ Pendiente') : '';
+            
             return `
-                <div class="work-item ${statusClass}">
-                    <div class="work-header">
-                        <span class="work-date">${formatDate(work.date)}</span>
-                        <span class="work-amount">$${parseFloat(work.amount).toFixed(2)}</span>
+                <div class="item ${statusClass}">
+                    <div class="item-header">
+                        <span class="item-date">${formatDate(item.date)}</span>
+                        <span class="item-amount">$${parseFloat(item.amount).toFixed(0)}</span>
                     </div>
-                    <div class="work-location">📍 ${work.location}</div>
-                    ${work.notes ? `<div class="work-notes">${work.notes}</div>` : ''}
-                    <span class="payment-status ${statusClass}">${statusText}</span>
-                    <button class="delete-btn" onclick="deleteWork('${work.id}')">Eliminar</button>
+                    <div class="item-location">${type === 'work' ? '📍 ' + item.location : item.description}</div>
+                    ${statusText ? `<span class="badge ${isPaid ? 'paid' : 'pending'}">${statusText}</span>` : ''}
+                    <button class="delete" onclick="deleteItem('${type}', ${item.id})">Eliminar</button>
                 </div>
             `;
         }
 
-        // ==================== CALENDARIO ====================
         function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
             
-            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            document.getElementById('currentMonth').textContent = `${months[month]} ${year}`;
+            document.getElementById('monthYear').textContent = months[month] + ' ' + year;
             
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
-            const works = Storage.getWorksByMonth(year, month);
-            const workDates = new Set(works.map(w => w.date));
-            
+            const workDates = new Set(DB.get('works').filter(w => {
+                const d = new Date(w.date);
+                return d.getMonth() === month && d.getFullYear() === year;
+            }).map(w => w.date));
+
             let html = '';
-            const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-            dayNames.forEach(day => {
-                html += `<div class="calendar-day-header">${day}</div>`;
+            ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].forEach(d => {
+                html += `<div class="day-name">${d}</div>`;
             });
-            
+
             for (let i = 0; i < firstDay; i++) {
-                html += '<div class="calendar-day" style="visibility:hidden;"></div>';
+                html += '<div></div>';
             }
-            
-            const today = new Date();
+
             for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
                 const hasWork = workDates.has(dateStr);
-                const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
                 const isSelected = selectedDate === dateStr;
                 
-                let classes = 'calendar-day';
-                if (hasWork) classes += ' has-work';
-                if (isToday) classes += ' today';
-                if (isSelected) classes += ' selected';
-                
                 html += `
-                    <div class="${classes}" onclick="selectDate('${dateStr}')">
+                    <div class="day ${hasWork ? 'has-work' : ''} ${isSelected ? 'selected' : ''}" 
+                         onclick="selectDay('${dateStr}')">
                         ${day}
-                        ${hasWork ? '<div class="day-indicator"></div>' : ''}
+                        ${hasWork ? '<div class="dot"></div>' : ''}
                     </div>
                 `;
             }
             
-            document.getElementById('calendarGrid').innerHTML = html;
+            document.getElementById('calGrid').innerHTML = html;
         }
 
         function changeMonth(delta) {
-            currentDate.setMonth(currentDate.getMonth() + delta);
+            currentMonth.setMonth(currentMonth.getMonth() + delta);
             selectedDate = null;
             document.getElementById('dayDetails').style.display = 'none';
             renderCalendar();
         }
 
-        function selectDate(dateStr) {
-            selectedDate = dateStr;
+        function selectDay(date) {
+            selectedDate = date;
             renderCalendar();
             
-            const works = Storage.getWorks().filter(w => w.date === dateStr);
-            const container = document.getElementById('dayWorkList');
+            const works = DB.get('works').filter(w => w.date === date);
+            document.getElementById('dayWorks').innerHTML = works.length ?
+                works.map(w => createItemHTML(w, 'work')).join('') :
+                '<p style="color:#999;text-align:center;">Sin trabajos</p>';
             
-            if (works.length > 0) {
-                container.innerHTML = works.map(work => createWorkHTML(work)).join('');
-                document.getElementById('selectedDate').textContent = 'Trabajos del ' + formatDate(dateStr);
-            } else {
-                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">No hay trabajos este día</p>';
-                document.getElementById('selectedDate').textContent = formatDate(dateStr);
-            }
-            
+            document.getElementById('selectedDayTitle').textContent = formatDate(date);
             document.getElementById('dayDetails').style.display = 'block';
         }
 
-        // ==================== GASTOS ====================
-        function updateExpensesView() {
+        function updateExpenses() {
             const now = new Date();
-            const expenses = Storage.getExpensesByMonth(now.getFullYear(), now.getMonth());
-            const total = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+            const expenses = DB.get('expenses').filter(e => {
+                const d = new Date(e.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
             
-            document.getElementById('totalExpensesMonth').textContent = '$' + total.toFixed(2);
+            const total = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
+            document.getElementById('totalExpenses').textContent = '$' + total.toFixed(0);
             
-            const container = document.getElementById('expensesList');
-            if (expenses.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay gastos registrados</p>';
-            } else {
-                container.innerHTML = expenses.slice().reverse().map(expense => `
-                    <div class="expense-item">
-                        <div class="expense-description">${expense.description}</div>
-                        <div style="color:#64748b;font-size:14px;margin-bottom:5px;">${formatDate(expense.date)}</div>
-                        <div class="expense-amount">$${parseFloat(expense.amount).toFixed(2)}</div>
-                        <button class="delete-btn" onclick="deleteExpense('${expense.id}')">Eliminar</button>
-                    </div>
-                `).join('');
-            }
+            document.getElementById('expensesList').innerHTML = expenses.length ?
+                expenses.slice().reverse().map(e => createItemHTML(e, 'expense')).join('') :
+                '<p style="text-align:center;color:#999;padding:20px;">Sin gastos</p>';
         }
 
-        // ==================== MODALES ====================
-        function showAddWorkModal() {
-            document.getElementById('workDate').valueAsDate = new Date();
-            document.getElementById('addWorkModal').style.display = 'block';
+        function openModal(type) {
+            document.getElementById(type + 'Modal').style.display = 'block';
         }
 
-        function showAddWorkModalForDay() {
-            if (selectedDate) {
-                document.getElementById('workDate').value = selectedDate;
-            }
-            document.getElementById('addWorkModal').style.display = 'block';
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.querySelector('#' + id + ' form').reset();
         }
 
-        function showAddExpenseModal() {
-            document.getElementById('expenseDate').valueAsDate = new Date();
-            document.getElementById('addExpenseModal').style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.getElementById(modalId).querySelector('form').reset();
-        }
-
-        // ==================== GUARDAR DATOS ====================
-        function saveWork(event) {
-            event.preventDefault();
-            
-            const work = {
-                date: document.getElementById('workDate').value,
-                location: document.getElementById('workLocation').value,
-                amount: document.getElementById('workAmount').value,
-                paid: document.getElementById('workPaid').checked,
-                notes: document.getElementById('workNotes').value
-            };
-            
-            Storage.saveWork(work);
-            closeModal('addWorkModal');
-            updateDashboard();
+        function saveWork(e) {
+            e.preventDefault();
+            DB.add('works', {
+                date: document.getElementById('wDate').value,
+                location: document.getElementById('wLocation').value,
+                amount: document.getElementById('wAmount').value,
+                paid: document.getElementById('wPaid').checked,
+                notes: document.getElementById('wNotes').value
+            });
+            closeModal('workModal');
+            updateHome();
             renderCalendar();
-            
-            alert('✅ Trabajo guardado correctamente');
         }
 
-        function saveExpense(event) {
-            event.preventDefault();
-            
-            const expense = {
-                date: document.getElementById('expenseDate').value,
-                description: document.getElementById('expenseDescription').value,
-                amount: document.getElementById('expenseAmount').value
-            };
-            
-            Storage.saveExpense(expense);
-            closeModal('addExpenseModal');
-            updateExpensesView();
-            updateDashboard();
-            
-            alert('✅ Gasto guardado correctamente');
+        function saveExpense(e) {
+            e.preventDefault();
+            DB.add('expenses', {
+                date: document.getElementById('eDate').value,
+                description: document.getElementById('eDesc').value,
+                amount: document.getElementById('eAmount').value
+            });
+            closeModal('expenseModal');
+            updateExpenses();
+            updateHome();
         }
 
-        function deleteWork(id) {
-            if (confirm('¿Estás seguro de eliminar este trabajo?')) {
-                Storage.deleteWork(id);
-                updateDashboard();
+        function deleteItem(type, id) {
+            if (confirm('¿Eliminar?')) {
+                DB.remove(type === 'work' ? 'works' : 'expenses', id);
+                updateHome();
                 renderCalendar();
-                if (selectedDate) selectDate(selectedDate);
+                updateExpenses();
             }
         }
 
-        function deleteExpense(id) {
-            if (confirm('¿Estás seguro de eliminar este gasto?')) {
-                Storage.deleteExpense(id);
-                updateExpensesView();
-                updateDashboard();
-            }
-        }
-
-        // ==================== GRÁFICOS ====================
         function updateCharts() {
-            const months = [];
-            const earnings = [];
-            const expenses = [];
+            const labels = [];
+            const income = [];
+            const expense = [];
             const days = [];
             
             const now = new Date();
             for (let i = 5; i >= 0; i--) {
                 const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-                months.push(monthNames[d.getMonth()] + ' ' + d.getFullYear());
+                labels.push(['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][d.getMonth()]);
                 
-                const monthEarnings = Storage.getWorksByMonth(d.getFullYear(), d.getMonth()).reduce((sum, w) => sum + parseFloat(w.amount), 0);
-                const monthExpenses = Storage.getExpensesByMonth(d.getFullYear(), d.getMonth()).reduce((sum, e) => sum + parseFloat(e.amount), 0);
-                const monthDays = new Set(Storage.getWorksByMonth(d.getFullYear(), d.getMonth()).map(w => w.date)).size;
+                const monthWorks = DB.get('works').filter(w => {
+                    const wd = new Date(w.date);
+                    return wd.getMonth() === d.getMonth() && wd.getFullYear() === d.getFullYear();
+                });
                 
-                earnings.push(monthEarnings);
-                expenses.push(monthExpenses);
-                days.push(monthDays);
+                income.push(monthWorks.reduce((s, w) => s + parseFloat(w.amount), 0));
+                expense.push(DB.get('expenses').filter(e => {
+                    const ed = new Date(e.date);
+                    return ed.getMonth() === d.getMonth() && ed.getFullYear() === d.getFullYear();
+                }).reduce((s, e) => s + parseFloat(e.amount), 0));
+                days.push(new Set(monthWorks.map(w => w.date)).size);
             }
-            
-            if (earningsChart) earningsChart.destroy();
-            const ctx1 = document.getElementById('earningsChart').getContext('2d');
-            earningsChart = new Chart(ctx1, {
+
+            if (chart1) chart1.destroy();
+            chart1 = new Chart(document.getElementById('chart1'), {
                 type: 'bar',
                 data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Ingresos',
-                        data: earnings,
-                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
-                        borderRadius: 8
-                    }, {
-                        label: 'Gastos',
-                        data: expenses,
-                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
-                        borderRadius: 8
-                    }]
+                    labels,
+                    datasets: [
+                        { label: 'Ingresos', data: income, backgroundColor: '#2563eb' },
+                        { label: 'Gastos', data: expense, backgroundColor: '#d97706' }
+                    ]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
+                options: { responsive: true }
             });
-            
-            if (daysChart) daysChart.destroy();
-            const ctx2 = document.getElementById('daysChart').getContext('2d');
-            daysChart = new Chart(ctx2, {
+
+            if (chart2) chart2.destroy();
+            chart2 = new Chart(document.getElementById('chart2'), {
                 type: 'line',
                 data: {
-                    labels: months,
+                    labels,
                     datasets: [{
-                        label: 'Días Trabajados',
+                        label: 'Días',
                         data: days,
-                        borderColor: 'rgba(16, 185, 129, 1)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderColor: '#059669',
                         tension: 0.4,
                         fill: true,
-                        borderWidth: 3,
-                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)'
                     }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
+                options: { responsive: true }
             });
         }
 
-        // ==================== EXPORTAR ====================
-        function exportData() {
-            const works = Storage.getWorks();
-            const expenses = Storage.getExpenses();
-            
-            let csv = 'TIPO,FECHA,MONTO,DETALLE,ESTADO\\n';
-            
-            works.forEach(w => {
-                csv += `Trabajo,${w.date},${w.amount},"${w.location}",${w.paid ? 'Pagado' : 'Pendiente'}\\n`;
+        function exportCSV() {
+            let csv = 'TIPO,FECHA,MONTO,DETALLE\n';
+            DB.get('works').forEach(w => {
+                csv += `Trabajo,${w.date},${w.amount},${w.location}\n`;
+            });
+            DB.get('expenses').forEach(e => {
+                csv += `Gasto,${e.date},${e.amount},${e.description}\n`;
             });
             
-            expenses.forEach(e => {
-                csv += `Gasto,${e.date},${e.amount},"${e.description}",-\\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = window.URL.createObjectURL(blob);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'work-tracker-' + new Date().toISOString().split('T')[0] + '.csv';
+            a.download = 'datos.csv';
             a.click();
         }
 
-        // ==================== UTILIDADES ====================
         function formatDate(dateStr) {
-            const date = new Date(dateStr + 'T00:00:00');
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return date.toLocaleDateString('es-ES', options);
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
         }
 
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
             }
         }
     </script>
 </body>
-</html>'''
-
-with open('work-tracker-app/index.html', 'w', encoding='utf-8') as f:
-    f.write(modern_html)
-
-print("✅ ¡Diseño moderno aplicado exitosamente!")
-print("\n🎨 Características del nuevo diseño:")
-print("   • Glassmorphism (efecto cristal)")
-print("   • Colores vibrantes y modernos")
-print("   • Sombras suaves y profundas")
-print("   • Animaciones fluidas")
-print("   • Tipografía limpia")
-print("   • Bordes redondeados")
-print("   • Hover effects elegantes")
-print("   • Totalmente responsive")
-
-result = 
-modern_html = '''<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Work Tracker</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text: #1e293b;
-            --text-light: #64748b;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        .app-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--bg);
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* Header Moderno */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            text-align: center;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .nav-tab {
-            flex: 1;
-            min-width: 80px;
-            padding: 10px 15px;
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-tab:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .nav-tab.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: var(--shadow);
-        }
-
-        /* Contenido de Tabs */
-        .tab-content {
-            display: none;
-            padding: 20px;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(10px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-
-        /* Cards de Resumen - Estilo Glassmorphism */
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card h3 {
-            font-size: 11px;
-            color: var(--text-light);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .card .amount {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--success);
-            margin: 0;
-        }
-
-        .card .amount.pending {
-            color: var(--danger);
-        }
-
-        .card .amount.expenses {
-            color: var(--warning);
-        }
-
-        .card .number {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 0;
-        }
-
-        /* Botones Modernos */
-        .btn {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .btn-icon {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 8px 12px;
-            color: var(--primary);
-            border-radius: 10px;
-            transition: all 0.3s;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-icon:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        /* Lista de Trabajos - Diseño Moderno */
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .work-item, .expense-item {
-            background: var(--card-bg);
-            padding: 18px;
-            border-radius: 14px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--primary);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .work-item:hover, .expense-item:hover {
-            transform: translateX(5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .work-item.paid {
-            border-left-color: var(--success);
-        }
-
-        .work-item.pending {
-            border-left-color: var(--danger);
-        }
-
-        .work-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .work-date {
-            font-weight: 600;
-            color: var(--text);
-            font-size: 15px;
-        }
-
-        .work-amount {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--success);
-        }
-
-        .work-location {
-            color: var(--text-light);
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .work-notes {
-            color: var(--text-light);
-            font-size: 13px;
-            font-style: italic;
-            margin-top: 5px;
-        }
-
-        .payment-status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .payment-status.paid {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .payment-status.pending {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .delete-btn {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-
-        .delete-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Calendario Moderno */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 14px;
-            box-shadow: var(--shadow);
-        }
-
-        .calendar-header h2 {
-            color: var(--text);
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .calendar-day-header {
-            text-align: center;
-            font-weight: 700;
-            color: var(--text-light);
-            padding: 10px 5px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--card-bg);
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            color: var(--text);
-        }
-
-        .calendar-day:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.1);
-            z-index: 10;
-        }
-
-        .calendar-day.has-work {
-            background: rgba(16, 185, 129, 0.15);
-            border: 2px solid var(--success);
-            color: var(--success);
-        }
-
-        .calendar-day.has-work:hover {
-            background: var(--success);
-            color: white;
-        }
-
-        .calendar-day.selected {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
-        }
-
-        .calendar-day.today {
-            border: 2px solid var(--primary);
-            font-weight: 700;
-        }
-
-        .day-indicator {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px white;
-        }
-
-        .day-details {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 14px;
-            margin-top: 15px;
-            box-shadow: var(--shadow);
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .day-details h3 {
-            color: var(--text);
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        /* Gastos - Diseño Moderno */
-        .expenses-summary {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 25px;
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-        }
-
-        .expenses-summary h3 {
-            color: var(--text);
-            margin-bottom: 10px;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .expenses-summary .amount.large {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--danger);
-            margin: 0;
-        }
-
-        .expense-item {
-            border-left-color: var(--warning);
-        }
-
-        .expense-description {
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 5px;
-            font-size: 15px;
-        }
-
-        .expense-amount {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--danger);
-        }
-
-        /* Gráficos */
-        .chart-container {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-container h3 {
-            color: var(--text);
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .export-section {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        /* Modal Moderno */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-content {
-            background: white;
-            margin: 8% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: var(--shadow-lg);
-            animation: slideIn 0.4s ease;
-        }
-
-        @keyframes slideIn {
-            from { 
-                transform: translateY(-50px) scale(0.9); 
-                opacity: 0; 
-            }
-            to { 
-                transform: translateY(0) scale(1); 
-                opacity: 1; 
-            }
-        }
-
-        .close {
-            color: var(--text-light);
-            float: right;
-            font-size: 32px;
-            font-weight: 300;
-            cursor: pointer;
-            transition: all 0.3s;
-            line-height: 1;
-        }
-
-        .close:hover {
-            color: var(--danger);
-            transform: rotate(90deg);
-        }
-
-        .modal-content h2 {
-            color: var(--text);
-            margin-bottom: 25px;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group input[type="date"],
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background: #f8fafc;
-            color: var(--text);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .form-group input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            margin-right: 10px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-tab {
-                font-size: 13px;
-                padding: 8px 12px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-        }
-
-        /* Scrollbar personalizado */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <header class="header">
-            <h1>🌾 Work Tracker</h1>
-            <nav class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('dashboard')">Inicio</button>
-                <button class="nav-tab" onclick="showTab('calendar')">Calendario</button>
-                <button class="nav-tab" onclick="showTab('expenses')">Gastos</button>
-                <button class="nav-tab" onclick="showTab('stats')">Estadísticas</button>
-            </nav>
-        </header>
-
-        <section id="dashboard" class="tab-content active">
-            <div class="summary-cards">
-                <div class="card">
-                    <h3>Ganancia del Mes</h3>
-                    <p class="amount" id="monthEarnings">$0</p>
-                </div>
-                <div class="card">
-                    <h3>Días Trabajados</h3>
-                    <p class="number" id="monthDays">0</p>
-                </div>
-                <div class="card">
-                    <h3>Pendiente de Pago</h3>
-                    <p class="amount pending" id="pendingPayment">$0</p>
-                </div>
-                <div class="card">
-                    <h3>Gastos del Mes</h3>
-                    <p class="amount expenses" id="monthExpenses">$0</p>
-                </div>
-            </div>
-
-            <div class="quick-actions">
-                <button class="btn btn-primary" onclick="showAddWorkModal()">➕ Agregar Trabajo</button>
-                <button class="btn btn-secondary" onclick="showAddExpenseModal()">💰 Agregar Gasto</button>
-            </div>
-
-            <div class="recent-work">
-                <h3 class="section-title">📋 Trabajos Recientes</h3>
-                <div id="recentWorkList"></div>
-            </div>
-        </section>
-
-        <section id="calendar" class="tab-content">
-            <div class="calendar-header">
-                <button class="btn-icon" onclick="changeMonth(-1)">◀</button>
-                <h2 id="currentMonth"></h2>
-                <button class="btn-icon" onclick="changeMonth(1)">▶</button>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-            <div class="day-details" id="dayDetails" style="display:none;">
-                <h3 id="selectedDate"></h3>
-                <div id="dayWorkList"></div>
-                <button class="btn btn-primary" onclick="showAddWorkModalForDay()" style="margin-top:15px;">➕ Agregar Trabajo este Día</button>
-            </div>
-        </section>
-
-        <section id="expenses" class="tab-content">
-            <div class="expenses-summary">
-                <h3>Total Gastos del Mes</h3>
-                <p class="amount large" id="totalExpensesMonth">$0</p>
-            </div>
-            <button class="btn btn-primary" onclick="showAddExpenseModal()">➕ Agregar Gasto</button>
-            <div id="expensesList"></div>
-        </section>
-
-        <section id="stats" class="tab-content">
-            <div class="chart-container">
-                <h3>📊 Ingresos vs Gastos (Últimos 6 meses)</h3>
-                <canvas id="earningsChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>📅 Días Trabajados por Mes</h3>
-                <canvas id="daysChart"></canvas>
-            </div>
-            <div class="export-section">
-                <button class="btn btn-secondary" onclick="exportData()">📥 Exportar Datos (CSV)</button>
-            </div>
-        </section>
-
-        <div id="addWorkModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('addWorkModal')">&times;</span>
-                <h2>Agregar Trabajo</h2>
-                <form id="workForm" onsubmit="saveWork(event)">
-                    <div class="form-group">
-                        <label>Fecha:</label>
-                        <input type="date" id="workDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Lugar/Ubicación:</label>
-                        <input type="text" id="workLocation" placeholder="Ej: Finca Los Pinos" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Monto ($):</label>
-                        <input type="number" id="workAmount" placeholder="0.00" step="0.01" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="workPaid">
-                            <span>¿Ya pagado?</span>
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label>Notas (opcional):</label>
-                        <textarea id="workNotes" rows="3" placeholder="Descripción del trabajo..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Trabajo</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="addExpenseModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('addExpenseModal')">&times;</span>
-                <h2>Agregar Gasto</h2>
-                <form id="expenseForm" onsubmit="saveExpense(event)">
-                    <div class="form-group">
-                        <label>Fecha:</label>
-                        <input type="date" id="expenseDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción:</label>
-                        <input type="text" id="expenseDescription" placeholder="Ej: Combustible, herramientas..." required>
-                    </div>
-                    <div class="form-group">
-                        <label>Monto ($):</label>
-                        <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Gasto</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-        // ==================== ALMACENAMIENTO ====================
-        const Storage = {
-            getWorks() {
-                return JSON.parse(localStorage.getItem('works') || '[]');
-            },
-            saveWork(work) {
-                const works = this.getWorks();
-                work.id = Date.now().toString();
-                works.push(work);
-                localStorage.setItem('works', JSON.stringify(works));
-                return work;
-            },
-            deleteWork(id) {
-                const works = this.getWorks().filter(w => w.id !== id);
-                localStorage.setItem('works', JSON.stringify(works));
-            },
-            getExpenses() {
-                return JSON.parse(localStorage.getItem('expenses') || '[]');
-            },
-            saveExpense(expense) {
-                const expenses = this.getExpenses();
-                expense.id = Date.now().toString();
-                expenses.push(expense);
-                localStorage.setItem('expenses', JSON.stringify(expenses));
-                return expense;
-            },
-            deleteExpense(id) {
-                const expenses = this.getExpenses().filter(e => e.id !== id);
-                localStorage.setItem('expenses', JSON.stringify(expenses));
-            },
-            getWorksByMonth(year, month) {
-                return this.getWorks().filter(w => {
-                    const d = new Date(w.date);
-                    return d.getFullYear() === year && d.getMonth() === month;
-                });
-            },
-            getExpensesByMonth(year, month) {
-                return this.getExpenses().filter(e => {
-                    const d = new Date(e.date);
-                    return d.getFullYear() === year && d.getMonth() === month;
-                });
-            }
-        };
-
-        // ==================== VARIABLES GLOBALES ====================
-        let currentDate = new Date();
-        let selectedDate = null;
-        let earningsChart = null;
-        let daysChart = null;
-
-        // ==================== INICIALIZACIÓN ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDashboard();
-            renderCalendar();
-            updateExpensesView();
-            document.getElementById('workDate').valueAsDate = new Date();
-            document.getElementById('expenseDate').valueAsDate = new Date();
-        });
-
-        // ==================== NAVEGACIÓN ====================
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-            
-            if (tabName === 'dashboard') updateDashboard();
-            if (tabName === 'calendar') renderCalendar();
-            if (tabName === 'expenses') updateExpensesView();
-            if (tabName === 'stats') updateCharts();
-        }
-
-        // ==================== DASHBOARD ====================
-        function updateDashboard() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth();
-            
-            const earnings = Storage.getWorksByMonth(year, month).reduce((sum, w) => sum + parseFloat(w.amount), 0);
-            const expenses = Storage.getExpensesByMonth(year, month).reduce((sum, e) => sum + parseFloat(e.amount), 0);
-            const pending = Storage.getWorksByMonth(year, month).filter(w => !w.paid).reduce((sum, w) => sum + parseFloat(w.amount), 0);
-            const days = new Set(Storage.getWorksByMonth(year, month).map(w => w.date)).size;
-            
-            document.getElementById('monthEarnings').textContent = '$' + earnings.toFixed(2);
-            document.getElementById('monthDays').textContent = days;
-            document.getElementById('pendingPayment').textContent = '$' + pending.toFixed(2);
-            document.getElementById('monthExpenses').textContent = '$' + expenses.toFixed(2);
-            
-            const recentWorks = Storage.getWorks().slice(-5).reverse();
-            const container = document.getElementById('recentWorkList');
-            if (recentWorks.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay trabajos registrados aún</p>';
-            } else {
-                container.innerHTML = recentWorks.map(work => createWorkHTML(work)).join('');
-            }
-        }
-
-        function createWorkHTML(work) {
-            const statusClass = work.paid ? 'paid' : 'pending';
-            const statusText = work.paid ? '✓ Pagado' : '⏳ Pendiente';
-            return `
-                <div class="work-item ${statusClass}">
-                    <div class="work-header">
-                        <span class="work-date">${formatDate(work.date)}</span>
-                        <span class="work-amount">$${parseFloat(work.amount).toFixed(2)}</span>
-                    </div>
-                    <div class="work-location">📍 ${work.location}</div>
-                    ${work.notes ? `<div class="work-notes">${work.notes}</div>` : ''}
-                    <span class="payment-status ${statusClass}">${statusText}</span>
-                    <button class="delete-btn" onclick="deleteWork('${work.id}')">Eliminar</button>
-                </div>
-            `;
-        }
-
-        // ==================== CALENDARIO ====================
-        function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            
-            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            document.getElementById('currentMonth').textContent = `${months[month]} ${year}`;
-            
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
-            const works = Storage.getWorksByMonth(year, month);
-            const workDates = new Set(works.map(w => w.date));
-            
-            let html = '';
-            const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-            dayNames.forEach(day => {
-                html += `<div class="calendar-day-header">${day}</div>`;
-            });
-            
-            for (let i = 0; i < firstDay; i++) {
-                html += '<div class="calendar-day" style="visibility:hidden;"></div>';
-            }
-            
-            const today = new Date();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const hasWork = workDates.has(dateStr);
-                const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
-                const isSelected = selectedDate === dateStr;
-                
-                let classes = 'calendar-day';
-                if (hasWork) classes += ' has-work';
-                if (isToday) classes += ' today';
-                if (isSelected) classes += ' selected';
-                
-                html += `
-                    <div class="${classes}" onclick="selectDate('${dateStr}')">
-                        ${day}
-                        ${hasWork ? '<div class="day-indicator"></div>' : ''}
-                    </div>
-                `;
-            }
-            
-            document.getElementById('calendarGrid').innerHTML = html;
-        }
-
-        function changeMonth(delta) {
-            currentDate.setMonth(currentDate.getMonth() + delta);
-            selectedDate = null;
-            document.getElementById('dayDetails').style.display = 'none';
-            renderCalendar();
-        }
-
-        function selectDate(dateStr) {
-            selectedDate = dateStr;
-            renderCalendar();
-            
-            const works = Storage.getWorks().filter(w => w.date === dateStr);
-            const container = document.getElementById('dayWorkList');
-            
-            if (works.length > 0) {
-                container.innerHTML = works.map(work => createWorkHTML(work)).join('');
-                document.getElementById('selectedDate').textContent = 'Trabajos del ' + formatDate(dateStr);
-            } else {
-                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">No hay trabajos este día</p>';
-                document.getElementById('selectedDate').textContent = formatDate(dateStr);
-            }
-            
-            document.getElementById('dayDetails').style.display = 'block';
-        }
-
-        // ==================== GASTOS ====================
-        function updateExpensesView() {
-            const now = new Date();
-            const expenses = Storage.getExpensesByMonth(now.getFullYear(), now.getMonth());
-            const total = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
-            
-            document.getElementById('totalExpensesMonth').textContent = '$' + total.toFixed(2);
-            
-            const container = document.getElementById('expensesList');
-            if (expenses.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:30px;">No hay gastos registrados</p>';
-            } else {
-                container.innerHTML = expenses.slice().reverse().map(expense => `
-                    <div class="expense-item">
-                        <div class="expense-description">${expense.description}</div>
-                        <div style="color:#64748b;font-size:14px;margin-bottom:5px;">${formatDate(expense.date)}</div>
-                        <div class="expense-amount">$${parseFloat(expense.amount).toFixed(2)}</div>
-                        <button class="delete-btn" onclick="deleteExpense('${expense.id}')">Eliminar</button>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // ==================== MODALES ====================
-        function showAddWorkModal() {
-            document.getElementById('workDate').valueAsDate = new Date();
-            document.getElementById('addWorkModal').style.display = 'block';
-        }
-
-        function showAddWorkModalForDay() {
-            if (selectedDate) {
-                document.getElementById('workDate').value = selectedDate;
-            }
-            document.getElementById('addWorkModal').style.display = 'block';
-        }
-
-        function showAddExpenseModal() {
-            document.getElementById('expenseDate').valueAsDate = new Date();
-            document.getElementById('addExpenseModal').style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.getElementById(modalId).querySelector('form').reset();
-        }
-
-        // ==================== GUARDAR DATOS ====================
-        function saveWork(event) {
-            event.preventDefault();
-            
-            const work = {
-                date: document.getElementById('workDate').value,
-                location: document.getElementById('workLocation').value,
-                amount: document.getElementById('workAmount').value,
-                paid: document.getElementById('workPaid').checked,
-                notes: document.getElementById('workNotes').value
-            };
-            
-            Storage.saveWork(work);
-            closeModal('addWorkModal');
-            updateDashboard();
-            renderCalendar();
-            
-            alert('✅ Trabajo guardado correctamente');
-        }
-
-        function saveExpense(event) {
-            event.preventDefault();
-            
-            const expense = {
-                date: document.getElementById('expenseDate').value,
-                description: document.getElementById('expenseDescription').value,
-                amount: document.getElementById('expenseAmount').value
-            };
-            
-            Storage.saveExpense(expense);
-            closeModal('addExpenseModal');
-            updateExpensesView();
-            updateDashboard();
-            
-            alert('✅ Gasto guardado correctamente');
-        }
-
-        function deleteWork(id) {
-            if (confirm('¿Estás seguro de eliminar este trabajo?')) {
-                Storage.deleteWork(id);
-                updateDashboard();
-                renderCalendar();
-                if (selectedDate) selectDate(selectedDate);
-            }
-        }
-
-        function deleteExpense(id) {
-            if (confirm('¿Estás seguro de eliminar este gasto?')) {
-                Storage.deleteExpense(id);
-                updateExpensesView();
-                updateDashboard();
-            }
-        }
-
-        // ==================== GRÁFICOS ====================
-        function updateCharts() {
-            const months = [];
-            const earnings = [];
-            const expenses = [];
-            const days = [];
-            
-            const now = new Date();
-            for (let i = 5; i >= 0; i--) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-                months.push(monthNames[d.getMonth()] + ' ' + d.getFullYear());
-                
-                const monthEarnings = Storage.getWorksByMonth(d.getFullYear(), d.getMonth()).reduce((sum, w) => sum + parseFloat(w.amount), 0);
-                const monthExpenses = Storage.getExpensesByMonth(d.getFullYear(), d.getMonth()).reduce((sum, e) => sum + parseFloat(e.amount), 0);
-                const monthDays = new Set(Storage.getWorksByMonth(d.getFullYear(), d.getMonth()).map(w => w.date)).size;
-                
-                earnings.push(monthEarnings);
-                expenses.push(monthExpenses);
-                days.push(monthDays);
-            }
-            
-            if (earningsChart) earningsChart.destroy();
-            const ctx1 = document.getElementById('earningsChart').getContext('2d');
-            earningsChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Ingresos',
-                        data: earnings,
-                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
-                        borderRadius: 8
-                    }, {
-                        label: 'Gastos',
-                        data: expenses,
-                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-            
-            if (daysChart) daysChart.destroy();
-            const ctx2 = document.getElementById('daysChart').getContext('2d');
-            daysChart = new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Días Trabajados',
-                        data: days,
-                        borderColor: 'rgba(16, 185, 129, 1)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        borderWidth: 3,
-                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // ==================== EXPORTAR ====================
-        function exportData() {
-            const works = Storage.getWorks();
-            const expenses = Storage.getExpenses();
-            
-            let csv = 'TIPO,FECHA,MONTO,DETALLE,ESTADO\\n';
-            
-            works.forEach(w => {
-                csv += `Trabajo,${w.date},${w.amount},"${w.location}",${w.paid ? 'Pagado' : 'Pendiente'}\\n`;
-            });
-            
-            expenses.forEach(e => {
-                csv += `Gasto,${e.date},${e.amount},"${e.description}",-\\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'work-tracker-' + new Date().toISOString().split('T')[0] + '.csv';
-            a.click();
-        }
-
-        // ==================== UTILIDADES ====================
-        function formatDate(dateStr) {
-            const date = new Date(dateStr + 'T00:00:00');
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return date.toLocaleDateString('es-ES', options);
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-    </script>
-</body>
-</html>'''
-
-with open('work-tracker-app/index.html', 'w', encoding='utf-8') as f:
-    f.write(modern_html)
-
-print("✅ ¡Diseño moderno aplicado exitosamente!")
-print("\n🎨 Características del nuevo diseño:")
-print("   • Glassmorphism (efecto cristal)")
-print("   • Colores vibrantes y modernos")
-print("   • Sombras suaves y profundas")
-print("   • Animaciones fluidas")
-print("   • Tipografía limpia")
-print("   • Bordes redondeados")
-print("   • Hover effects elegantes")
-print("   • Totalmente responsive")
-
-
-#Return
-execute error
+</html>

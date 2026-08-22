@@ -14,7 +14,7 @@
             --bg: #f8fafc;
             --white: #ffffff;
             --text: #0f172a;
-            --gray: #64748b;
+            --gray: #94a3b8;
             --nav-height: 70px;
         }
 
@@ -23,25 +23,25 @@
         body { 
             background: var(--bg); 
             color: var(--text); 
-            padding-bottom: calc(var(--nav-height) + 20px); /* Espacio para el menú flotante */
+            padding-bottom: 100px; /* Espacio para el menú */
         }
 
         .container { max-width: 600px; margin: 0 auto; min-height: 100vh; position: relative; }
         
-        /* Header Simple */
+        /* Header */
         header { 
             background: var(--white); 
-            padding: 15px 20px; 
+            padding: 20px; 
             position: sticky; 
             top: 0; 
             z-index: 90; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        h1 { font-size: 20px; font-weight: 800; color: var(--primary); }
+        h1 { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
         
         /* Contenido */
         .content { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
@@ -50,64 +50,76 @@
         
         /* Stats Cards */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--white); padding: 15px; border-radius: 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .stat-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; font-weight: 600; }
-        .stat-value { font-size: 22px; font-weight: 800; color: var(--text); }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
+        .stat-label { font-size: 12px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700; }
+        .stat-value { font-size: 24px; font-weight: 800; color: var(--text); }
         .stat-value.success { color: var(--success); }
         .stat-value.danger { color: var(--danger); }
         .stat-value.warning { color: var(--warning); }
         
         /* Items List */
-        .item { background: var(--white); padding: 15px; border-radius: 16px; margin-bottom: 12px; border-left: 5px solid var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: transform 0.2s; }
+        .item { background: var(--white); padding: 20px; border-radius: 18px; margin-bottom: 15px; border-left: 6px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s; }
         .item:active { transform: scale(0.98); }
         .item.paid { border-left-color: var(--success); }
         .item.pending { border-left-color: var(--danger); }
         .item.expense { border-left-color: var(--warning); }
         
-        .item-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .item-date { font-weight: 700; font-size: 14px; color: var(--text); }
-        .item-amount { font-weight: 800; font-size: 18px; color: var(--success); }
-        .item-location { color: var(--gray); font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+        .item-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .item-date { font-weight: 700; font-size: 15px; color: var(--text); }
+        .item-amount { font-weight: 800; font-size: 20px; color: var(--success); }
+        .item-location { color: var(--gray); font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
         
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .badge.paid { background: #ecfdf5; color: var(--success); }
         .badge.pending { background: #fef2f2; color: var(--danger); }
         
-        .actions-row { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-sm { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .actions-row { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-sm { flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .btn-edit { background: var(--bg); color: var(--text); }
         .btn-del { background: #fef2f2; color: var(--danger); }
         
         /* Calendario */
-        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--white); padding: 15px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .calendar-nav h2 { font-size: 18px; font-weight: 700; }
         .nav-arrow { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; color: var(--primary); }
         
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 20px; }
-        .day-name { text-align: center; font-size: 11px; color: var(--gray); font-weight: 600; margin-bottom: 5px; }
-        .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--white); border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-        .day.has-work { background: var(--primary); color: white; }
-        .dot { position: absolute; bottom: 5px; width: 4px; height: 4px; background: var(--success); border-radius: 50%; border: 1px solid white; }
+        .day-name { text-align: center; font-size: 12px; color: var(--gray); font-weight: 700; margin-bottom: 8px; }
+        .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--white); border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s; }
+        .day.has-work { background: var(--primary); color: white; font-weight: 700; }
+        .dot { position: absolute; bottom: 6px; width: 5px; height: 5px; background: var(--success); border-radius: 50%; border: 2px solid white; }
         .day.has-work .dot { background: white; }
         
-        /* MENÚ FLOTANTE INFERIOR */
+        /* MENÚ FLOTANTE INFERIOR MODERNO */
         .bottom-nav {
             position: fixed;
-            bottom: 20px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            height: 65px;
+            width: 92%;
+            max-width: 420px;
+            height: 70px;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 35px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between; /* Clave para la distribución */
             align-items: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             z-index: 1000;
-            padding: 0 10px;
+            padding: 0 15px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .nav-group.right {
+            justify-content: flex-end;
         }
 
         .nav-item {
@@ -123,75 +135,107 @@
             transition: all 0.3s;
         }
 
-        .nav-item.active { color: var(--primary); transform: translateY(-2px); }
-        .nav-icon { font-size: 22px; margin-bottom: 2px; }
+        .nav-item.active { color: var(--primary); transform: translateY(-3px); }
+        
+        /* Iconos SVG Lineales */
+        .nav-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            margin-bottom: 4px;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active .nav-icon svg {
+            stroke-width: 2.5;
+            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.3));
+        }
 
         /* Botón Central Flotante (FAB) */
         .fab-container {
             position: relative;
             top: -25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
         }
 
         .fab-btn {
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 28px;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5);
             cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 4px solid var(--bg);
+            border: 5px solid var(--bg);
+            z-index: 1001;
         }
+        
+        .fab-btn svg { width: 30px; height: 30px; stroke: white; stroke-width: 2.5; }
 
         .fab-btn:active { transform: scale(0.9); }
         
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 10% auto; padding: 25px; border-radius: 24px; width: 90%; max-width: 450px; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .close { font-size: 24px; cursor: pointer; color: var(--gray); background: var(--bg); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: var(--text); }
-        input, textarea, select { width: 100%; padding: 14px; border: 2px solid var(--bg); border-radius: 12px; font-size: 16px; background: var(--bg); transition: all 0.3s; }
-        input:focus, textarea:focus { outline: none; border-color: var(--primary); background: white; }
-        
-        .btn-save { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        
-        .chart-box { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .chart-box h3 { text-align: center; margin-bottom: 15px; font-size: 16px; }
-
         /* Menú desplegable del FAB */
         .fab-menu {
             position: absolute;
-            bottom: 70px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             display: none;
             flex-direction: column;
-            gap: 10px;
-            width: 200px;
+            gap: 12px;
+            width: 220px;
+            z-index: 999;
         }
         
         .fab-option {
             background: white;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
             animation: popIn 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--text);
         }
         
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 15% auto; padding: 30px; border-radius: 28px; width: 90%; max-width: 450px; animation: slideUp 0.3s ease; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .close { font-size: 24px; cursor: pointer; color: var(--gray); background: var(--bg); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .close:hover { background: #fee2e2; color: var(--danger); }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 700; color: var(--text); }
+        input, textarea, select { width: 100%; padding: 16px; border: 2px solid var(--bg); border-radius: 14px; font-size: 16px; background: var(--bg); transition: all 0.3s; font-weight: 500; }
+        input:focus, textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); transition: all 0.2s; }
+        .btn-save:active { transform: scale(0.98); }
+        
+        .chart-box { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .chart-box h3 { text-align: center; margin-bottom: 20px; font-size: 16px; font-weight: 700; }
 
     </style>
 </head>
@@ -199,19 +243,23 @@
     <div class="container">
         <header>
             <h1>🌾 Work Tracker</h1>
-            <div style="font-size: 12px; color: var(--gray);" id="currentDateDisplay"></div>
+            <div style="font-size: 12px; color: var(--gray); font-weight: 600;" id="currentDateDisplay"></div>
         </header>
 
-        <!-- INICIO: Calendario + Resumen -->
+        <!-- INICIO -->
         <div id="home" class="content active">
             <div class="calendar-nav">
-                <button class="nav-arrow" onclick="changeMonth(-1)">◀</button>
+                <button class="nav-arrow" onclick="changeMonth(-1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
                 <h2 id="monthYear"></h2>
-                <button class="nav-arrow" onclick="changeMonth(1)">▶</button>
+                <button class="nav-arrow" onclick="changeMonth(1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
             </div>
             <div class="calendar-grid" id="calGrid"></div>
             
-            <h3 style="margin: 25px 0 15px 0; font-size: 18px;">Resumen del Mes</h3>
+            <h3 style="margin: 30px 0 20px 0; font-size: 18px; font-weight: 800;">Resumen Mensual</h3>
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-label">Ganancia</div><div class="stat-value success" id="earnings">$0</div></div>
                 <div class="stat-card"><div class="stat-label">Pendiente</div><div class="stat-value danger" id="pending">$0</div></div>
@@ -220,15 +268,15 @@
             </div>
         </div>
 
-        <!-- TRABAJOS: Lista Completa -->
+        <!-- TRABAJOS -->
         <div id="works" class="content">
-            <h3 style="margin-bottom: 15px;">Todos los Trabajos</h3>
+            <h3 style="margin-bottom: 20px; font-weight: 800;">Historial de Trabajos</h3>
             <div id="allWorksList"></div>
         </div>
 
         <!-- GASTOS -->
         <div id="expenses" class="content">
-            <h3 style="margin-bottom: 15px;">Historial de Gastos</h3>
+            <h3 style="margin-bottom: 20px; font-weight: 800;">Historial de Gastos</h3>
             <div id="expensesList"></div>
         </div>
 
@@ -236,37 +284,59 @@
         <div id="stats" class="content">
             <div class="chart-box"><h3>Ingresos vs Gastos</h3><canvas id="chart1"></canvas></div>
             <div class="chart-box"><h3>Días Trabajados</h3><canvas id="chart2"></canvas></div>
-            <button onclick="exportCSV()" style="width:100%; padding:15px; background:white; border:2px solid var(--bg); border-radius:12px; font-weight:600; cursor:pointer;">📥 Exportar a Excel</button>
+            <button onclick="exportCSV()" style="width:100%; padding:18px; background:white; border:2px solid var(--bg); border-radius:16px; font-weight:700; cursor:pointer; font-size: 15px;">📥 Exportar Reporte CSV</button>
         </div>
     </div>
 
     <!-- MENÚ FLOTANTE INFERIOR -->
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="showTab('home', this)">
-            <div class="nav-icon">🏠</div>
-            <span>Inicio</span>
-        </div>
-        <div class="nav-item" onclick="showTab('works', this)">
-            <div class="nav-icon">💼</div>
-            <span>Trabajos</span>
+        <!-- Izquierda -->
+        <div class="nav-group">
+            <div class="nav-item active" onclick="showTab('home', this)">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </div>
+                <span>Inicio</span>
+            </div>
+            <div class="nav-item" onclick="showTab('works', this)">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
+                <span>Trabajos</span>
+            </div>
         </div>
         
-        <!-- Botón Central Agregar -->
+        <!-- Centro -->
         <div class="fab-container">
-            <div class="fab-btn" onclick="toggleFabMenu()">+</div>
+            <div class="fab-btn" onclick="toggleFabMenu()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
             <div class="fab-menu" id="fabMenu">
-                <div class="fab-option" onclick="openModal('work'); toggleFabMenu()">➕ Nuevo Trabajo</div>
-                <div class="fab-option" onclick="openModal('expense'); toggleFabMenu()">💸 Nuevo Gasto</div>
+                <div class="fab-option" onclick="openModal('work'); toggleFabMenu()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    Nuevo Trabajo
+                </div>
+                <div class="fab-option" onclick="openModal('expense'); toggleFabMenu()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Nuevo Gasto
+                </div>
             </div>
         </div>
 
-        <div class="nav-item" onclick="showTab('expenses', this)">
-            <div class="nav-icon">💰</div>
-            <span>Gastos</span>
-        </div>
-        <div class="nav-item" onclick="showTab('stats', this)">
-            <div class="nav-icon">📊</div>
-            <span>Stats</span>
+        <!-- Derecha -->
+        <div class="nav-group right">
+            <div class="nav-item" onclick="showTab('expenses', this)">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+                <span>Gastos</span>
+            </div>
+            <div class="nav-item" onclick="showTab('stats', this)">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                </div>
+                <span>Stats</span>
+            </div>
         </div>
     </div>
 
@@ -279,9 +349,9 @@
                 <div class="form-group"><label>Fecha</label><input type="date" id="wDate" required></div>
                 <div class="form-group"><label>Lugar / Finca</label><input type="text" id="wLocation" placeholder="Ej: Finca El Roble" required></div>
                 <div class="form-group"><label>Monto a Pagar ($)</label><input type="number" id="wAmount" step="0.01" required></div>
-                <div class="form-group" style="background:var(--bg); padding:10px; border-radius:10px; display:flex; align-items:center; gap:10px;">
-                    <input type="checkbox" id="wPaid" style="width:20px; height:20px;">
-                    <label style="margin:0;">¿Ya fue pagado?</label>
+                <div class="form-group" style="background:var(--bg); padding:15px; border-radius:14px; display:flex; align-items:center; gap:12px;">
+                    <input type="checkbox" id="wPaid" style="width:22px; height:22px; accent-color: var(--primary);">
+                    <label style="margin:0; font-size: 15px;">¿El trabajo ya fue pagado?</label>
                 </div>
                 <div class="form-group"><label>Notas</label><textarea id="wNotes" rows="2" placeholder="Detalles extra..."></textarea></div>
                 <button type="submit" class="btn-save">Guardar Trabajo</button>
@@ -390,7 +460,6 @@
 
         function goToWorksOnDate(date) {
             showTab('works', document.querySelectorAll('.nav-item')[1]);
-            // Podríamos filtrar aquí si quisiéramos
         }
 
         // HOME
@@ -414,14 +483,14 @@
             const allWorks = DB.get('works').sort((a,b) => new Date(b.date) - new Date(a.date));
             document.getElementById('allWorksList').innerHTML = allWorks.length ? 
                 allWorks.map(w => createItemHTML(w, 'work')).join('') : 
-                '<p style="text-align:center;color:#999;padding:20px;">Sin trabajos aún</p>';
+                '<p style="text-align:center;color:#999;padding:40px;">No hay trabajos registrados aún</p>';
         }
 
         function updateExpenses() {
             const expenses = DB.get('expenses').sort((a,b) => new Date(b.date) - new Date(a.date));
             document.getElementById('expensesList').innerHTML = expenses.length ? 
                 expenses.map(e => createItemHTML(e, 'expense')).join('') : 
-                '<p style="text-align:center;color:#999;padding:20px;">Sin gastos registrados</p>';
+                '<p style="text-align:center;color:#999;padding:40px;">Sin gastos registrados</p>';
         }
 
         function createItemHTML(item, type) {
@@ -432,7 +501,7 @@
             let actions = '';
             if (type === 'work') {
                 actions = `<div class="actions-row">
-                    <button class="btn-sm btn-edit" onclick="editWork(${item.id})">Editar</button>
+                    <button class="btn-sm btn-edit" onclick="editWork(${item.id})">Editar Estado</button>
                     <button class="btn-sm btn-del" onclick="deleteItem('works', ${item.id})">Borrar</button>
                 </div>`;
             } else {
@@ -512,7 +581,7 @@
         }
 
         function deleteItem(type, id) {
-            if (confirm('¿Estás seguro?')) {
+            if (confirm('¿Estás seguro de eliminar este registro?')) {
                 DB.remove(type, id);
                 refreshAll();
             }
@@ -539,10 +608,10 @@
             }
 
             if(chart1) chart1.destroy();
-            chart1 = new Chart(document.getElementById('chart1'), { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: income, backgroundColor: '#2563eb', borderRadius: 6 }, { label: 'Gastos', data: expense, backgroundColor: '#d97706', borderRadius: 6 }] }, options: { responsive: true } });
+            chart1 = new Chart(document.getElementById('chart1'), { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: income, backgroundColor: '#2563eb', borderRadius: 8 }, { label: 'Gastos', data: expense, backgroundColor: '#d97706', borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom' } } } });
 
             if(chart2) chart2.destroy();
-            chart2 = new Chart(document.getElementById('chart2'), { type: 'line', data: { labels, datasets: [{ label: 'Días', data: days, borderColor: '#059669', tension: 0.4, fill: true, backgroundColor: 'rgba(5,150,105,0.1)' }] }, options: { responsive: true } });
+            chart2 = new Chart(document.getElementById('chart2'), { type: 'line', data: { labels, datasets: [{ label: 'Días', data: days, borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.1)', tension: 0.4, fill: true, pointRadius: 6, pointBackgroundColor: '#fff', pointBorderWidth: 2 }] }, options: { responsive: true } });
         }
 
         function exportCSV() {
@@ -550,11 +619,11 @@
             DB.get('works').forEach(w => csv += `Trabajo,${w.date},${w.amount},${w.location},${w.paid?'Pagado':'Pendiente'}\n`);
             DB.get('expenses').forEach(e => csv += `Gasto,${e.date},${e.amount},${e.description},-\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'reporte.csv'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'reporte_trabajos.csv'; a.click();
         }
 
         function formatDate(dateStr) {
-            return new Date(dateStr + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+            return new Date(dateStr + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
         window.onclick = function(e) {

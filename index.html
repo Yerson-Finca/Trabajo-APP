@@ -30,6 +30,7 @@
         .content { display: none; padding: 20px; }
         .content.active { display: block; }
         
+        /* Stats Cards */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .stat-card { background: var(--bg); padding: 15px; border-radius: 12px; text-align: center; }
         .stat-label { font-size: 11px; color: var(--gray); text-transform: uppercase; margin-bottom: 5px; }
@@ -38,11 +39,13 @@
         .stat-value.success { color: var(--success); }
         .stat-value.warning { color: var(--warning); }
         
+        /* Botones */
         .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--bg); color: var(--text); }
         .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
         
+        /* Items List */
         .item { background: var(--bg); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
         .item.paid { border-left-color: var(--success); }
         .item.pending { border-left-color: var(--danger); }
@@ -53,23 +56,25 @@
         .item-amount { font-weight: 700; font-size: 18px; color: var(--success); }
         .item-location { color: var(--gray); font-size: 13px; margin-bottom: 5px; }
         
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 5px; cursor: pointer; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 5px; }
         .badge.paid { background: rgba(5, 150, 105, 0.1); color: var(--success); }
         .badge.pending { background: rgba(220, 38, 38, 0.1); color: var(--danger); }
         
         .delete { background: transparent; border: none; color: var(--danger); font-size: 12px; margin-top: 8px; cursor: pointer; }
         
+        /* Calendario en Inicio */
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--bg); padding: 12px; border-radius: 10px; }
         .calendar-nav h2 { font-size: 18px; }
         .nav-arrow { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px 10px; }
         
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 20px; }
         .day-name { text-align: center; font-size: 11px; color: var(--gray); padding: 8px 0; font-weight: 600; }
         .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--bg); border-radius: 8px; font-size: 14px; cursor: pointer; position: relative; }
         .day.has-work { background: rgba(5, 150, 105, 0.1); color: var(--success); font-weight: 600; }
         .day.selected { background: var(--primary); color: white; }
         .dot { position: absolute; bottom: 4px; width: 4px; height: 4px; background: var(--success); border-radius: 50%; }
         
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
         .modal-content { background: white; margin: 15% auto; padding: 25px; border-radius: 15px; width: 90%; max-width: 450px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -93,15 +98,16 @@
         <header>
             <h1>🌾 Work Tracker</h1>
             <div class="tabs">
-                <button class="tab-btn active" onclick="showTab('calendar')">Calendario</button>
-                <button class="tab-btn" onclick="showTab('home')">Resumen</button>
+                <button class="tab-btn active" onclick="showTab('home')">Inicio</button>
+                <button class="tab-btn" onclick="showTab('works')">Trabajos</button>
                 <button class="tab-btn" onclick="showTab('expenses')">Gastos</button>
                 <button class="tab-btn" onclick="showTab('stats')">Gráficos</button>
             </div>
         </header>
 
-        <!-- CALENDARIO (Pantalla Principal) -->
-        <div id="calendar" class="content active">
+        <!-- INICIO: Calendario + Resumen -->
+        <div id="home" class="content active">
+            <!-- Calendario Integrado -->
             <div class="calendar-nav">
                 <button class="nav-arrow" onclick="changeMonth(-1)">◀</button>
                 <h2 id="monthYear"></h2>
@@ -109,29 +115,26 @@
             </div>
             <div class="calendar-grid" id="calGrid"></div>
             
-            <div id="dayDetails" style="display:none; margin-top: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h3 id="selectedDayTitle"></h3>
-                    <button class="btn btn-primary" style="width:auto; padding:8px 15px; margin:0;" onclick="openModalForSelectedDay()">+ Agregar</button>
-                </div>
-                <div id="dayWorks"></div>
-            </div>
-        </div>
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 20px 0;">
 
-        <!-- RESUMEN -->
-        <div id="home" class="content">
+            <!-- Resumen Financiero -->
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-label">Ganancia Mes</div><div class="stat-value success" id="earnings">$0</div></div>
                 <div class="stat-card"><div class="stat-label">Días Trabajados</div><div class="stat-value" id="days">0</div></div>
                 <div class="stat-card"><div class="stat-label">Pendiente Pago</div><div class="stat-value danger" id="pending">$0</div></div>
                 <div class="stat-card"><div class="stat-label">Gastos Mes</div><div class="stat-value warning" id="expensesTotal">$0</div></div>
             </div>
+            
             <div class="actions">
-                <button class="btn btn-primary" onclick="openModal('work')">+ Trabajo</button>
-                <button class="btn btn-secondary" onclick="openModal('expense')">+ Gasto</button>
+                <button class="btn btn-primary" onclick="openModal('work')">+ Nuevo Trabajo</button>
+                <button class="btn btn-secondary" onclick="openModal('expense')">+ Nuevo Gasto</button>
             </div>
-            <h3 style="margin-bottom: 15px;">Recientes</h3>
-            <div id="recentList"></div>
+        </div>
+
+        <!-- TRABAJOS: Lista Completa -->
+        <div id="works" class="content">
+            <h3 style="margin-bottom: 15px;">Historial de Trabajos</h3>
+            <div id="allWorksList"></div>
         </div>
 
         <!-- GASTOS -->
@@ -203,12 +206,12 @@
         };
 
         let currentMonth = new Date();
-        let selectedDate = null;
         let chart1, chart2;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderCalendar();
             updateHome();
+            updateAllWorks();
             updateExpenses();
             document.getElementById('wDate').valueAsDate = new Date();
             document.getElementById('eDate').valueAsDate = new Date();
@@ -220,13 +223,13 @@
             document.getElementById(name).classList.add('active');
             event.target.classList.add('active');
             
-            if (name === 'calendar') renderCalendar();
-            if (name === 'home') updateHome();
+            if (name === 'home') { renderCalendar(); updateHome(); }
+            if (name === 'works') updateAllWorks();
             if (name === 'expenses') updateExpenses();
             if (name === 'stats') updateCharts();
         }
 
-        // CALENDARIO
+        // CALENDARIO (Integrado en Inicio)
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -253,50 +256,27 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
                 const hasWork = workDates.has(dateStr);
-                const isSelected = selectedDate === dateStr;
                 
                 html += `
-                    <div class="day ${hasWork ? 'has-work' : ''} ${isSelected ? 'selected' : ''}" 
-                         onclick="selectDay('${dateStr}')">
+                    <div class="day ${hasWork ? 'has-work' : ''}" onclick="goToWorksOnDate('${dateStr}')">
                         ${day}
                         ${hasWork ? '<div class="dot"></div>' : ''}
                     </div>
                 `;
             }
-            
             document.getElementById('calGrid').innerHTML = html;
         }
 
         function changeMonth(delta) {
             currentMonth.setMonth(currentMonth.getMonth() + delta);
-            selectedDate = null;
-            document.getElementById('dayDetails').style.display = 'none';
             renderCalendar();
         }
 
-        function selectDay(date) {
-            selectedDate = date;
-            renderCalendar();
-            loadDayDetails(date);
-        }
-
-        function loadDayDetails(date) {
-            const works = DB.get('works').filter(w => w.date === date);
-            const container = document.getElementById('dayWorks');
-            
-            container.innerHTML = works.length ?
-                works.map(w => createItemHTML(w, 'work')).join('') :
-                '<p style="color:#999;text-align:center;padding:20px;">Sin trabajos este día</p>';
-            
-            document.getElementById('selectedDayTitle').textContent = formatDate(date);
-            document.getElementById('dayDetails').style.display = 'block';
-        }
-
-        function openModalForSelectedDay() {
-            if (selectedDate) {
-                document.getElementById('wDate').value = selectedDate;
-            }
-            openModal('work');
+        function goToWorksOnDate(date) {
+            // Al hacer clic en el calendario, lleva a la pestaña de trabajos filtrada (opcional)
+            // Por ahora solo mostramos un alert o podríamos filtrar la lista
+            showTab('works');
+            // Aquí podrías implementar un filtro si quisieras
         }
 
         // HOME / RESUMEN
@@ -320,11 +300,19 @@
             document.getElementById('days').textContent = days;
             document.getElementById('pending').textContent = '$' + pending.toFixed(0);
             document.getElementById('expensesTotal').textContent = '$' + expenses.toFixed(0);
+        }
 
-            const recent = DB.get('works').slice(-5).reverse();
-            document.getElementById('recentList').innerHTML = recent.length ? 
-                recent.map(w => createItemHTML(w, 'work')).join('') : 
-                '<p style="text-align:center;color:#999;padding:20px;">Sin registros</p>';
+        // LISTA COMPLETA DE TRABAJOS
+        function updateAllWorks() {
+            const allWorks = DB.get('works').sort((a,b) => new Date(b.date) - new Date(a.date));
+            const container = document.getElementById('allWorksList');
+            
+            if (allWorks.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No hay trabajos registrados</p>';
+                return;
+            }
+            
+            container.innerHTML = allWorks.map(w => createItemHTML(w, 'work')).join('');
         }
 
         // ITEMS HTML
@@ -335,7 +323,6 @@
             
             let actionButtons = `<button class="delete" onclick="deleteItem('${type}', ${item.id})">Eliminar</button>`;
             
-            // Si es trabajo, agregamos botón para editar estado de pago
             if (type === 'work') {
                 actionButtons = `
                     <div style="display:flex; gap:10px; margin-top:8px;">
@@ -432,7 +419,7 @@
             closeModal('workModal');
             updateHome();
             renderCalendar();
-            if (selectedDate) loadDayDetails(selectedDate);
+            updateAllWorks();
         }
 
         function saveExpense(e) {
@@ -452,8 +439,8 @@
                 DB.remove(type === 'work' ? 'works' : 'expenses', id);
                 updateHome();
                 renderCalendar();
+                updateAllWorks();
                 updateExpenses();
-                if (selectedDate) loadDayDetails(selectedDate);
             }
         }
 

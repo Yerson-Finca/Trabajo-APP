@@ -17,6 +17,7 @@
             --danger: #FF3B30;
             --warning: #FF9500;
             --gray: #8E8E93;
+            --dark-gray: #636366;
             --bg: #F2F2F7;
             --surface: #FFFFFF;
             --text-main: #1C1C1E;
@@ -82,9 +83,12 @@
             aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
             font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500;
         }
+        /* Colores del Calendario */
         .day.has-work-paid { background: var(--success); color: white; }
         .day.has-work-pending { background: var(--danger); color: white; }
         .day.has-work-future { background: var(--primary); color: white; }
+        .day.has-work-unconfirmed { background: var(--dark-gray); color: white; border: 1px dashed #ccc; } /* Nuevo estilo para no confirmados */
+        
         .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
         .day.disabled { color: #d1d1d6; background: transparent; cursor: not-allowed; }
         
@@ -100,7 +104,7 @@
             background: var(--surface); padding: 16px; border-radius: var(--radius-m); 
             margin-bottom: 12px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);
         }
-        .card.unconfirmed { border-left-color: var(--gray); background: #fafafa; opacity: 0.8; }
+        .card.unconfirmed { border-left-color: var(--gray); background: #fafafa; opacity: 0.9; }
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
         .card-title { font-weight: 600; font-size: 15px; color: var(--text-main); word-break: break-word; }
@@ -405,7 +409,7 @@
             menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // CALENDARIO
+        // CALENDARIO ACTUALIZADO PARA MOSTRAR NO CONFIRMADOS
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -416,7 +420,8 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             
             const dayMap = {};
-            DB.get('works').filter(w => w.confirmed).forEach(w => {
+            // Mapeamos TODOS los trabajos, confirmados o no
+            DB.get('works').forEach(w => {
                 w.dates.forEach(d => {
                     if (!dayMap[d]) dayMap[d] = [];
                     dayMap[d].push(w);
@@ -439,12 +444,20 @@
                     html += `<div class="${classes}">${day}</div>`;
                 } else {
                     if (works) {
-                        const hasPending = works.some(w => !w.paid);
+                        // Lógica de prioridad visual
+                        const hasUnconfirmed = works.some(w => !w.confirmed);
+                        const hasPending = works.some(w => !w.paid && w.confirmed);
                         const isFuture = new Date(dateStr) >= new Date(today);
                         
-                        if (isFuture) classes += ' has-work-future';
-                        else if (hasPending) classes += ' has-work-pending';
-                        else classes += ' has-work-paid';
+                        if (hasUnconfirmed) {
+                            classes += ' has-work-unconfirmed'; // Gris oscuro para no confirmados
+                        } else if (isFuture) {
+                            classes += ' has-work-future'; // Azul para futuros confirmados
+                        } else if (hasPending) {
+                            classes += ' has-work-pending'; // Rojo para pendientes de pago
+                        } else {
+                            classes += ' has-work-paid'; // Verde para pagados
+                        }
                         
                         html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
                     } else {
@@ -474,9 +487,14 @@
         }
 
         function showDayDetails(dateStr) {
-            const works = DB.get('works').filter(w => w.confirmed && w.dates.includes(dateStr));
+            const works = DB.get('works').filter(w => w.dates.includes(dateStr));
             if (works.length > 0) {
-                alert(`Fecha: ${formatDate(dateStr)}\n\n` + works.map(w => `${w.location} - ${w.paid ? 'Pagado' : 'Pendiente'}`).join('\n'));
+                let msg = `Fecha: ${formatDate(dateStr)}\n\n`;
+                works.forEach(w => {
+                    let status = w.confirmed ? (w.paid ? 'Pagado' : 'Pendiente Pago') : 'SIN CONFIRMAR';
+                    msg += `${w.location} - ${status}\n`;
+                });
+                alert(msg);
             }
         }
 
@@ -503,7 +521,8 @@
             if (currentFilter === 'unconfirmed') {
                 works = works.filter(w => !w.confirmed);
             } else if (currentFilter === 'upcoming') {
-                works = works.filter(w => w.confirmed && w.dates.some(d => new Date(d) >= now));
+                // Mostrar próximos confirmados Y no confirmados
+                works = works.filter(w => w.dates.some(d => new Date(d) >= now));
             } else if (currentFilter === 'all') {
                 works = works.filter(w => w.confirmed);
             }
@@ -560,6 +579,7 @@
 
         function updateHome() {
             const now = new Date();
+            // Solo trabajos confirmados para estadísticas financieras
             const works = DB.get('works').filter(w => w.confirmed);
             let earnings = 0, pending = 0, totalDays = new Set();
             const weeklyJobs = [];
@@ -591,7 +611,7 @@
                     return `<div class="card" style="border-left-color:${job.paid ? 'var(--success)' : 'var(--primary)'}; padding:14px;"><div class="card-title">${job.location}</div><div class="dates-compact">${datesHtml}</div></div>`;
                 }).join('');
             } else {
-                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:20px; background:white; border-radius:16px; text-align:center;">Sin actividades esta semana</div>';
+                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:20px; background:white; border-radius:16px; text-align:center;">Sin actividades confirmadas esta semana</div>';
             }
 
             const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);

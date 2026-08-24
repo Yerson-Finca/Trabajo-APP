@@ -15,6 +15,7 @@
             --success: #34C759;
             --danger: #FF3B30;
             --warning: #FF9500;
+            --gray: #8E8E93;
             --bg: #F2F2F7;
             --surface: #FFFFFF;
             --text-main: #000000;
@@ -39,13 +40,6 @@
         .content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Alerta de Notificación */
-        .notification-banner {
-            background: #FFF0F0; border: 1px solid var(--danger); color: var(--danger);
-            padding: 12px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; font-weight: 600;
-            display: none; align-items: center; gap: 10px;
-        }
-        
         /* Stats */
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
         .stat-card { background: var(--surface); padding: 14px; border-radius: var(--radius-l); box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
@@ -68,7 +62,7 @@
         .day.has-work-pending { background: var(--danger); color: white; }
         .day.has-work-future { background: var(--primary); color: white; }
         .day.selected-day { border: 2px solid var(--text-main); background: rgba(255,255,255,0.3) !important; color: var(--text-main) !important; font-weight: 700; }
-        .day.past-overdue { background: #555; color: #ccc; text-decoration: line-through; }
+        .day.disabled { color: #d1d1d6; background: #f9f9f9; cursor: not-allowed; }
         
         .btn-confirm-dates { 
             width: 100%; padding: 12px; background: var(--success); color: white; 
@@ -86,6 +80,9 @@
             background: var(--surface); padding: 14px; border-radius: var(--radius-m); 
             margin-bottom: 10px; box-shadow: var(--shadow); border-left: 4px solid var(--primary);
         }
+        /* Estilo para no confirmados */
+        .card.unconfirmed { border-left-color: var(--gray); opacity: 0.8; background: #fafafa; }
+        
         .card-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .card-title { font-weight: 600; font-size: 15px; }
         .card-amount { font-weight: 700; font-size: 15px; }
@@ -99,6 +96,7 @@
             display: flex; align-items: center; justify-content: center; gap: 4px;
         }
         .btn-pay { background: #E8FAF0; color: var(--success); }
+        .btn-confirm { background: #FFF9E6; color: #D97706; border: 1px solid #FCD34D; }
         .btn-edit { background: #F2F2F7; color: var(--text-main); }
         .btn-delete { background: #FFEAEA; color: var(--danger); }
         
@@ -145,6 +143,14 @@
         
         /* Estilo para el total calculado */
         .calc-total { font-size: 14px; color: var(--primary); font-weight: 700; margin-top: 8px; text-align: right; }
+
+        /* Estilos para el Selector de Patrones */
+        .pattern-selector { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .day-check { 
+            display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; 
+        }
+        .day-check input { width: 18px; height: 18px; accent-color: var(--primary); }
+        .day-check span { font-size: 11px; font-weight: 600; color: var(--text-sec); }
     </style>
 </head>
 <body>
@@ -156,13 +162,6 @@
 
         <!-- INICIO -->
         <div id="home" class="content active">
-            <!-- Notificación de Cobros Vencidos -->
-            <div id="overdueNotification" class="notification-banner">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span id="overdueMessage">Tienes trabajos pendientes por cobrar.</span>
-            </div>
-
-            <!-- 1. PRIMERO EL CALENDARIO -->
             <div class="section-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 Calendario de Actividades
@@ -178,14 +177,12 @@
                 <div id="dayDetails" class="day-details-box"></div>
             </div>
 
-            <!-- 2. LUEGO ESTA SEMANA (Ordenado por proximidad) -->
             <div class="section-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                 Próximos Esta Semana
             </div>
             <div id="upcomingList" style="margin-bottom: 25px;"></div>
             
-            <!-- 3. AL FINAL EL RESUMEN -->
             <div class="section-title">Resumen del Mes Actual</div>
             <div class="stats-grid">
                 <div class="stat-card">
@@ -215,8 +212,8 @@
             </div>
             <div class="filter-container">
                 <button class="filter-btn active" onclick="setFilter('upcoming', this)">Próximos</button>
+                <button class="filter-btn" onclick="setFilter('unconfirmed', this)">Sin Confirmar</button>
                 <button class="filter-btn" onclick="setFilter('all', this)">Todos</button>
-                <button class="filter-btn" onclick="setFilter('pending', this)">Por Cobrar</button>
             </div>
             <div class="section-title">Lista de Trabajos</div>
             <div id="allWorksList"></div>
@@ -289,7 +286,7 @@
         </div>
     </div>
 
-    <!-- MODALES -->
+    <!-- MODAL TRABAJO CON PATRONES Y CONFIRMACIÓN -->
     <div id="workModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
@@ -297,22 +294,41 @@
                 <input type="hidden" id="wId">
                 <input type="text" id="wLocation" class="input-field" placeholder="Lugar / Finca" required>
                 
-                <!-- CAMBIO: Tarifa Diaria -->
                 <input type="number" id="wAmount" class="input-field" placeholder="Tarifa Diaria ($)" step="100" required oninput="updateCalcTotal()">
                 
+                <!-- Selector de Patrones -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size:13px; font-weight:600; color:var(--text-sec); margin-bottom:6px; display:block;">Generar Fechas (Patrón Semanal)</label>
+                    <div class="pattern-selector">
+                        <label class="day-check"><input type="checkbox" class="pattern-day" value="1"><span>L</span></label>
+                        <label class="day-check"><input type="checkbox" class="pattern-day" value="2"><span>M</span></label>
+                        <label class="day-check"><input type="checkbox" class="pattern-day" value="3"><span>M</span></label>
+                        <label class="day-check"><input type="checkbox" class="pattern-day" value="4"><span>J</span></label>
+                        <label class="day-check"><input type="checkbox" class="pattern-day" value="5"><span>V</span></label>
+                        <label class="day-check"><input type="checkbox" class="pattern-day" value="6"><span>S</span></label>
+                        <label class="day-check"><input type="checkbox" class="pattern-day" value="0"><span>D</span></label>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="generatePatternDates()" style="width:100%; font-size:12px;">Aplicar Patrón (Próximas 4 semanas)</button>
+                </div>
+
                 <div style="display:flex; gap:8px; margin-bottom:12px;">
                     <input type="date" id="wNewDate" class="input-field" style="flex:1; margin:0;">
                     <button type="button" class="btn btn-primary" onclick="addDateToTempList()" style="width:auto;">+</button>
                 </div>
                 <div id="tempDatesList" class="dates-compact" style="margin-bottom:4px;"></div>
                 
-                <!-- CAMBIO: Mostrar Total Calculado -->
                 <div id="calcTotalDisplay" class="calc-total"></div>
                 <br>
 
-                <div style="background:#F2F2F7; padding:14px; border-radius:12px; display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-                    <input type="checkbox" id="wPaid" style="width:20px; height:20px;">
-                    <label>¿Pagado?</label>
+                <div style="background:#F2F2F7; padding:14px; border-radius:12px; display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <input type="checkbox" id="wPaid" style="width:20px; height:20px;">
+                        <label>¿Ya pagado?</label>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px; border-top:1px solid #e5e5ea; padding-top:12px;">
+                        <input type="checkbox" id="wConfirmed" style="width:20px; height:20px;" checked>
+                        <label>¿Confirmado por el cliente?</label>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;">Guardar Trabajo</button>
             </form>
@@ -364,7 +380,6 @@
             updateHome();
             updateAllWorks();
             updateFinances();
-            checkOverdueNotifications();
         });
 
         function showTab(name, element) {
@@ -372,7 +387,7 @@
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             document.getElementById(name).classList.add('active');
             if(element) element.classList.add('active');
-            if (name === 'home') { renderCalendar(); updateHome(); checkOverdueNotifications(); }
+            if (name === 'home') { renderCalendar(); updateHome(); }
             if (name === 'works') updateAllWorks();
             if (name === 'finances') updateFinances();
         }
@@ -382,31 +397,7 @@
             menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // NOTIFICACIONES DE COBRO
-        function checkOverdueNotifications() {
-            const works = DB.get('works');
-            const now = new Date();
-            let overdueCount = 0;
-            
-            works.forEach(w => {
-                if (!w.paid) {
-                    const lastDate = new Date(w.dates[w.dates.length - 1]);
-                    const diffTime = Math.abs(now - lastDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                    if (diffDays >= 5) overdueCount++;
-                }
-            });
-
-            const banner = document.getElementById('overdueNotification');
-            if (overdueCount > 0) {
-                document.getElementById('overdueMessage').textContent = `Tienes ${overdueCount} trabajo(s) con más de 5 días pendiente de cobro.`;
-                banner.style.display = 'flex';
-            } else {
-                banner.style.display = 'none';
-            }
-        }
-
-        // CALENDARIO
+        // CALENDARIO (Solo muestra trabajos CONFIRMADOS)
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -417,7 +408,8 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             
             const dayMap = {};
-            DB.get('works').forEach(w => {
+            // Solo mapeamos trabajos confirmados para el calendario
+            DB.get('works').filter(w => w.confirmed).forEach(w => {
                 w.dates.forEach(d => {
                     if (!dayMap[d]) dayMap[d] = [];
                     dayMap[d].push(w);
@@ -432,21 +424,26 @@
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
                 const works = dayMap[dateStr];
                 const isSelected = selectedRangeDates.includes(dateStr);
+                const isPast = dateStr < today;
                 let classes = 'day';
                 
-                if (works) {
-                    const hasPending = works.some(w => !w.paid);
-                    const isFuture = new Date(dateStr) >= new Date(today);
-                    
-                    if (!isFuture && hasPending) classes += ' past-overdue';
-                    else if (isFuture) classes += ' has-work-future';
-                    else if (hasPending) classes += ' has-work-pending';
-                    else classes += ' has-work-paid';
-                    
-                    html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
+                if (isPast) {
+                    classes += ' disabled';
+                    html += `<div class="${classes}">${day}</div>`;
                 } else {
-                    if (isSelected) classes += ' selected-day';
-                    html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
+                    if (works) {
+                        const hasPending = works.some(w => !w.paid);
+                        const isFuture = new Date(dateStr) >= new Date(today);
+                        
+                        if (isFuture) classes += ' has-work-future';
+                        else if (hasPending) classes += ' has-work-pending';
+                        else classes += ' has-work-paid';
+                        
+                        html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
+                    } else {
+                        if (isSelected) classes += ' selected-day';
+                        html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
+                    }
                 }
             }
             document.getElementById('calGrid').innerHTML = html;
@@ -472,7 +469,8 @@
 
         function showDayDetails(dateStr) {
             const detailsDiv = document.getElementById('dayDetails');
-            const works = DB.get('works').filter(w => w.dates.includes(dateStr));
+            // Solo detalles de confirmados
+            const works = DB.get('works').filter(w => w.confirmed && w.dates.includes(dateStr));
             if (works.length > 0) {
                 let html = `<strong>${formatDate(dateStr)}</strong><br>`;
                 works.forEach(w => {
@@ -503,12 +501,16 @@
             let works = DB.get('works');
             const now = new Date();
             
-            // Ordenar por fecha más próxima primero
             works.sort((a,b) => new Date(a.dates[0]) - new Date(b.dates[0]));
 
-            if (currentFilter === 'pending') works = works.filter(w => !w.paid);
-            else if (currentFilter === 'upcoming') {
-                works = works.filter(w => w.dates.some(d => new Date(d) >= now));
+            if (currentFilter === 'unconfirmed') {
+                works = works.filter(w => !w.confirmed);
+            } else if (currentFilter === 'upcoming') {
+                // Mostrar solo confirmados y futuros
+                works = works.filter(w => w.confirmed && w.dates.some(d => new Date(d) >= now));
+            } else if (currentFilter === 'all') {
+                // Todos menos los no confirmados para no saturar, o podríamos mostrarlos todos
+                works = works.filter(w => w.confirmed);
             }
 
             const term = document.getElementById('searchInput').value.toLowerCase();
@@ -520,41 +522,56 @@
             } else {
                 container.innerHTML = works.map(w => {
                     const datesHtml = w.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
-                    const statusColor = w.paid ? 'var(--success)' : 'var(--danger)';
+                    const isUnconfirmed = !w.confirmed;
+                    const cardClass = isUnconfirmed ? 'card unconfirmed' : `card ${w.paid ? '' : ''}`;
+                    const statusColor = w.paid ? 'var(--success)' : (isUnconfirmed ? 'var(--gray)' : 'var(--danger)');
+                    
+                    let actions = '';
+                    if (isUnconfirmed) {
+                        actions = `<button class="action-btn btn-confirm" onclick="confirmWork(${w.id})">✓ Confirmar</button>`;
+                    } else {
+                        actions = `${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Pagado</button>` : ''}`;
+                    }
+                    
+                    actions += `
+                        <button class="action-btn btn-edit" onclick="editWork(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Editar</button>
+                        <button class="action-btn btn-delete" onclick="deleteItem('works', ${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Eliminar</button>
+                    `;
+
                     return `
-                    <div class="card" style="border-left-color:${statusColor}">
+                    <div class="${cardClass}" style="border-left-color:${statusColor}">
                         <div class="card-row">
-                            <div class="card-title">${w.location}</div>
+                            <div class="card-title">${w.location} ${isUnconfirmed ? '(Sin Confirmar)' : ''}</div>
                             <div class="card-amount">${formatMoney(w.amount)}</div>
                         </div>
                         <div class="dates-compact">${datesHtml}</div>
                         <div class="quick-actions">
-                            ${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Pagado</button>` : ''}
-                            <button class="action-btn btn-edit" onclick="editWork(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Editar</button>
-                            <button class="action-btn btn-delete" onclick="deleteItem('works', ${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Eliminar</button>
+                            ${actions}
                         </div>
                     </div>`;
                 }).join('');
             }
         }
 
-        // ACCIONES RÁPIDAS
         function quickPay(id) {
             DB.update('works', id, { paid: true });
             refreshAll();
         }
 
+        function confirmWork(id) {
+            DB.update('works', id, { confirmed: true });
+            refreshAll();
+        }
+
         function updateHome() {
             const now = new Date();
-            const works = DB.get('works');
+            // Solo trabajos confirmados para estadísticas y semana
+            const works = DB.get('works').filter(w => w.confirmed);
             let earnings = 0, pending = 0, totalDays = new Set();
-            
-            // Lógica para "Esta Semana" agrupada por lugar pero ordenada por fecha más próxima
             const weeklyJobs = [];
             const nextWeek = new Date(); nextWeek.setDate(now.getDate() + 7);
 
             works.forEach(w => {
-                // Filtrar fechas de esta semana para este trabajo
                 const weekDates = w.dates.filter(d => {
                     const dateObj = new Date(d);
                     return dateObj >= now && dateObj <= nextWeek;
@@ -565,21 +582,18 @@
                         location: w.location,
                         dates: weekDates,
                         paid: w.paid,
-                        firstDate: new Date(weekDates[0]) // Para ordenar
+                        firstDate: new Date(weekDates[0])
                     });
                 }
                 
-                // Cálculos mensuales
                 const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth() && new Date(d).getFullYear() === now.getFullYear());
                 if (datesInMonth.length > 0) {
-                    // Aquí asumimos que el monto guardado ya es el total calculado
                     earnings += parseFloat(w.amount);
                     if (!w.paid) pending += parseFloat(w.amount);
                     datesInMonth.forEach(d => totalDays.add(d));
                 }
             });
 
-            // Ordenar trabajos de la semana por el día más próximo
             weeklyJobs.sort((a, b) => a.firstDate - b.firstDate);
 
             const upcomingContainer = document.getElementById('upcomingList');
@@ -596,7 +610,7 @@
                     </div>`;
                 }).join('');
             } else {
-                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:15px; background:white; border-radius:16px; text-align:center; box-shadow:var(--shadow);">Sin actividades esta semana</div>';
+                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:15px; background:white; border-radius:16px; text-align:center; box-shadow:var(--shadow);">Sin actividades confirmadas esta semana</div>';
             }
 
             const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);
@@ -609,7 +623,8 @@
         function updateFinances() {
             const expenses = DB.get('expenses');
             const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
-            const totalInc = DB.get('works').reduce((s, w) => s + parseFloat(w.amount), 0); 
+            // Solo ingresos confirmados para el balance real
+            const totalInc = DB.get('works').filter(w => w.confirmed).reduce((s, w) => s + parseFloat(w.amount), 0); 
             
             document.getElementById('totalExpensesAll').textContent = formatMoney(totalExp);
             document.getElementById('netProfit').textContent = formatMoney(totalInc - totalExp);
@@ -621,7 +636,6 @@
                 </div>
             `).join('');
 
-            // Gráfico Histórico Mensual
             const labels = [], incomeData = [], expenseData = [];
             for (let i = 5; i >= 0; i--) {
                 const d = new Date();
@@ -630,7 +644,7 @@
                 labels.push(monthName);
                 
                 let mIncome = 0;
-                DB.get('works').forEach(w => {
+                DB.get('works').filter(w => w.confirmed).forEach(w => {
                     const daysInM = w.dates.filter(dt => new Date(dt).getMonth() === d.getMonth() && new Date(dt).getFullYear() === d.getFullYear()).length;
                     if(daysInM > 0) {
                          const dailyRate = parseFloat(w.amount) / w.dates.length;
@@ -662,6 +676,32 @@
         }
 
         // GESTIÓN DE DATOS Y CÁLCULOS
+        function generatePatternDates() {
+            const checkboxes = document.querySelectorAll('.pattern-day:checked');
+            if (checkboxes.length === 0) {
+                alert('Selecciona al menos un día de la semana.');
+                return;
+            }
+
+            const selectedDays = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            const startDate = new Date();
+            
+            for (let week = 0; week < 4; week++) {
+                for (let dayOfWeek of selectedDays) {
+                    const d = new Date(startDate);
+                    d.setDate(startDate.getDate() + (dayOfWeek - startDate.getDay() + 7) % 7 + (week * 7));
+                    const dateStr = d.toISOString().split('T')[0];
+                    
+                    if (!tempDates.includes(dateStr) && dateStr >= today) {
+                        tempDates.push(dateStr);
+                    }
+                }
+            }
+            tempDates.sort();
+            renderTempDates();
+            updateCalcTotal();
+        }
+
         function updateCalcTotal() {
             const rate = parseFloat(document.getElementById('wAmount').value) || 0;
             const days = tempDates.length;
@@ -678,11 +718,15 @@
 
         function addDateToTempList() {
             const date = document.getElementById('wNewDate').value;
+            if (date < today) {
+                alert('No se permiten fechas en el pasado.');
+                return;
+            }
             if (date && !tempDates.includes(date)) { 
                 tempDates.push(date); 
                 tempDates.sort();
                 renderTempDates(); 
-                updateCalcTotal(); // Actualizar total al agregar fecha
+                updateCalcTotal();
             } else if (tempDates.includes(date)) {
                 alert('Esta fecha ya está agregada.');
             }
@@ -695,18 +739,21 @@
         function removeTempDate(date) { 
             tempDates = tempDates.filter(d => d !== date); 
             renderTempDates(); 
-            updateCalcTotal(); // Actualizar total al quitar fecha
+            updateCalcTotal();
         }
 
         function openModal(type) {
             tempDates = [];
             document.getElementById('tempDatesList').innerHTML = '';
             document.getElementById('calcTotalDisplay').style.display = 'none';
+            document.querySelectorAll('.pattern-day').forEach(cb => cb.checked = false);
+            
             if (type === 'work') {
                 document.getElementById('wId').value = '';
                 document.getElementById('wLocation').value = '';
                 document.getElementById('wAmount').value = '';
                 document.getElementById('wPaid').checked = false;
+                document.getElementById('wConfirmed').checked = true; // Por defecto confirmado
             }
             document.getElementById(type + 'Modal').style.display = 'block';
         }
@@ -723,6 +770,7 @@
             document.getElementById('wAmount').value = dailyRate;
             
             document.getElementById('wPaid').checked = work.paid;
+            document.getElementById('wConfirmed').checked = work.confirmed;
             tempDates = [...work.dates];
             renderTempDates();
             updateCalcTotal();
@@ -734,13 +782,14 @@
             if (tempDates.length === 0) { alert('Agrega al menos una fecha'); return; }
             
             const rate = parseFloat(document.getElementById('wAmount').value) || 0;
-            const totalAmount = rate * tempDates.length; // MULTIPLICACIÓN AQUÍ
+            const totalAmount = rate * tempDates.length;
             
             const id = document.getElementById('wId').value;
             const data = { 
                 location: document.getElementById('wLocation').value, 
-                amount: totalAmount, // Guardamos el total calculado
+                amount: totalAmount,
                 paid: document.getElementById('wPaid').checked, 
+                confirmed: document.getElementById('wConfirmed').checked,
                 dates: tempDates 
             };
             
@@ -757,7 +806,7 @@
         }
 
         function deleteItem(type, id) { if (confirm('¿Eliminar?')) { DB.remove(type, id); refreshAll(); } }
-        function refreshAll() { renderCalendar(); updateHome(); updateAllWorks(); updateFinances(); checkOverdueNotifications(); }
+        function refreshAll() { renderCalendar(); updateHome(); updateAllWorks(); updateFinances(); }
         function updateAllWorks() { applyFilters(); }
 
         function exportBackup() {

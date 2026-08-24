@@ -39,7 +39,7 @@
         .content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Stats & Cards */
+        /* Stats */
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
         .stat-card { background: var(--surface); padding: 14px; border-radius: var(--radius-l); box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
         .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
@@ -56,13 +56,18 @@
         .day { 
             aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
             font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500;
-            transition: all 0.2s;
         }
+        /* Colores del Calendario */
         .day.has-work-paid { background: var(--success); color: white; }
         .day.has-work-pending { background: var(--danger); color: white; }
         .day.has-work-future { background: var(--primary); color: white; }
         .day.selected-day { border: 2px solid var(--text-main); transform: scale(0.95); }
-        .day.past-empty { color: #d1d1d6; }
+        
+        /* Detalle del día seleccionado */
+        .day-details-box { 
+            margin-top: 15px; padding: 15px; background: #F2F2F7; border-radius: 12px; 
+            display: none; font-size: 14px; border-left: 4px solid var(--primary);
+        }
 
         /* Tarjetas Compactas Agrupadas */
         .section-title { font-size: 13px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 10px; }
@@ -76,8 +81,6 @@
         
         .dates-compact { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
         .date-mini { font-size: 11px; background: #F2F2F7; padding: 2px 6px; border-radius: 4px; color: var(--text-sec); }
-        
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
         
         /* Filtros */
         .filter-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
@@ -122,7 +125,6 @@
         .close-btn { width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
         .chart-box { background: white; padding: 20px; border-radius: var(--radius-l); margin-bottom: 20px; box-shadow: var(--shadow); }
-        .day-details-modal { margin-top: 15px; padding: 15px; background: #F2F2F7; border-radius: 12px; display: none; }
     </style>
 </head>
 <body>
@@ -142,7 +144,7 @@
                     <button class="nav-btn" onclick="changeMonth(1)">▶</button>
                 </div>
                 <div class="calendar-grid" id="calGrid"></div>
-                <div id="dayDetails" class="day-details-modal"></div>
+                <div id="dayDetails" class="day-details-box"></div>
             </div>
             
             <div class="section-title">Resumen Mensual</div>
@@ -154,6 +156,14 @@
                 <div class="stat-card">
                     <div class="stat-icon" style="background:var(--danger)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
                     <div class="stat-info"><div class="stat-label">Pendiente</div><div class="stat-value" style="color:var(--danger)" id="pending">$0</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:var(--primary)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                    <div class="stat-info"><div class="stat-label">Días</div><div class="stat-value" id="days">0</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:var(--warning)"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+                    <div class="stat-info"><div class="stat-label">Gastos</div><div class="stat-value" style="color:var(--warning)" id="expensesTotal">$0</div></div>
                 </div>
             </div>
         </div>
@@ -236,7 +246,7 @@
         </div>
     </div>
 
-    <!-- MODALES (Simplificados) -->
+    <!-- MODALES -->
     <div id="workModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
@@ -285,9 +295,8 @@
         };
 
         let currentMonth = new Date();
-        let chart1, financeChart;
+        let financeChart;
         let tempDates = [];
-        let selectedDayInfo = null;
         let currentFilter = 'all';
         const today = new Date().toISOString().split('T')[0];
 
@@ -359,7 +368,6 @@
                     
                     html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
                 } else {
-                    if (dateStr < today) classes += ' past-empty';
                     html += `<div class="${classes}">${day}</div>`;
                 }
             }
@@ -443,7 +451,7 @@
         function updateHome() {
             const now = new Date();
             const works = DB.get('works');
-            let earnings = 0, pending = 0;
+            let earnings = 0, pending = 0, totalDays = new Set();
             
             works.forEach(w => {
                 const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth());
@@ -452,16 +460,22 @@
                     const monthVal = amountPerDay * datesInMonth.length;
                     earnings += monthVal;
                     if (!w.paid) pending += monthVal;
+                    datesInMonth.forEach(d => totalDays.add(d));
                 }
             });
+            
+            const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);
+            
             document.getElementById('earnings').textContent = formatMoney(earnings);
+            document.getElementById('days').textContent = totalDays.size;
             document.getElementById('pending').textContent = formatMoney(pending);
+            document.getElementById('expensesTotal').textContent = formatMoney(expenses);
         }
 
         function updateFinances() {
             const expenses = DB.get('expenses');
             const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
-            const totalInc = DB.get('works').reduce((s, w) => s + parseFloat(w.amount), 0); // Simplificado
+            const totalInc = DB.get('works').reduce((s, w) => s + parseFloat(w.amount), 0); 
             
             document.getElementById('totalExpensesAll').textContent = formatMoney(totalExp);
             document.getElementById('netProfit').textContent = formatMoney(totalInc - totalExp);
@@ -475,11 +489,12 @@
 
             if(financeChart) financeChart.destroy();
             financeChart = new Chart(document.getElementById('financeChart'), { 
-                type: 'line', 
+                type: 'bar', 
                 data: { 
                     labels: ['Ingresos', 'Gastos'], 
-                    datasets: [{ label: 'Balance', data: [totalInc, totalExp], borderColor: '#007AFF', backgroundColor: 'rgba(0,122,255,0.1)', fill: true }] 
-                } 
+                    datasets: [{ label: 'Balance', data: [totalInc, totalExp], backgroundColor: ['#007AFF', '#FF9500'], borderRadius: 6 }] 
+                },
+                options: { plugins: { legend: { display: false } } }
             });
         }
 

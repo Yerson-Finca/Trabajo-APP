@@ -81,7 +81,7 @@
         }
 
         /* Tarjetas y Acciones Rápidas */
-        .section-title { font-size: 13px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 10px; }
+        .section-title { font-size: 13px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .card { 
             background: var(--surface); padding: 14px; border-radius: var(--radius-m); 
             margin-bottom: 10px; box-shadow: var(--shadow); border-left: 4px solid var(--primary);
@@ -163,7 +163,10 @@
             </div>
 
             <!-- 1. PRIMERO EL CALENDARIO -->
-            <div class="section-title">Calendario de Actividades</div>
+            <div class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Calendario de Actividades
+            </div>
             <div class="calendar-wrapper">
                 <div class="calendar-nav">
                     <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
@@ -176,7 +179,10 @@
             </div>
 
             <!-- 2. LUEGO ESTA SEMANA (Ordenado por proximidad) -->
-            <div class="section-title">📅 Próximos Esta Semana</div>
+            <div class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Próximos Esta Semana
+            </div>
             <div id="upcomingList" style="margin-bottom: 25px;"></div>
             
             <!-- 3. AL FINAL EL RESUMEN -->
@@ -203,7 +209,10 @@
 
         <!-- TRABAJOS -->
         <div id="works" class="content">
-            <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Buscar lugar..." onkeyup="applyFilters()">
+            <div class="search-bar" style="display:flex; align-items:center; gap:10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-sec)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="searchInput" style="border:none; background:transparent; width:100%; outline:none;" placeholder="Buscar lugar..." onkeyup="applyFilters()">
+            </div>
             <div class="filter-container">
                 <button class="filter-btn active" onclick="setFilter('upcoming', this)">Próximos</button>
                 <button class="filter-btn" onclick="setFilter('all', this)">Todos</button>
@@ -520,9 +529,9 @@
                         </div>
                         <div class="dates-compact">${datesHtml}</div>
                         <div class="quick-actions">
-                            ${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})">✓ Marcar Pagado</button>` : ''}
-                            <button class="action-btn btn-edit" onclick="editWork(${w.id})">✏️ Editar</button>
-                            <button class="action-btn btn-delete" onclick="deleteItem('works', ${w.id})">🗑️ Eliminar</button>
+                            ${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Pagado</button>` : ''}
+                            <button class="action-btn btn-edit" onclick="editWork(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Editar</button>
+                            <button class="action-btn btn-delete" onclick="deleteItem('works', ${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Eliminar</button>
                         </div>
                     </div>`;
                 }).join('');
@@ -624,9 +633,6 @@
                 DB.get('works').forEach(w => {
                     const daysInM = w.dates.filter(dt => new Date(dt).getMonth() === d.getMonth() && new Date(dt).getFullYear() === d.getFullYear()).length;
                     if(daysInM > 0) {
-                         // Como ahora el monto es total, necesitamos calcular el proporcional si queremos ser exactos, 
-                         // pero para simplificar la gráfica mensual sumaremos el total si tiene días en ese mes.
-                         // Una forma más precisa es: (MontoTotal / TotalDias) * DiasEnMes
                          const dailyRate = parseFloat(w.amount) / w.dates.length;
                          mIncome += dailyRate * daysInM;
                     }
@@ -713,9 +719,6 @@
             document.getElementById('wId').value = work.id;
             document.getElementById('wLocation').value = work.location;
             
-            // Al editar, mostramos la tarifa diaria aproximada o el total? 
-            // Para mantener consistencia, mostramos el total guardado pero el usuario debe saber que es tarifa x días.
-            // Lo ideal es recalcular la tarifa diaria: Total / Días.
             const dailyRate = parseFloat(work.amount) / work.dates.length;
             document.getElementById('wAmount').value = dailyRate;
             

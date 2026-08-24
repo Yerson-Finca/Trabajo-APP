@@ -159,9 +159,7 @@
                 <span id="overdueMessage">Tienes trabajos pendientes por cobrar.</span>
             </div>
 
-            <div class="section-title">📅 Esta Semana (Por Lugar)</div>
-            <div id="upcomingList" style="margin-bottom: 25px;"></div>
-
+            <!-- 1. PRIMERO EL CALENDARIO -->
             <div class="section-title">Calendario de Actividades</div>
             <div class="calendar-wrapper">
                 <div class="calendar-nav">
@@ -173,7 +171,12 @@
                 <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Confirmar Días Seleccionados</button>
                 <div id="dayDetails" class="day-details-box"></div>
             </div>
+
+            <!-- 2. LUEGO ESTA SEMANA (Ordenado por proximidad) -->
+            <div class="section-title">📅 Próximos Esta Semana</div>
+            <div id="upcomingList" style="margin-bottom: 25px;"></div>
             
+            <!-- 3. AL FINAL EL RESUMEN -->
             <div class="section-title">Resumen del Mes Actual</div>
             <div class="stats-grid">
                 <div class="stat-card">
@@ -480,6 +483,7 @@
             let works = DB.get('works');
             const now = new Date();
             
+            // Ordenar por fecha más próxima primero
             works.sort((a,b) => new Date(a.dates[0]) - new Date(b.dates[0]));
 
             if (currentFilter === 'pending') works = works.filter(w => !w.paid);
@@ -529,18 +533,28 @@
             const now = new Date();
             const works = DB.get('works');
             let earnings = 0, pending = 0, totalDays = new Set();
-            const weeklyMap = {};
+            
+            // Lógica para "Esta Semana" agrupada por lugar pero ordenada por fecha más próxima
+            const weeklyJobs = [];
             const nextWeek = new Date(); nextWeek.setDate(now.getDate() + 7);
 
             works.forEach(w => {
-                w.dates.forEach(d => {
+                // Filtrar fechas de esta semana para este trabajo
+                const weekDates = w.dates.filter(d => {
                     const dateObj = new Date(d);
-                    if (dateObj >= now && dateObj <= nextWeek) {
-                        if (!weeklyMap[w.location]) weeklyMap[w.location] = { dates: [], paid: w.paid };
-                        weeklyMap[w.location].dates.push(d);
-                    }
+                    return dateObj >= now && dateObj <= nextWeek;
                 });
+
+                if (weekDates.length > 0) {
+                    weeklyJobs.push({
+                        location: w.location,
+                        dates: weekDates,
+                        paid: w.paid,
+                        firstDate: new Date(weekDates[0]) // Para ordenar
+                    });
+                }
                 
+                // Cálculos mensuales
                 const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth() && new Date(d).getFullYear() === now.getFullYear());
                 if (datesInMonth.length > 0) {
                     const amountPerDay = parseFloat(w.amount) / w.dates.length;
@@ -551,13 +565,21 @@
                 }
             });
 
+            // Ordenar trabajos de la semana por el día más próximo
+            weeklyJobs.sort((a, b) => a.firstDate - b.firstDate);
+
             const upcomingContainer = document.getElementById('upcomingList');
-            const locations = Object.keys(weeklyMap).sort();
-            if (locations.length > 0) {
-                upcomingContainer.innerHTML = locations.map(loc => {
-                    const info = weeklyMap[loc];
-                    const datesHtml = info.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
-                    return `<div class="card" style="border-left-color:${info.paid ? 'var(--success)' : 'var(--primary)'}; padding:12px;"><div class="card-row"><div class="card-title">${loc}</div></div><div class="dates-compact">${datesHtml}</div></div>`;
+            if (weeklyJobs.length > 0) {
+                upcomingContainer.innerHTML = weeklyJobs.map(job => {
+                    const datesHtml = job.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
+                    const borderColor = job.paid ? 'var(--success)' : 'var(--primary)';
+                    return `
+                    <div class="card" style="border-left-color:${borderColor}; padding:12px;">
+                        <div class="card-row">
+                            <div class="card-title">${job.location}</div>
+                        </div>
+                        <div class="dates-compact">${datesHtml}</div>
+                    </div>`;
                 }).join('');
             } else {
                 upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:15px; background:white; border-radius:16px; text-align:center; box-shadow:var(--shadow);">Sin actividades esta semana</div>';

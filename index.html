@@ -99,8 +99,8 @@
             display: flex; align-items: center; justify-content: center; gap: 4px;
         }
         .btn-pay { background: #E8FAF0; color: var(--success); }
-        .btn-whatsapp { background: #DCF8C6; color: #075E54; }
         .btn-edit { background: #F2F2F7; color: var(--text-main); }
+        .btn-delete { background: #FFEAEA; color: var(--danger); }
         
         /* Filtros */
         .filter-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
@@ -521,8 +521,8 @@
                         <div class="dates-compact">${datesHtml}</div>
                         <div class="quick-actions">
                             ${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})">✓ Marcar Pagado</button>` : ''}
-                            <button class="action-btn btn-whatsapp" onclick="sendWhatsapp('${w.location}', '${formatMoney(w.amount)}', '${w.dates.map(d => formatDate(d)).join(', ')}')">📤 Cuenta</button>
                             <button class="action-btn btn-edit" onclick="editWork(${w.id})">✏️ Editar</button>
+                            <button class="action-btn btn-delete" onclick="deleteItem('works', ${w.id})">🗑️ Eliminar</button>
                         </div>
                     </div>`;
                 }).join('');
@@ -533,11 +533,6 @@
         function quickPay(id) {
             DB.update('works', id, { paid: true });
             refreshAll();
-        }
-
-        function sendWhatsapp(location, amount, dates) {
-            const text = `Hola, te envío la cuenta de los trabajos en *${location}*.\n\n📅 Días: ${dates}\n💰 Total: ${amount}\n\nQuedo atento a tu confirmación. ¡Gracias!`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function updateHome() {

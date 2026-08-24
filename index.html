@@ -142,6 +142,9 @@
         .close-btn { width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
         .chart-box { background: white; padding: 20px; border-radius: var(--radius-l); margin-bottom: 20px; box-shadow: var(--shadow); }
+        
+        /* Estilo para el total calculado */
+        .calc-total { font-size: 14px; color: var(--primary); font-weight: 700; margin-top: 8px; text-align: right; }
     </style>
 </head>
 <body>
@@ -284,17 +287,25 @@
             <form onsubmit="saveWork(event)">
                 <input type="hidden" id="wId">
                 <input type="text" id="wLocation" class="input-field" placeholder="Lugar / Finca" required>
-                <input type="number" id="wAmount" class="input-field" placeholder="Monto Total ($)" step="100" required>
+                
+                <!-- CAMBIO: Tarifa Diaria -->
+                <input type="number" id="wAmount" class="input-field" placeholder="Tarifa Diaria ($)" step="100" required oninput="updateCalcTotal()">
+                
                 <div style="display:flex; gap:8px; margin-bottom:12px;">
                     <input type="date" id="wNewDate" class="input-field" style="flex:1; margin:0;">
                     <button type="button" class="btn btn-primary" onclick="addDateToTempList()" style="width:auto;">+</button>
                 </div>
-                <div id="tempDatesList" class="dates-compact" style="margin-bottom:16px;"></div>
+                <div id="tempDatesList" class="dates-compact" style="margin-bottom:4px;"></div>
+                
+                <!-- CAMBIO: Mostrar Total Calculado -->
+                <div id="calcTotalDisplay" class="calc-total"></div>
+                <br>
+
                 <div style="background:#F2F2F7; padding:14px; border-radius:12px; display:flex; align-items:center; gap:12px; margin-bottom:20px;">
                     <input type="checkbox" id="wPaid" style="width:20px; height:20px;">
                     <label>¿Pagado?</label>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;">Guardar</button>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;">Guardar Trabajo</button>
             </form>
         </div>
     </div>
@@ -557,10 +568,9 @@
                 // Cálculos mensuales
                 const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth() && new Date(d).getFullYear() === now.getFullYear());
                 if (datesInMonth.length > 0) {
-                    const amountPerDay = parseFloat(w.amount) / w.dates.length;
-                    const monthVal = amountPerDay * datesInMonth.length;
-                    earnings += monthVal;
-                    if (!w.paid) pending += monthVal;
+                    // Aquí asumimos que el monto guardado ya es el total calculado
+                    earnings += parseFloat(w.amount);
+                    if (!w.paid) pending += parseFloat(w.amount);
                     datesInMonth.forEach(d => totalDays.add(d));
                 }
             });
@@ -618,7 +628,13 @@
                 let mIncome = 0;
                 DB.get('works').forEach(w => {
                     const daysInM = w.dates.filter(dt => new Date(dt).getMonth() === d.getMonth() && new Date(dt).getFullYear() === d.getFullYear()).length;
-                    if(daysInM > 0) mIncome += (parseFloat(w.amount) / w.dates.length) * daysInM;
+                    if(daysInM > 0) {
+                         // Como ahora el monto es total, necesitamos calcular el proporcional si queremos ser exactos, 
+                         // pero para simplificar la gráfica mensual sumaremos el total si tiene días en ese mes.
+                         // Una forma más precisa es: (MontoTotal / TotalDias) * DiasEnMes
+                         const dailyRate = parseFloat(w.amount) / w.dates.length;
+                         mIncome += dailyRate * daysInM;
+                    }
                 });
                 incomeData.push(mIncome);
                 
@@ -644,13 +660,28 @@
             });
         }
 
-        // GESTIÓN DE DATOS
+        // GESTIÓN DE DATOS Y CÁLCULOS
+        function updateCalcTotal() {
+            const rate = parseFloat(document.getElementById('wAmount').value) || 0;
+            const days = tempDates.length;
+            const total = rate * days;
+            
+            const display = document.getElementById('calcTotalDisplay');
+            if (days > 0 && rate > 0) {
+                display.textContent = `Total calculado: ${formatMoney(total)} (${days} días)`;
+                display.style.display = 'block';
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
         function addDateToTempList() {
             const date = document.getElementById('wNewDate').value;
             if (date && !tempDates.includes(date)) { 
                 tempDates.push(date); 
                 tempDates.sort();
                 renderTempDates(); 
+                updateCalcTotal(); // Actualizar total al agregar fecha
             } else if (tempDates.includes(date)) {
                 alert('Esta fecha ya está agregada.');
             }
@@ -660,11 +691,16 @@
             document.getElementById('tempDatesList').innerHTML = tempDates.map(d => `<span class="date-mini" style="cursor:pointer; background:#FFEAEA; color:red;" onclick="removeTempDate('${d}')">${formatDate(d)} ×</span>`).join('');
         }
 
-        function removeTempDate(date) { tempDates = tempDates.filter(d => d !== date); renderTempDates(); }
+        function removeTempDate(date) { 
+            tempDates = tempDates.filter(d => d !== date); 
+            renderTempDates(); 
+            updateCalcTotal(); // Actualizar total al quitar fecha
+        }
 
         function openModal(type) {
             tempDates = [];
             document.getElementById('tempDatesList').innerHTML = '';
+            document.getElementById('calcTotalDisplay').style.display = 'none';
             if (type === 'work') {
                 document.getElementById('wId').value = '';
                 document.getElementById('wLocation').value = '';
@@ -681,18 +717,35 @@
             if (!work) return;
             document.getElementById('wId').value = work.id;
             document.getElementById('wLocation').value = work.location;
-            document.getElementById('wAmount').value = work.amount;
+            
+            // Al editar, mostramos la tarifa diaria aproximada o el total? 
+            // Para mantener consistencia, mostramos el total guardado pero el usuario debe saber que es tarifa x días.
+            // Lo ideal es recalcular la tarifa diaria: Total / Días.
+            const dailyRate = parseFloat(work.amount) / work.dates.length;
+            document.getElementById('wAmount').value = dailyRate;
+            
             document.getElementById('wPaid').checked = work.paid;
             tempDates = [...work.dates];
             renderTempDates();
+            updateCalcTotal();
             document.getElementById('workModal').style.display = 'block';
         }
 
         function saveWork(e) {
             e.preventDefault();
             if (tempDates.length === 0) { alert('Agrega al menos una fecha'); return; }
+            
+            const rate = parseFloat(document.getElementById('wAmount').value) || 0;
+            const totalAmount = rate * tempDates.length; // MULTIPLICACIÓN AQUÍ
+            
             const id = document.getElementById('wId').value;
-            const data = { location: document.getElementById('wLocation').value, amount: document.getElementById('wAmount').value, paid: document.getElementById('wPaid').checked, dates: tempDates };
+            const data = { 
+                location: document.getElementById('wLocation').value, 
+                amount: totalAmount, // Guardamos el total calculado
+                paid: document.getElementById('wPaid').checked, 
+                dates: tempDates 
+            };
+            
             id ? DB.update('works', id, data) : DB.add('works', data);
             closeModal('workModal');
             refreshAll();

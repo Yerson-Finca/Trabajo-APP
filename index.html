@@ -48,7 +48,7 @@
         .stat-label { font-size: 11px; color: var(--text-sec); font-weight: 600; text-transform: uppercase; }
         .stat-value { font-size: 18px; font-weight: 700; }
         
-        /* Calendario Cuadrado Redondeado con Selección */
+        /* Calendario */
         .calendar-wrapper { background: var(--surface); border-radius: var(--radius-l); padding: 16px; box-shadow: var(--shadow); margin-bottom: 25px; }
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
@@ -56,24 +56,18 @@
         .day { 
             aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
             font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500;
-            transition: all 0.2s;
         }
-        /* Colores de Estado */
         .day.has-work-paid { background: var(--success); color: white; }
         .day.has-work-pending { background: var(--danger); color: white; }
         .day.has-work-future { background: var(--primary); color: white; }
-        
-        /* Selección Múltiple (Borde Azul) */
         .day.selected-day { border: 2px solid var(--text-main); background: rgba(255,255,255,0.3) !important; color: var(--text-main) !important; font-weight: 700; }
+        .day.past-overdue { background: #555; color: #ccc; text-decoration: line-through; } /* Días pasados pendientes */
         
-        /* Botón Confirmar Días */
         .btn-confirm-dates { 
             width: 100%; padding: 12px; background: var(--success); color: white; 
             border: none; border-radius: 12px; font-weight: 600; margin-top: 15px; 
             display: none; cursor: pointer; font-size: 14px;
         }
-
-        /* Detalle del día seleccionado */
         .day-details-box { 
             margin-top: 15px; padding: 15px; background: #F2F2F7; border-radius: 12px; 
             display: none; font-size: 14px; border-left: 4px solid var(--primary);
@@ -146,8 +140,7 @@
 
         <!-- INICIO -->
         <div id="home" class="content active">
-            <!-- SECCIÓN RECUPERADA: PRÓXIMOS TRABAJOS -->
-            <div class="section-title">📅 Esta Semana</div>
+            <div class="section-title">📅 Esta Semana (Por Lugar)</div>
             <div id="upcomingList" style="margin-bottom: 25px;"></div>
 
             <div class="section-title">Calendario de Actividades</div>
@@ -187,11 +180,11 @@
         <div id="works" class="content">
             <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Buscar lugar..." onkeyup="applyFilters()">
             <div class="filter-container">
-                <button class="filter-btn active" onclick="setFilter('all', this)">Todos</button>
+                <button class="filter-btn active" onclick="setFilter('upcoming', this)">Próximos</button>
+                <button class="filter-btn" onclick="setFilter('all', this)">Todos</button>
                 <button class="filter-btn" onclick="setFilter('pending', this)">Por Cobrar</button>
-                <button class="filter-btn" onclick="setFilter('week', this)">Esta Semana</button>
             </div>
-            <div class="section-title">Trabajos Agrupados</div>
+            <div class="section-title">Lista de Trabajos</div>
             <div id="allWorksList"></div>
         </div>
 
@@ -310,8 +303,8 @@
         let currentMonth = new Date();
         let financeChart;
         let tempDates = [];
-        let selectedRangeDates = []; // Para selección múltiple
-        let currentFilter = 'all';
+        let selectedRangeDates = [];
+        let currentFilter = 'upcoming'; // Por defecto próximos
         const today = new Date().toISOString().split('T')[0];
 
         const formatMoney = (amount) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
@@ -343,7 +336,7 @@
             menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // CALENDARIO CON SELECCIÓN MÚLTIPLE Y COLORES
+        // CALENDARIO
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -372,23 +365,27 @@
                 let classes = 'day';
                 
                 if (works) {
+                    // Si ya hay trabajo, no se puede seleccionar (bloqueado visualmente)
                     const hasPending = works.some(w => !w.paid);
-                    const isFuture = new Date(dateStr) > new Date(today);
+                    const isFuture = new Date(dateStr) >= new Date(today);
                     
-                    if (isFuture) classes += ' has-work-future';
-                    else if (hasPending) classes += ' has-work-pending';
-                    else classes += ' has-work-paid';
+                    if (!isFuture && hasPending) classes += ' past-overdue'; // Rojo/Gris si pasó y no pagó
+                    else if (isFuture) classes += ' has-work-future'; // Azul
+                    else if (hasPending) classes += ' has-work-pending'; // Rojo
+                    else classes += ' has-work-paid'; // Verde
+                    
+                    // No permitimos selección si ya tiene trabajo
+                    html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
+                } else {
+                    // Solo permite selección si está vacío
+                    if (isSelected) classes += ' selected-day';
+                    html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
                 }
-                
-                if (isSelected) classes += ' selected-day';
-                
-                html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
             }
             document.getElementById('calGrid').innerHTML = html;
         }
 
         function toggleDateSelection(date) {
-            // Permitir selección incluso si hay trabajo
             if (selectedRangeDates.includes(date)) {
                 selectedRangeDates = selectedRangeDates.filter(d => d !== date);
             } else {
@@ -396,8 +393,6 @@
             }
             renderCalendar();
             document.getElementById('confirmRangeBtn').style.display = selectedRangeDates.length > 0 ? 'block' : 'none';
-            
-            // Ocultar detalles al seleccionar
             document.getElementById('dayDetails').style.display = 'none';
         }
 
@@ -412,9 +407,6 @@
         }
 
         function showDayDetails(dateStr) {
-            // Solo mostrar detalles si NO estamos en modo selección
-            if (selectedRangeDates.length > 0) return;
-
             const detailsDiv = document.getElementById('dayDetails');
             const works = DB.get('works').filter(w => w.dates.includes(dateStr));
             
@@ -426,8 +418,6 @@
                 });
                 detailsDiv.innerHTML = html;
                 detailsDiv.style.display = 'block';
-            } else {
-                detailsDiv.style.display = 'none';
             }
         }
 
@@ -438,7 +428,7 @@
             renderCalendar();
         }
 
-        // FILTROS Y LISTAS
+        // FILTROS Y LISTAS AGRUPADAS
         function setFilter(filterType, btnElement) {
             currentFilter = filterType;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -447,21 +437,25 @@
         }
 
         function applyFilters() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
             let works = DB.get('works');
             const now = new Date();
             const nextWeek = new Date(); nextWeek.setDate(now.getDate() + 7);
 
+            // Ordenamiento por defecto: Próximos primero
+            works.sort((a,b) => {
+                const dateA = new Date(a.dates[0]);
+                const dateB = new Date(b.dates[0]);
+                return dateA - dateB;
+            });
+
             if (currentFilter === 'pending') works = works.filter(w => !w.paid);
-            else if (currentFilter === 'week') {
-                works = works.filter(w => w.dates.some(d => {
-                    const dateObj = new Date(d);
-                    return dateObj >= now && dateObj <= nextWeek;
-                }));
+            else if (currentFilter === 'upcoming') {
+                // Mostrar solo los que tienen fechas desde hoy en adelante
+                works = works.filter(w => w.dates.some(d => new Date(d) >= now));
             }
 
+            const term = document.getElementById('searchInput').value.toLowerCase();
             if (term) works = works.filter(w => w.location.toLowerCase().includes(term));
-            works.sort((a,b) => new Date(b.dates[b.dates.length-1]) - new Date(a.dates[a.dates.length-1]));
 
             const container = document.getElementById('allWorksList');
             if (works.length === 0) {
@@ -493,14 +487,21 @@
             const now = new Date();
             const works = DB.get('works');
             let earnings = 0, pending = 0, totalDays = new Set();
-            const upcoming = [];
+            
+            // Agrupar trabajos de esta semana por LUGAR
+            const weeklyMap = {};
             const nextWeek = new Date(); nextWeek.setDate(now.getDate() + 7);
 
             works.forEach(w => {
                 w.dates.forEach(d => {
                     const dateObj = new Date(d);
-                    if (dateObj >= now && dateObj <= nextWeek) upcoming.push({ date: d, location: w.location, paid: w.paid });
+                    if (dateObj >= now && dateObj <= nextWeek) {
+                        if (!weeklyMap[w.location]) weeklyMap[w.location] = { dates: [], paid: w.paid };
+                        weeklyMap[w.location].dates.push(d);
+                    }
                 });
+                
+                // Cálculos mensuales
                 const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth());
                 if (datesInMonth.length > 0) {
                     const amountPerDay = parseFloat(w.amount) / w.dates.length;
@@ -511,15 +512,26 @@
                 }
             });
 
-            upcoming.sort((a,b) => new Date(a.date) - new Date(b.date));
-            document.getElementById('upcomingList').innerHTML = upcoming.length ? upcoming.map(u => `
-                <div class="card" style="padding:12px 16px; border-left: 4px solid ${u.paid ? 'var(--success)' : 'var(--primary)'}">
-                    <div class="card-row">
-                        <div class="card-title">${u.location}</div>
-                        <div style="font-size:12px; color:var(--text-sec); font-weight:600;">${formatDate(u.date)}</div>
-                    </div>
-                </div>
-            `).join('') : '<div style="color:var(--text-sec); font-size:14px; padding:15px; background:white; border-radius:16px; text-align:center; box-shadow:var(--shadow);">Sin actividades esta semana</div>';
+            // Renderizar lista agrupada
+            const upcomingContainer = document.getElementById('upcomingList');
+            const locations = Object.keys(weeklyMap).sort();
+            
+            if (locations.length > 0) {
+                upcomingContainer.innerHTML = locations.map(loc => {
+                    const info = weeklyMap[loc];
+                    const datesHtml = info.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
+                    const borderColor = info.paid ? 'var(--success)' : 'var(--primary)';
+                    return `
+                    <div class="card" style="border-left-color:${borderColor}; padding:12px;">
+                        <div class="card-row">
+                            <div class="card-title">${loc}</div>
+                        </div>
+                        <div class="dates-compact">${datesHtml}</div>
+                    </div>`;
+                }).join('');
+            } else {
+                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:15px; background:white; border-radius:16px; text-align:center; box-shadow:var(--shadow);">Sin actividades esta semana</div>';
+            }
 
             const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);
             document.getElementById('earnings').textContent = formatMoney(earnings);

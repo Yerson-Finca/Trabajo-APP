@@ -12,145 +12,184 @@
     <style>
         :root {
             --primary: #007AFF;
+            --primary-dark: #0056b3;
             --success: #34C759;
             --danger: #FF3B30;
             --warning: #FF9500;
             --gray: #8E8E93;
             --bg: #F2F2F7;
             --surface: #FFFFFF;
-            --text-main: #000000;
+            --text-main: #1C1C1E;
             --text-sec: #8E8E93;
-            --radius-l: 20px;
-            --radius-m: 12px;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --radius-l: 22px;
+            --radius-m: 14px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text-main); padding-bottom: 100px; line-height: 1.5; }
-        .container { max-width: 600px; margin: 0 auto; min-height: 100vh; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
+        body { background: var(--bg); color: var(--text-main); padding-bottom: 110px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 600px; margin: 0 auto; min-height: 100vh; position: relative; }
+        
+        /* Header Pulido */
         header { 
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px);
-            padding: 16px 20px; position: sticky; top: 0; z-index: 90; border-bottom: 0.5px solid rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 18px 24px; position: sticky; top: 0; z-index: 90; 
+            border-bottom: 0.5px solid rgba(0,0,0,0.05);
             display: flex; justify-content: space-between; align-items: center; 
         }
-        h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
-        .date-badge { font-size: 12px; color: var(--text-sec); font-weight: 600; background: #E5E5EA; padding: 4px 10px; border-radius: 12px; }
+        h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-main); }
+        .date-badge { font-size: 12px; color: var(--text-sec); font-weight: 600; background: rgba(0,0,0,0.05); padding: 6px 12px; border-radius: 20px; }
         
-        .content { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        .content { display: none; padding: 24px; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Stats */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
-        .stat-card { background: var(--surface); padding: 14px; border-radius: var(--radius-l); box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
-        .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .stat-icon svg { width: 20px; height: 20px; stroke: white; stroke-width: 2.5; fill: none; }
+        /* Stats Cards Mejoradas */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 30px; }
+        .stat-card { 
+            background: var(--surface); padding: 18px; border-radius: var(--radius-l); 
+            box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 16px;
+            transition: transform 0.2s ease;
+        }
+        .stat-card:active { transform: scale(0.98); }
+        .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .stat-icon svg { width: 22px; height: 22px; stroke: white; stroke-width: 2.5; fill: none; }
         .stat-info { display: flex; flex-direction: column; }
-        .stat-label { font-size: 11px; color: var(--text-sec); font-weight: 600; text-transform: uppercase; }
-        .stat-value { font-size: 18px; font-weight: 700; }
+        .stat-label { font-size: 12px; color: var(--text-sec); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .stat-value { font-size: 20px; font-weight: 700; color: var(--text-main); font-feature-settings: "tnum"; }
         
-        /* Calendario */
-        .calendar-wrapper { background: var(--surface); border-radius: var(--radius-l); padding: 16px; box-shadow: var(--shadow); margin-bottom: 25px; }
-        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
-        .day-name { font-size: 11px; color: var(--text-sec); font-weight: 600; margin-bottom: 8px; }
+        /* Calendario Premium */
+        .calendar-wrapper { background: var(--surface); border-radius: var(--radius-l); padding: 20px; box-shadow: var(--shadow-sm); margin-bottom: 30px; }
+        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-nav h2 { font-size: 17px; font-weight: 600; }
+        .nav-btn { background: rgba(0,0,0,0.05); border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; color: var(--primary); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .nav-btn:hover { background: rgba(0,0,0,0.1); }
+        
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .day-name { font-size: 11px; color: var(--text-sec); font-weight: 600; margin-bottom: 12px; text-transform: uppercase; }
         .day { 
             aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
-            font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500;
+            font-size: 15px; border-radius: 10px; cursor: pointer; position: relative; font-weight: 500;
+            transition: all 0.2s;
         }
-        .day.has-work-paid { background: var(--success); color: white; }
-        .day.has-work-pending { background: var(--danger); color: white; }
-        .day.has-work-future { background: var(--primary); color: white; }
-        .day.selected-day { border: 2px solid var(--text-main); background: rgba(255,255,255,0.3) !important; color: var(--text-main) !important; font-weight: 700; }
-        .day.disabled { color: #d1d1d6; background: #f9f9f9; cursor: not-allowed; }
+        .day.has-work-paid { background: var(--success); color: white; font-weight: 600; box-shadow: 0 4px 10px rgba(52, 199, 89, 0.3); }
+        .day.has-work-pending { background: var(--danger); color: white; font-weight: 600; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3); }
+        .day.has-work-future { background: var(--primary); color: white; font-weight: 600; box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3); }
+        .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
+        .day.disabled { color: #d1d1d6; background: transparent; cursor: not-allowed; }
         
         .btn-confirm-dates { 
-            width: 100%; padding: 12px; background: var(--success); color: white; 
-            border: none; border-radius: 12px; font-weight: 600; margin-top: 15px; 
-            display: none; cursor: pointer; font-size: 14px;
+            width: 100%; padding: 14px; background: var(--success); color: white; 
+            border: none; border-radius: 14px; font-weight: 600; margin-top: 20px; 
+            display: none; cursor: pointer; font-size: 15px; box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
         }
-        .day-details-box { 
-            margin-top: 15px; padding: 15px; background: #F2F2F7; border-radius: 12px; 
-            display: none; font-size: 14px; border-left: 4px solid var(--primary);
-        }
-
-        /* Tarjetas y Acciones Rápidas */
-        .section-title { font-size: 13px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Tarjetas y Acciones */
+        .section-title { font-size: 14px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
+        
         .card { 
-            background: var(--surface); padding: 14px; border-radius: var(--radius-m); 
-            margin-bottom: 10px; box-shadow: var(--shadow); border-left: 4px solid var(--primary);
+            background: var(--surface); padding: 18px; border-radius: var(--radius-m); 
+            margin-bottom: 14px; box-shadow: var(--shadow-sm); border-left: 5px solid var(--primary);
+            transition: transform 0.2s;
         }
-        /* Estilo para no confirmados */
-        .card.unconfirmed { border-left-color: var(--gray); opacity: 0.8; background: #fafafa; }
+        .card.unconfirmed { border-left-color: var(--gray); background: #fafafa; opacity: 0.7; }
+        .card:active { transform: scale(0.99); }
         
-        .card-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .card-title { font-weight: 600; font-size: 15px; }
-        .card-amount { font-weight: 700; font-size: 15px; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .card-title { font-weight: 600; font-size: 16px; color: var(--text-main); }
+        .card-amount { font-weight: 700; font-size: 16px; color: var(--text-main); font-feature-settings: "tnum"; }
         
-        .dates-compact { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-        .date-mini { font-size: 11px; background: #F2F2F7; padding: 2px 6px; border-radius: 4px; color: var(--text-sec); }
+        .dates-compact { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+        .date-mini { font-size: 12px; background: #F2F2F7; padding: 4px 8px; border-radius: 6px; color: var(--text-sec); font-weight: 500; }
         
-        .quick-actions { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #F2F2F7; }
+        .quick-actions { display: flex; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #F2F2F7; }
         .action-btn { 
-            flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 4px;
+            flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;
         }
         .btn-pay { background: #E8FAF0; color: var(--success); }
         .btn-confirm { background: #FFF9E6; color: #D97706; border: 1px solid #FCD34D; }
         .btn-edit { background: #F2F2F7; color: var(--text-main); }
         .btn-delete { background: #FFEAEA; color: var(--danger); }
         
-        /* Filtros */
-        .filter-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
+        /* Filtros Modernos */
+        .filter-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 20px; -ms-overflow-style: none; scrollbar-width: none; }
+        .filter-container::-webkit-scrollbar { display: none; }
         .filter-btn { 
-            padding: 6px 14px; border-radius: 16px; border: 1px solid #E5E5EA; 
-            background: white; color: var(--text-sec); font-size: 12px; font-weight: 600; cursor: pointer; 
+            padding: 8px 16px; border-radius: 20px; border: 1px solid #E5E5EA; 
+            background: white; color: var(--text-sec); font-size: 13px; font-weight: 600; cursor: pointer; 
+            white-space: nowrap; transition: all 0.2s;
         }
-        .filter-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
+        .filter-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-        /* Inputs */
-        .input-field { width: 100%; padding: 14px; border: 1px solid #E5E5EA; border-radius: 12px; font-size: 16px; background: white; margin-bottom: 12px; }
-        .search-bar { width: 100%; padding: 10px 16px; border: none; border-radius: 12px; font-size: 15px; background: #E5E5EA; margin-bottom: 15px; }
+        /* Inputs Elegantes */
+        .input-field { 
+            width: 100%; padding: 16px; border: 1px solid #E5E5EA; border-radius: 14px; 
+            font-size: 16px; background: white; margin-bottom: 16px; transition: all 0.2s;
+        }
+        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
         
-        /* Menú Invertido */
+        .search-container { position: relative; margin-bottom: 20px; }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sec); }
+        .search-bar { 
+            width: 100%; padding: 14px 16px 14px 48px; border: none; border-radius: 14px; 
+            font-size: 16px; background: #E5E5EA; transition: all 0.2s;
+        }
+        .search-bar:focus { background: white; box-shadow: 0 0 0 2px var(--primary); outline: none; }
+        
+        /* Menú Flotante Glassmorphism */
         .bottom-nav { 
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 380px; height: 65px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-            border-radius: 35px; display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1); z-index: 1000; border: 0.5px solid rgba(0,0,0,0.05);
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 400px; height: 70px;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-radius: 40px; display: flex; justify-content: space-around; align-items: center;
+            box-shadow: var(--shadow-md); z-index: 1000; border: 1px solid rgba(255,255,255,0.6);
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); font-size: 10px; font-weight: 500; cursor: pointer; width: 50px; }
-        .nav-item.active { color: var(--primary); }
-        .nav-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; margin-bottom: 4px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); font-size: 10px; font-weight: 600; cursor: pointer; width: 50px; transition: all 0.3s; }
+        .nav-item.active { color: var(--primary); transform: translateY(-4px); }
+        .nav-icon svg { width: 26px; height: 26px; stroke: currentColor; stroke-width: 2; fill: none; margin-bottom: 4px; transition: all 0.3s; }
         
-        .fab-container { position: relative; top: -25px; }
+        .fab-container { position: relative; top: -28px; }
         .fab-btn { 
-            width: 60px; height: 60px; background: var(--primary); border-radius: 50%; 
+            width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; color: white; 
-            box-shadow: 0 8px 20px rgba(0,122,255,0.4); cursor: pointer; border: 4px solid var(--bg);
+            box-shadow: 0 12px 24px rgba(0,122,255,0.4); cursor: pointer; border: 5px solid var(--bg);
+            transition: transform 0.2s;
         }
-        .fab-menu { position: absolute; bottom: 75px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 10px; width: 200px; z-index: 999; }
-        .fab-option { background: white; padding: 14px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; }
-
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--surface); margin: 15% auto; padding: 28px; border-radius: 24px; width: 90%; max-width: 450px; }
-        .modal-header { display: flex; justify-content: space-between; margin-bottom: 24px; }
-        .close-btn { width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        
-        .chart-box { background: white; padding: 20px; border-radius: var(--radius-l); margin-bottom: 20px; box-shadow: var(--shadow); }
-        
-        /* Estilo para el total calculado */
-        .calc-total { font-size: 14px; color: var(--primary); font-weight: 700; margin-top: 8px; text-align: right; }
-
-        /* Estilos para el Selector de Patrones */
-        .pattern-selector { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .day-check { 
-            display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; 
+        .fab-btn:active { transform: scale(0.9); }
+        .fab-menu { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 12px; width: 220px; z-index: 999; }
+        .fab-option { 
+            background: white; padding: 16px; border-radius: 18px; box-shadow: var(--shadow-md); 
+            font-weight: 600; font-size: 15px; cursor: pointer; text-align: center; color: var(--text-main);
+            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .day-check input { width: 18px; height: 18px; accent-color: var(--primary); }
-        .day-check span { font-size: 11px; font-weight: 600; color: var(--text-sec); }
+
+        /* Modal Premium */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; backdrop-filter: blur(8px); }
+        .modal-content { 
+            background: var(--surface); margin: 10% auto; padding: 32px; border-radius: 28px; 
+            width: 92%; max-width: 480px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+        .modal-title { font-size: 22px; font-weight: 700; }
+        .close-btn { width: 36px; height: 36px; border-radius: 50%; background: #F2F2F7; border: none; font-size: 20px; cursor: pointer; color: var(--text-sec); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .close-btn:hover { background: #E5E5EA; color: var(--text-main); }
+        
+        .chart-box { background: white; padding: 24px; border-radius: var(--radius-l); margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+        
+        .calc-total { font-size: 15px; color: var(--primary); font-weight: 700; margin-top: 12px; text-align: right; background: #F0F7FF; padding: 10px; border-radius: 10px; }
+        
+        /* Checkbox personalizado */
+        .checkbox-wrapper { 
+            background: #F2F2F7; padding: 16px; border-radius: 14px; 
+            display: flex; align-items: center; gap: 14px; margin-bottom: 16px; cursor: pointer;
+        }
+        .checkbox-wrapper input { width: 22px; height: 22px; accent-color: var(--primary); }
+        .checkbox-wrapper label { font-weight: 600; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -163,8 +202,8 @@
         <!-- INICIO -->
         <div id="home" class="content active">
             <div class="section-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Calendario de Actividades
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Calendario
             </div>
             <div class="calendar-wrapper">
                 <div class="calendar-nav">
@@ -174,16 +213,15 @@
                 </div>
                 <div class="calendar-grid" id="calGrid"></div>
                 <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Confirmar Días Seleccionados</button>
-                <div id="dayDetails" class="day-details-box"></div>
             </div>
 
             <div class="section-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                Próximos Esta Semana
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Esta Semana
             </div>
-            <div id="upcomingList" style="margin-bottom: 25px;"></div>
+            <div id="upcomingList" style="margin-bottom: 30px;"></div>
             
-            <div class="section-title">Resumen del Mes Actual</div>
+            <div class="section-title">Resumen Mensual</div>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon" style="background:var(--success)"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
@@ -206,16 +244,16 @@
 
         <!-- TRABAJOS -->
         <div id="works" class="content">
-            <div class="search-bar" style="display:flex; align-items:center; gap:10px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-sec)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="searchInput" style="border:none; background:transparent; width:100%; outline:none;" placeholder="Buscar lugar..." onkeyup="applyFilters()">
+            <div class="search-container">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar lugar..." onkeyup="applyFilters()">
             </div>
             <div class="filter-container">
                 <button class="filter-btn active" onclick="setFilter('upcoming', this)">Próximos</button>
                 <button class="filter-btn" onclick="setFilter('unconfirmed', this)">Sin Confirmar</button>
-                <button class="filter-btn" onclick="setFilter('all', this)">Todos</button>
+                <button class="filter-btn" onclick="setFilter('all', this)">Historial</button>
             </div>
-            <div class="section-title">Lista de Trabajos</div>
+            <div class="section-title">Trabajos</div>
             <div id="allWorksList"></div>
         </div>
 
@@ -234,20 +272,20 @@
             </div>
             
             <div class="chart-box">
-                <h3 style="font-size:15px; text-align:center; margin-bottom:10px;">Histórico Mensual (Últimos 6 Meses)</h3>
+                <h3 style="font-size:16px; text-align:center; margin-bottom:16px; font-weight:700;">Histórico (6 Meses)</h3>
                 <canvas id="financeChart"></canvas>
             </div>
             
-            <div class="section-title">Historial de Gastos</div>
+            <div class="section-title">Gastos Recientes</div>
             <div id="expensesList"></div>
         </div>
 
         <!-- CONFIGURACIÓN -->
         <div id="settings" class="content">
             <div class="section-title">Administración</div>
-            <div style="background:white; padding:20px; border-radius:20px; text-align:center;">
-                <button class="btn btn-primary" onclick="exportBackup()" style="width:100%; margin-bottom:12px; padding:14px;">Descargar Respaldo</button>
-                <label class="btn" style="width:100%; display:block; background:#F2F2F7; padding:14px;">
+            <div style="background:white; padding:24px; border-radius:var(--radius-l); text-align:center; box-shadow:var(--shadow-sm);">
+                <button class="btn btn-primary" onclick="exportBackup()" style="width:100%; margin-bottom:16px; padding:16px; background:var(--primary); color:white; border:none; border-radius:14px; font-weight:600; font-size:16px;">Descargar Respaldo</button>
+                <label class="btn" style="width:100%; display:block; background:#F2F2F7; padding:16px; border-radius:14px; font-weight:600; color:var(--text-main); cursor:pointer;">
                     Restaurar Datos
                     <input type="file" id="restoreFile" onchange="importBackup(this)" style="display:none;" accept=".json">
                 </label>
@@ -255,7 +293,7 @@
         </div>
     </div>
 
-    <!-- MENÚ FLOTANTE (INVERTIDO) -->
+    <!-- MENÚ FLOTANTE -->
     <div class="bottom-nav">
         <div class="nav-item" onclick="showTab('settings', this)">
             <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
@@ -268,7 +306,7 @@
         
         <div class="fab-container">
             <div class="fab-btn" onclick="toggleFabMenu()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </div>
             <div class="fab-menu" id="fabMenu">
                 <div class="fab-option" onclick="openModal('work'); toggleFabMenu()">Nuevo Trabajo</div>
@@ -286,63 +324,46 @@
         </div>
     </div>
 
-    <!-- MODAL TRABAJO CON PATRONES Y CONFIRMACIÓN -->
+    <!-- MODAL TRABAJO -->
     <div id="workModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
+            <div class="modal-header"><h2 class="modal-title">Nuevo Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
             <form onsubmit="saveWork(event)">
                 <input type="hidden" id="wId">
                 <input type="text" id="wLocation" class="input-field" placeholder="Lugar / Finca" required>
-                
                 <input type="number" id="wAmount" class="input-field" placeholder="Tarifa Diaria ($)" step="100" required oninput="updateCalcTotal()">
                 
-                <!-- Selector de Patrones -->
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size:13px; font-weight:600; color:var(--text-sec); margin-bottom:6px; display:block;">Generar Fechas (Patrón Semanal)</label>
-                    <div class="pattern-selector">
-                        <label class="day-check"><input type="checkbox" class="pattern-day" value="1"><span>L</span></label>
-                        <label class="day-check"><input type="checkbox" class="pattern-day" value="2"><span>M</span></label>
-                        <label class="day-check"><input type="checkbox" class="pattern-day" value="3"><span>M</span></label>
-                        <label class="day-check"><input type="checkbox" class="pattern-day" value="4"><span>J</span></label>
-                        <label class="day-check"><input type="checkbox" class="pattern-day" value="5"><span>V</span></label>
-                        <label class="day-check"><input type="checkbox" class="pattern-day" value="6"><span>S</span></label>
-                        <label class="day-check"><input type="checkbox" class="pattern-day" value="0"><span>D</span></label>
-                    </div>
-                    <button type="button" class="btn btn-secondary" onclick="generatePatternDates()" style="width:100%; font-size:12px;">Aplicar Patrón (Próximas 4 semanas)</button>
-                </div>
-
-                <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <div style="display:flex; gap:10px; margin-bottom:16px;">
                     <input type="date" id="wNewDate" class="input-field" style="flex:1; margin:0;">
-                    <button type="button" class="btn btn-primary" onclick="addDateToTempList()" style="width:auto;">+</button>
+                    <button type="button" class="btn btn-primary" onclick="addDateToTempList()" style="width:auto; padding:0 20px; border-radius:14px;">+</button>
                 </div>
-                <div id="tempDatesList" class="dates-compact" style="margin-bottom:4px;"></div>
-                
-                <div id="calcTotalDisplay" class="calc-total"></div>
+                <div id="tempDatesList" class="dates-compact" style="margin-bottom:8px;"></div>
+                <div id="calcTotalDisplay" class="calc-total" style="display:none;"></div>
                 <br>
 
-                <div style="background:#F2F2F7; padding:14px; border-radius:12px; display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <input type="checkbox" id="wPaid" style="width:20px; height:20px;">
-                        <label>¿Ya pagado?</label>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:12px; border-top:1px solid #e5e5ea; padding-top:12px;">
-                        <input type="checkbox" id="wConfirmed" style="width:20px; height:20px;" checked>
-                        <label>¿Confirmado por el cliente?</label>
-                    </div>
+                <div class="checkbox-wrapper" onclick="document.getElementById('wPaid').click()">
+                    <input type="checkbox" id="wPaid" style="pointer-events:none;">
+                    <label style="pointer-events:none;">¿Ya fue pagado?</label>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;">Guardar Trabajo</button>
+                
+                <div class="checkbox-wrapper" onclick="document.getElementById('wConfirmed').click()" style="background:#FFF9E6; border:1px solid #FCD34D;">
+                    <input type="checkbox" id="wConfirmed" style="pointer-events:none;" checked>
+                    <label style="pointer-events:none; color:#D97706;">¿Confirmado por el cliente?</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:14px; font-weight:600; font-size:16px; margin-top:10px;">Guardar Trabajo</button>
             </form>
         </div>
     </div>
 
     <div id="expenseModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>Gasto</h2><button class="close-btn" onclick="closeModal('expenseModal')">&times;</button></div>
+            <div class="modal-header"><h2 class="modal-title">Nuevo Gasto</h2><button class="close-btn" onclick="closeModal('expenseModal')">&times;</button></div>
             <form onsubmit="saveExpense(event)">
                 <input type="date" id="eDate" class="input-field" required>
                 <input type="text" id="eDesc" class="input-field" placeholder="Descripción" required>
                 <input type="number" id="eAmount" class="input-field" placeholder="Monto ($)" step="100" required>
-                <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; background:var(--warning);">Guardar</button>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:16px; background:var(--warning); color:white; border:none; border-radius:14px; font-weight:600; font-size:16px;">Guardar Gasto</button>
             </form>
         </div>
     </div>
@@ -397,7 +418,7 @@
             menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // CALENDARIO (Solo muestra trabajos CONFIRMADOS)
+        // CALENDARIO
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -408,7 +429,6 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             
             const dayMap = {};
-            // Solo mapeamos trabajos confirmados para el calendario
             DB.get('works').filter(w => w.confirmed).forEach(w => {
                 w.dates.forEach(d => {
                     if (!dayMap[d]) dayMap[d] = [];
@@ -454,7 +474,6 @@
             else selectedRangeDates.push(date);
             renderCalendar();
             document.getElementById('confirmRangeBtn').style.display = selectedRangeDates.length > 0 ? 'block' : 'none';
-            document.getElementById('dayDetails').style.display = 'none';
         }
 
         function confirmSelectedDates() {
@@ -468,24 +487,15 @@
         }
 
         function showDayDetails(dateStr) {
-            const detailsDiv = document.getElementById('dayDetails');
-            // Solo detalles de confirmados
             const works = DB.get('works').filter(w => w.confirmed && w.dates.includes(dateStr));
             if (works.length > 0) {
-                let html = `<strong>${formatDate(dateStr)}</strong><br>`;
-                works.forEach(w => {
-                    const status = w.paid ? '<span style="color:var(--success)">✓ Pagado</span>' : '<span style="color:var(--danger)">⏳ Pendiente</span>';
-                    html += `<div style="margin-top:5px; font-size:13px;">${w.location} - ${status}</div>`;
-                });
-                detailsDiv.innerHTML = html;
-                detailsDiv.style.display = 'block';
+                alert(`Fecha: ${formatDate(dateStr)}\n\n` + works.map(w => `${w.location} - ${w.paid ? 'Pagado' : 'Pendiente'}`).join('\n'));
             }
         }
 
         function changeMonth(delta) {
             currentMonth.setMonth(currentMonth.getMonth() + delta);
             selectedRangeDates = [];
-            document.getElementById('dayDetails').style.display = 'none';
             renderCalendar();
         }
 
@@ -506,10 +516,8 @@
             if (currentFilter === 'unconfirmed') {
                 works = works.filter(w => !w.confirmed);
             } else if (currentFilter === 'upcoming') {
-                // Mostrar solo confirmados y futuros
                 works = works.filter(w => w.confirmed && w.dates.some(d => new Date(d) >= now));
             } else if (currentFilter === 'all') {
-                // Todos menos los no confirmados para no saturar, o podríamos mostrarlos todos
                 works = works.filter(w => w.confirmed);
             }
 
@@ -518,29 +526,29 @@
 
             const container = document.getElementById('allWorksList');
             if (works.length === 0) {
-                container.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:20px;">Sin resultados</div>';
+                container.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">No hay resultados</div>';
             } else {
                 container.innerHTML = works.map(w => {
                     const datesHtml = w.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
                     const isUnconfirmed = !w.confirmed;
-                    const cardClass = isUnconfirmed ? 'card unconfirmed' : `card ${w.paid ? '' : ''}`;
+                    const cardClass = isUnconfirmed ? 'card unconfirmed' : 'card';
                     const statusColor = w.paid ? 'var(--success)' : (isUnconfirmed ? 'var(--gray)' : 'var(--danger)');
                     
                     let actions = '';
                     if (isUnconfirmed) {
                         actions = `<button class="action-btn btn-confirm" onclick="confirmWork(${w.id})">✓ Confirmar</button>`;
                     } else {
-                        actions = `${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Pagado</button>` : ''}`;
+                        actions = `${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})">✓ Pagado</button>` : ''}`;
                     }
                     
                     actions += `
-                        <button class="action-btn btn-edit" onclick="editWork(${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Editar</button>
-                        <button class="action-btn btn-delete" onclick="deleteItem('works', ${w.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Eliminar</button>
+                        <button class="action-btn btn-edit" onclick="editWork(${w.id})">✏️ Editar</button>
+                        <button class="action-btn btn-delete" onclick="deleteItem('works', ${w.id})">🗑️ Borrar</button>
                     `;
 
                     return `
                     <div class="${cardClass}" style="border-left-color:${statusColor}">
-                        <div class="card-row">
+                        <div class="card-header">
                             <div class="card-title">${w.location} ${isUnconfirmed ? '(Sin Confirmar)' : ''}</div>
                             <div class="card-amount">${formatMoney(w.amount)}</div>
                         </div>
@@ -565,7 +573,6 @@
 
         function updateHome() {
             const now = new Date();
-            // Solo trabajos confirmados para estadísticas y semana
             const works = DB.get('works').filter(w => w.confirmed);
             let earnings = 0, pending = 0, totalDays = new Set();
             const weeklyJobs = [];
@@ -578,12 +585,7 @@
                 });
 
                 if (weekDates.length > 0) {
-                    weeklyJobs.push({
-                        location: w.location,
-                        dates: weekDates,
-                        paid: w.paid,
-                        firstDate: new Date(weekDates[0])
-                    });
+                    weeklyJobs.push({ location: w.location, dates: weekDates, paid: w.paid, firstDate: new Date(weekDates[0]) });
                 }
                 
                 const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth() && new Date(d).getFullYear() === now.getFullYear());
@@ -595,22 +597,14 @@
             });
 
             weeklyJobs.sort((a, b) => a.firstDate - b.firstDate);
-
             const upcomingContainer = document.getElementById('upcomingList');
             if (weeklyJobs.length > 0) {
                 upcomingContainer.innerHTML = weeklyJobs.map(job => {
                     const datesHtml = job.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
-                    const borderColor = job.paid ? 'var(--success)' : 'var(--primary)';
-                    return `
-                    <div class="card" style="border-left-color:${borderColor}; padding:12px;">
-                        <div class="card-row">
-                            <div class="card-title">${job.location}</div>
-                        </div>
-                        <div class="dates-compact">${datesHtml}</div>
-                    </div>`;
+                    return `<div class="card" style="border-left-color:${job.paid ? 'var(--success)' : 'var(--primary)'}; padding:14px;"><div class="card-title">${job.location}</div><div class="dates-compact">${datesHtml}</div></div>`;
                 }).join('');
             } else {
-                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:15px; background:white; border-radius:16px; text-align:center; box-shadow:var(--shadow);">Sin actividades confirmadas esta semana</div>';
+                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:20px; background:white; border-radius:16px; text-align:center;">Sin actividades esta semana</div>';
             }
 
             const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);
@@ -623,7 +617,6 @@
         function updateFinances() {
             const expenses = DB.get('expenses');
             const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
-            // Solo ingresos confirmados para el balance real
             const totalInc = DB.get('works').filter(w => w.confirmed).reduce((s, w) => s + parseFloat(w.amount), 0); 
             
             document.getElementById('totalExpensesAll').textContent = formatMoney(totalExp);
@@ -631,25 +624,20 @@
             
             document.getElementById('expensesList').innerHTML = expenses.slice().reverse().map(e => `
                 <div class="card" style="border-left-color:var(--warning)">
-                    <div class="card-row"><div class="card-title">${e.description}</div><div class="card-amount">-${formatMoney(e.amount)}</div></div>
+                    <div class="card-header"><div class="card-title">${e.description}</div><div class="card-amount" style="color:var(--danger)">-${formatMoney(e.amount)}</div></div>
                     <div style="font-size:12px; color:var(--text-sec);">${formatDate(e.date)}</div>
                 </div>
             `).join('');
 
             const labels = [], incomeData = [], expenseData = [];
             for (let i = 5; i >= 0; i--) {
-                const d = new Date();
-                d.setMonth(d.getMonth() - i);
-                const monthName = d.toLocaleDateString('es-CO', { month: 'short' });
-                labels.push(monthName);
+                const d = new Date(); d.setMonth(d.getMonth() - i);
+                labels.push(d.toLocaleDateString('es-CO', { month: 'short' }));
                 
                 let mIncome = 0;
                 DB.get('works').filter(w => w.confirmed).forEach(w => {
                     const daysInM = w.dates.filter(dt => new Date(dt).getMonth() === d.getMonth() && new Date(dt).getFullYear() === d.getFullYear()).length;
-                    if(daysInM > 0) {
-                         const dailyRate = parseFloat(w.amount) / w.dates.length;
-                         mIncome += dailyRate * daysInM;
-                    }
+                    if(daysInM > 0) mIncome += (parseFloat(w.amount) / w.dates.length) * daysInM;
                 });
                 incomeData.push(mIncome);
                 
@@ -667,49 +655,22 @@
                 data: { 
                     labels: labels, 
                     datasets: [
-                        { label: 'Ingresos', data: incomeData, backgroundColor: '#007AFF', borderRadius: 4 },
-                        { label: 'Gastos', data: expenseData, backgroundColor: '#FF9500', borderRadius: 4 }
+                        { label: 'Ingresos', data: incomeData, backgroundColor: '#007AFF', borderRadius: 6 },
+                        { label: 'Gastos', data: expenseData, backgroundColor: '#FF9500', borderRadius: 6 }
                     ] 
                 },
-                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
             });
         }
 
-        // GESTIÓN DE DATOS Y CÁLCULOS
-        function generatePatternDates() {
-            const checkboxes = document.querySelectorAll('.pattern-day:checked');
-            if (checkboxes.length === 0) {
-                alert('Selecciona al menos un día de la semana.');
-                return;
-            }
-
-            const selectedDays = Array.from(checkboxes).map(cb => parseInt(cb.value));
-            const startDate = new Date();
-            
-            for (let week = 0; week < 4; week++) {
-                for (let dayOfWeek of selectedDays) {
-                    const d = new Date(startDate);
-                    d.setDate(startDate.getDate() + (dayOfWeek - startDate.getDay() + 7) % 7 + (week * 7));
-                    const dateStr = d.toISOString().split('T')[0];
-                    
-                    if (!tempDates.includes(dateStr) && dateStr >= today) {
-                        tempDates.push(dateStr);
-                    }
-                }
-            }
-            tempDates.sort();
-            renderTempDates();
-            updateCalcTotal();
-        }
-
+        // GESTIÓN DE DATOS
         function updateCalcTotal() {
             const rate = parseFloat(document.getElementById('wAmount').value) || 0;
             const days = tempDates.length;
             const total = rate * days;
-            
             const display = document.getElementById('calcTotalDisplay');
             if (days > 0 && rate > 0) {
-                display.textContent = `Total calculado: ${formatMoney(total)} (${days} días)`;
+                display.textContent = `Total: ${formatMoney(total)} (${days} días)`;
                 display.style.display = 'block';
             } else {
                 display.style.display = 'none';
@@ -718,17 +679,9 @@
 
         function addDateToTempList() {
             const date = document.getElementById('wNewDate').value;
-            if (date < today) {
-                alert('No se permiten fechas en el pasado.');
-                return;
-            }
+            if (date < today) { alert('No se permiten fechas pasadas.'); return; }
             if (date && !tempDates.includes(date)) { 
-                tempDates.push(date); 
-                tempDates.sort();
-                renderTempDates(); 
-                updateCalcTotal();
-            } else if (tempDates.includes(date)) {
-                alert('Esta fecha ya está agregada.');
+                tempDates.push(date); tempDates.sort(); renderTempDates(); updateCalcTotal();
             }
         }
 
@@ -736,24 +689,18 @@
             document.getElementById('tempDatesList').innerHTML = tempDates.map(d => `<span class="date-mini" style="cursor:pointer; background:#FFEAEA; color:red;" onclick="removeTempDate('${d}')">${formatDate(d)} ×</span>`).join('');
         }
 
-        function removeTempDate(date) { 
-            tempDates = tempDates.filter(d => d !== date); 
-            renderTempDates(); 
-            updateCalcTotal();
-        }
+        function removeTempDate(date) { tempDates = tempDates.filter(d => d !== date); renderTempDates(); updateCalcTotal(); }
 
         function openModal(type) {
             tempDates = [];
             document.getElementById('tempDatesList').innerHTML = '';
             document.getElementById('calcTotalDisplay').style.display = 'none';
-            document.querySelectorAll('.pattern-day').forEach(cb => cb.checked = false);
-            
             if (type === 'work') {
                 document.getElementById('wId').value = '';
                 document.getElementById('wLocation').value = '';
                 document.getElementById('wAmount').value = '';
                 document.getElementById('wPaid').checked = false;
-                document.getElementById('wConfirmed').checked = true; // Por defecto confirmado
+                document.getElementById('wConfirmed').checked = true;
             }
             document.getElementById(type + 'Modal').style.display = 'block';
         }
@@ -765,10 +712,7 @@
             if (!work) return;
             document.getElementById('wId').value = work.id;
             document.getElementById('wLocation').value = work.location;
-            
-            const dailyRate = parseFloat(work.amount) / work.dates.length;
-            document.getElementById('wAmount').value = dailyRate;
-            
+            document.getElementById('wAmount').value = parseFloat(work.amount) / work.dates.length;
             document.getElementById('wPaid').checked = work.paid;
             document.getElementById('wConfirmed').checked = work.confirmed;
             tempDates = [...work.dates];
@@ -780,19 +724,10 @@
         function saveWork(e) {
             e.preventDefault();
             if (tempDates.length === 0) { alert('Agrega al menos una fecha'); return; }
-            
             const rate = parseFloat(document.getElementById('wAmount').value) || 0;
             const totalAmount = rate * tempDates.length;
-            
             const id = document.getElementById('wId').value;
-            const data = { 
-                location: document.getElementById('wLocation').value, 
-                amount: totalAmount,
-                paid: document.getElementById('wPaid').checked, 
-                confirmed: document.getElementById('wConfirmed').checked,
-                dates: tempDates 
-            };
-            
+            const data = { location: document.getElementById('wLocation').value, amount: totalAmount, paid: document.getElementById('wPaid').checked, confirmed: document.getElementById('wConfirmed').checked, dates: tempDates };
             id ? DB.update('works', id, data) : DB.add('works', data);
             closeModal('workModal');
             refreshAll();

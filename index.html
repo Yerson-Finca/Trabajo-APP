@@ -85,12 +85,11 @@
         }
         /* Colores del Calendario */
         .day.has-work-paid { background: var(--success); color: white; }
-        .day.has-work-pending { background: var(--danger); color: white; }
-        .day.has-work-future { background: var(--primary); color: white; }
+        .day.has-work-pending { background: var(--danger); color: white; } /* Rojo para pasados no pagados */
+        .day.has-work-future { background: var(--primary); color: white; } /* Azul para hoy y futuros */
         .day.has-work-unconfirmed { background: var(--dark-gray); color: white; border: 1px dashed #ccc; }
         
         .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
-        /* Días pasados SIN trabajo se ven tenues, pero CON trabajo se ven normales */
         .day.past-empty { color: #d1d1d6; background: transparent; cursor: default; }
         
         .btn-confirm-dates { 
@@ -407,13 +406,16 @@
         let tempDates = [];
         let selectedRangeDates = [];
         let currentFilter = 'upcoming';
-        const today = new Date().toISOString().split('T')[0];
+        
+        // Obtener fecha actual SIN hora para comparaciones precisas de días
+        const today = new Date();
+        today.setHours(0,0,0,0);
 
         const formatMoney = (amount) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
         const formatDate = (dateStr) => new Date(dateStr + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('wNewDate').min = today;
+            document.getElementById('wNewDate').min = today.toISOString().split('T')[0];
             document.getElementById('eDate').valueAsDate = new Date();
             document.getElementById('wNewDate').valueAsDate = new Date();
             document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -440,7 +442,7 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // CALENDARIO CORREGIDO PARA MOSTRAR PASADOS CON COLOR
+        // CALENDARIO CORREGIDO CON LÓGICA DE PASADO/FUTURO
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -464,29 +466,39 @@
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const workDateObj = new Date(dateStr + 'T00:00:00');
                 const works = dayMap[dateStr];
                 const isSelected = selectedRangeDates.includes(dateStr);
-                const isPast = dateStr < today;
+                
+                // Comparación precisa: ¿El día ya pasó?
+                const isPast = workDateObj < today;
+                
                 let classes = 'day';
                 
                 if (works) {
-                    // Si hay trabajo, mostramos el color correspondiente SIN importar si es pasado
+                    // Si hay trabajo, mostramos el color correspondiente
                     const hasUnconfirmed = works.some(w => !w.confirmed);
                     const hasPending = works.some(w => !w.paid && w.confirmed);
                     
-                    if (hasUnconfirmed) classes += ' has-work-unconfirmed';
-                    else if (hasPending) classes += ' has-work-pending'; // Rojo incluso si es pasado
-                    else classes += ' has-work-paid'; // Verde incluso si es pasado
+                    if (hasUnconfirmed) {
+                        classes += ' has-work-unconfirmed';
+                    } else if (isPast && hasPending) {
+                        // Si es PASADO y NO PAGADO -> ROJO
+                        classes += ' has-work-pending';
+                    } else {
+                        // Si es PAGADO (verde) o es FUTURO/HOY (azul)
+                        if (isPast) classes += ' has-work-paid'; // Pasado y pagado
+                        else classes += ' has-work-future'; // Hoy o futuro
+                    }
                     
-                    // Permitimos click para ver detalles siempre
                     html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
                 } else {
-                    // Si NO hay trabajo y es pasado, lo mostramos tenue y sin acción
+                    // Si NO hay trabajo
                     if (isPast) {
                         classes += ' past-empty';
                         html += `<div class="${classes}">${day}</div>`;
                     } else {
-                        // Si es futuro y no tiene trabajo, permite selección
+                        // Futuro o Hoy sin trabajo: permite selección
                         if (isSelected) classes += ' selected-day';
                         html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
                     }
@@ -737,7 +749,7 @@
 
         function addDateToTempList() {
             const date = document.getElementById('wNewDate').value;
-            if (date < today) { alert('No se permiten fechas pasadas.'); return; }
+            if (date < today.toISOString().split('T')[0]) { alert('No se permiten fechas pasadas.'); return; }
             if (date && !tempDates.includes(date)) { 
                 tempDates.push(date); tempDates.sort(); renderTempDates(); updateCalcTotal();
             }
@@ -803,7 +815,7 @@
         function exportBackup() {
             const data = { works: DB.get('works'), expenses: DB.get('expenses') };
             const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `respaldo_${today}.json`; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `respaldo_${today.toISOString().split('T')[0]}.json`; a.click();
         }
 
         function importBackup(input) {

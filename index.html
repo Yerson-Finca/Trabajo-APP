@@ -90,7 +90,8 @@
         .day.has-work-unconfirmed { background: var(--dark-gray); color: white; border: 1px dashed #ccc; }
         
         .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
-        .day.disabled { color: #d1d1d6; background: transparent; cursor: not-allowed; }
+        /* Días pasados SIN trabajo se ven tenues, pero CON trabajo se ven normales */
+        .day.past-empty { color: #d1d1d6; background: transparent; cursor: default; }
         
         .btn-confirm-dates { 
             width: 100%; padding: 12px; background: var(--success); color: white; 
@@ -332,7 +333,7 @@
         </div>
     </div>
 
-    <!-- MODAL DETALLES DEL DÍA (NUEVO Y ELEGANTE) -->
+    <!-- MODAL DETALLES DEL DÍA -->
     <div id="dayDetailsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -439,7 +440,7 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // CALENDARIO ACTUALIZADO
+        // CALENDARIO CORREGIDO PARA MOSTRAR PASADOS CON COLOR
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -468,22 +469,24 @@
                 const isPast = dateStr < today;
                 let classes = 'day';
                 
-                if (isPast) {
-                    classes += ' disabled';
-                    html += `<div class="${classes}">${day}</div>`;
+                if (works) {
+                    // Si hay trabajo, mostramos el color correspondiente SIN importar si es pasado
+                    const hasUnconfirmed = works.some(w => !w.confirmed);
+                    const hasPending = works.some(w => !w.paid && w.confirmed);
+                    
+                    if (hasUnconfirmed) classes += ' has-work-unconfirmed';
+                    else if (hasPending) classes += ' has-work-pending'; // Rojo incluso si es pasado
+                    else classes += ' has-work-paid'; // Verde incluso si es pasado
+                    
+                    // Permitimos click para ver detalles siempre
+                    html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
                 } else {
-                    if (works) {
-                        const hasUnconfirmed = works.some(w => !w.confirmed);
-                        const hasPending = works.some(w => !w.paid && w.confirmed);
-                        const isFuture = new Date(dateStr) >= new Date(today);
-                        
-                        if (hasUnconfirmed) classes += ' has-work-unconfirmed';
-                        else if (isFuture) classes += ' has-work-future';
-                        else if (hasPending) classes += ' has-work-pending';
-                        else classes += ' has-work-paid';
-                        
-                        html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
+                    // Si NO hay trabajo y es pasado, lo mostramos tenue y sin acción
+                    if (isPast) {
+                        classes += ' past-empty';
+                        html += `<div class="${classes}">${day}</div>`;
                     } else {
+                        // Si es futuro y no tiene trabajo, permite selección
                         if (isSelected) classes += ' selected-day';
                         html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
                     }
@@ -509,7 +512,6 @@
             document.getElementById('confirmRangeBtn').style.display = 'none';
         }
 
-        // NUEVA FUNCIÓN PARA MOSTRAR DETALLES ELEGANTES
         function showDayDetails(dateStr) {
             const works = DB.get('works').filter(w => w.dates.includes(dateStr));
             const modal = document.getElementById('dayDetailsModal');

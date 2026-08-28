@@ -37,22 +37,14 @@
             width: 100%;
         }
         
-        .container { 
-            max-width: 100%; 
-            margin: 0 auto; 
-            min-height: 100vh; 
-            position: relative; 
-            padding: 0 16px; 
-        }
+        .container { max-width: 100%; margin: 0 auto; min-height: 100vh; position: relative; padding: 0 16px; }
         
         header { 
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: 16px 0; 
-            position: sticky; top: 0; z-index: 90; 
+            padding: 16px 0; position: sticky; top: 0; z-index: 90; 
             border-bottom: 0.5px solid rgba(0,0,0,0.05);
             display: flex; justify-content: space-between; align-items: center; 
-            margin: 0 -16px 20px -16px; 
-            padding-left: 20px; padding-right: 20px;
+            margin: 0 -16px 20px -16px; padding-left: 20px; padding-right: 20px;
         }
         h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-main); }
         .date-badge { font-size: 11px; color: var(--text-sec); font-weight: 600; background: rgba(0,0,0,0.05); padding: 5px 10px; border-radius: 12px; white-space: nowrap; }
@@ -83,13 +75,22 @@
             aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
             font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500;
         }
+        
         /* Colores del Calendario */
         .day.has-work-paid { background: var(--success); color: white; }
-        .day.has-work-pending { background: var(--danger); color: white; } /* Rojo para pasados no pagados */
-        .day.has-work-future { background: var(--primary); color: white; } /* Azul para hoy y futuros */
+        .day.has-work-pending { background: var(--danger); color: white; }
+        .day.has-work-future { background: var(--primary); color: white; }
         .day.has-work-unconfirmed { background: var(--dark-gray); color: white; border: 1px dashed #ccc; }
         
-        .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
+        /* DÍA ACTUAL RESALTADO CON SOMBRA Y BORDE */
+        .day.today-marker { 
+            border: 2px solid var(--text-main) !important; 
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.15);
+            font-weight: 800 !important;
+            z-index: 2;
+        }
+        
+        .day.selected-day { border: 2px solid var(--primary); background: white !important; color: var(--primary) !important; font-weight: 700; }
         .day.past-empty { color: #d1d1d6; background: transparent; cursor: default; }
         
         .btn-confirm-dates { 
@@ -99,6 +100,24 @@
         }
         
         .section-title { font-size: 13px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        
+        /* Tarjeta de Próximo Trabajo Destacada */
+        .next-job-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            border: 1px solid #e0e7ff;
+            padding: 18px;
+            border-radius: var(--radius-l);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .next-job-header { display: flex; justify-content: space-between; align-items: center; }
+        .next-job-label { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .next-job-date { font-size: 14px; font-weight: 600; color: var(--text-main); background: white; padding: 4px 10px; border-radius: 8px; border: 1px solid #e5e5ea; }
+        .next-job-location { font-size: 18px; font-weight: 700; color: var(--text-main); }
+        .next-job-status { font-size: 13px; font-weight: 500; }
         
         .card { 
             background: var(--surface); padding: 16px; border-radius: var(--radius-m); 
@@ -134,16 +153,10 @@
         }
         .filter-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
 
-        .input-field { 
-            width: 100%; padding: 14px; border: 1px solid #E5E5EA; border-radius: 12px; 
-            font-size: 16px; background: white; margin-bottom: 14px;
-        }
+        .input-field { width: 100%; padding: 14px; border: 1px solid #E5E5EA; border-radius: 12px; font-size: 16px; background: white; margin-bottom: 14px; }
         .search-container { position: relative; margin-bottom: 16px; }
         .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sec); }
-        .search-bar { 
-            width: 100%; padding: 12px 12px 12px 42px; border: none; border-radius: 12px; 
-            font-size: 15px; background: #E5E5EA;
-        }
+        .search-bar { width: 100%; padding: 12px 12px 12px 42px; border: none; border-radius: 12px; font-size: 15px; background: #E5E5EA; }
         
         .bottom-nav { 
             position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
@@ -163,12 +176,8 @@
             box-shadow: 0 8px 16px rgba(0,122,255,0.3); cursor: pointer; border: 4px solid var(--bg);
         }
         .fab-menu { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 10px; width: 200px; z-index: 999; }
-        .fab-option { 
-            background: white; padding: 14px; border-radius: 14px; box-shadow: var(--shadow-md); 
-            font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; color: var(--text-main);
-        }
+        .fab-option { background: white; padding: 14px; border-radius: 14px; box-shadow: var(--shadow-md); font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; color: var(--text-main); }
 
-        /* Modal Genérico y de Detalles */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; backdrop-filter: blur(5px); }
         .modal-content { 
             background: var(--surface); margin: 15% auto; padding: 24px; border-radius: 24px; 
@@ -190,11 +199,7 @@
         }
         .checkbox-wrapper input { width: 20px; height: 20px; accent-color: var(--primary); }
 
-        /* Estilos específicos para el modal de detalles del día */
-        .detail-item { 
-            padding: 12px; background: #F2F2F7; border-radius: 12px; margin-bottom: 10px; 
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .detail-item { padding: 12px; background: #F2F2F7; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .detail-info { display: flex; flex-direction: column; }
         .detail-location { font-weight: 600; font-size: 15px; }
         .detail-status { font-size: 12px; font-weight: 500; margin-top: 2px; }
@@ -226,9 +231,13 @@
                 <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Confirmar Días</button>
             </div>
 
-            <div class="section-title">Esta Semana</div>
-            <div id="upcomingList" style="margin-bottom: 24px;"></div>
-            
+            <!-- PRÓXIMO TRABAJO (Mañana o el más cercano) -->
+            <div class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Próximo Trabajo
+            </div>
+            <div id="nextJobContainer"></div>
+
             <div class="section-title">Resumen Mensual</div>
             <div class="stats-grid">
                 <div class="stat-card">
@@ -265,7 +274,7 @@
             <div id="allWorksList"></div>
         </div>
 
-        <!-- FINANZAS -->
+        <!-- FINANZAS (Últimos 3 meses) -->
         <div id="finances" class="content">
             <div class="section-title">Balance General</div>
             <div class="stats-grid">
@@ -280,7 +289,7 @@
             </div>
             
             <div class="chart-box">
-                <h3 style="font-size:15px; text-align:center; margin-bottom:12px; font-weight:700;">Histórico (6 Meses)</h3>
+                <h3 style="font-size:15px; text-align:center; margin-bottom:12px; font-weight:700;">Últimos 3 Meses</h3>
                 <canvas id="financeChart"></canvas>
             </div>
             
@@ -407,7 +416,6 @@
         let selectedRangeDates = [];
         let currentFilter = 'upcoming';
         
-        // Obtener fecha actual SIN hora para comparaciones precisas de días
         const today = new Date();
         today.setHours(0,0,0,0);
 
@@ -442,7 +450,7 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // CALENDARIO CORREGIDO CON LÓGICA DE PASADO/FUTURO
+        // CALENDARIO CON DÍA ACTUAL RESALTADO
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -460,6 +468,9 @@
                 });
             });
 
+            // Fecha de hoy como string para comparación exacta
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
             let html = '';
             ['D','L','M','M','J','V','S'].forEach(d => html += `<div class="day-name">${d}</div>`);
             for (let i = 0; i < firstDay; i++) html += '<div></div>';
@@ -469,36 +480,33 @@
                 const workDateObj = new Date(dateStr + 'T00:00:00');
                 const works = dayMap[dateStr];
                 const isSelected = selectedRangeDates.includes(dateStr);
-                
-                // Comparación precisa: ¿El día ya pasó?
                 const isPast = workDateObj < today;
+                const isToday = dateStr === todayStr;
                 
                 let classes = 'day';
                 
+                // Marcar día actual con sombra y borde
+                if (isToday) classes += ' today-marker';
+                
                 if (works) {
-                    // Si hay trabajo, mostramos el color correspondiente
                     const hasUnconfirmed = works.some(w => !w.confirmed);
                     const hasPending = works.some(w => !w.paid && w.confirmed);
                     
                     if (hasUnconfirmed) {
                         classes += ' has-work-unconfirmed';
                     } else if (isPast && hasPending) {
-                        // Si es PASADO y NO PAGADO -> ROJO
                         classes += ' has-work-pending';
                     } else {
-                        // Si es PAGADO (verde) o es FUTURO/HOY (azul)
-                        if (isPast) classes += ' has-work-paid'; // Pasado y pagado
-                        else classes += ' has-work-future'; // Hoy o futuro
+                        if (isPast) classes += ' has-work-paid';
+                        else classes += ' has-work-future';
                     }
                     
                     html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
                 } else {
-                    // Si NO hay trabajo
                     if (isPast) {
                         classes += ' past-empty';
                         html += `<div class="${classes}">${day}</div>`;
                     } else {
-                        // Futuro o Hoy sin trabajo: permite selección
                         if (isSelected) classes += ' selected-day';
                         html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
                     }
@@ -538,13 +546,8 @@
                     let statusText = 'Sin Confirmar';
                     
                     if (w.confirmed) {
-                        if (w.paid) {
-                            statusClass = 'status-paid';
-                            statusText = 'Pagado';
-                        } else {
-                            statusClass = 'status-pending';
-                            statusText = 'Pendiente de Pago';
-                        }
+                        if (w.paid) { statusClass = 'status-paid'; statusText = 'Pagado'; }
+                        else { statusClass = 'status-pending'; statusText = 'Pendiente de Pago'; }
                     }
                     
                     return `
@@ -623,41 +626,46 @@
                             <div class="card-amount">${formatMoney(w.amount)}</div>
                         </div>
                         <div class="dates-compact">${datesHtml}</div>
-                        <div class="quick-actions">
-                            ${actions}
-                        </div>
+                        <div class="quick-actions">${actions}</div>
                     </div>`;
                 }).join('');
             }
         }
 
-        function quickPay(id) {
-            DB.update('works', id, { paid: true });
-            refreshAll();
-        }
-
-        function confirmWork(id) {
-            DB.update('works', id, { confirmed: true });
-            refreshAll();
-        }
+        function quickPay(id) { DB.update('works', id, { paid: true }); refreshAll(); }
+        function confirmWork(id) { DB.update('works', id, { confirmed: true }); refreshAll(); }
 
         function updateHome() {
             const now = new Date();
             const works = DB.get('works').filter(w => w.confirmed);
             let earnings = 0, pending = 0, totalDays = new Set();
-            const weeklyJobs = [];
-            const nextWeek = new Date(); nextWeek.setDate(now.getDate() + 7);
+            
+            // Buscar trabajo de MAÑANA o el más cercano DESPUÉS de hoy
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            let nextJob = null;
+            let minDiff = Infinity;
 
             works.forEach(w => {
-                const weekDates = w.dates.filter(d => {
-                    const dateObj = new Date(d);
-                    return dateObj >= now && dateObj <= nextWeek;
-                });
-
-                if (weekDates.length > 0) {
-                    weeklyJobs.push({ location: w.location, dates: weekDates, paid: w.paid, firstDate: new Date(weekDates[0]) });
-                }
+                // Solo fechas estrictamente posteriores a hoy (mañana en adelante)
+                const futureDates = w.dates.filter(d => new Date(d) >= tomorrow).sort();
                 
+                if (futureDates.length > 0) {
+                    const closestDate = new Date(futureDates[0]);
+                    const diff = closestDate - tomorrow;
+                    
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        nextJob = {
+                            location: w.location,
+                            date: futureDates[0],
+                            paid: w.paid
+                        };
+                    }
+                }
+
+                // Cálculos mensuales
                 const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth() && new Date(d).getFullYear() === now.getFullYear());
                 if (datesInMonth.length > 0) {
                     earnings += parseFloat(w.amount);
@@ -666,15 +674,30 @@
                 }
             });
 
-            weeklyJobs.sort((a, b) => a.firstDate - b.firstDate);
-            const upcomingContainer = document.getElementById('upcomingList');
-            if (weeklyJobs.length > 0) {
-                upcomingContainer.innerHTML = weeklyJobs.map(job => {
-                    const datesHtml = job.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
-                    return `<div class="card" style="border-left-color:${job.paid ? 'var(--success)' : 'var(--primary)'}; padding:14px;"><div class="card-title">${job.location}</div><div class="dates-compact">${datesHtml}</div></div>`;
-                }).join('');
+            // Renderizar tarjeta de próximo trabajo
+            const nextContainer = document.getElementById('nextJobContainer');
+            if (nextJob) {
+                const statusColor = nextJob.paid ? 'var(--success)' : 'var(--danger)';
+                const statusText = nextJob.paid ? 'Pagado' : 'Pendiente';
+                const isTomorrow = new Date(nextJob.date).toDateString() === tomorrow.toDateString();
+                const label = isTomorrow ? 'Mañana' : formatDate(nextJob.date);
+                
+                nextContainer.innerHTML = `
+                    <div class="next-job-card">
+                        <div class="next-job-header">
+                            <span class="next-job-label">Próximo Trabajo</span>
+                            <span class="next-job-date">${label}</span>
+                        </div>
+                        <div class="next-job-location">${nextJob.location}</div>
+                        <div class="next-job-status" style="color:${statusColor}">● ${statusText}</div>
+                    </div>
+                `;
             } else {
-                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:20px; background:white; border-radius:16px; text-align:center;">Sin actividades confirmadas esta semana</div>';
+                nextContainer.innerHTML = `
+                    <div class="next-job-card" style="background:white; border:1px dashed #ccc; text-align:center;">
+                        <div style="color:var(--text-sec); font-size:14px;">No hay trabajos próximos confirmados</div>
+                    </div>
+                `;
             }
 
             const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);
@@ -684,6 +707,7 @@
             document.getElementById('expensesTotal').textContent = formatMoney(expenses);
         }
 
+        // FINANZAS: ÚLTIMOS 3 MESES
         function updateFinances() {
             const expenses = DB.get('expenses');
             const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
@@ -699,8 +723,9 @@
                 </div>
             `).join('');
 
+            // Solo últimos 3 meses
             const labels = [], incomeData = [], expenseData = [];
-            for (let i = 5; i >= 0; i--) {
+            for (let i = 2; i >= 0; i--) {
                 const d = new Date(); d.setMonth(d.getMonth() - i);
                 labels.push(d.toLocaleDateString('es-CO', { month: 'short' }));
                 

@@ -82,15 +82,15 @@
         .day.has-work-future { background: var(--primary); color: white; }
         .day.has-work-unconfirmed { background: var(--dark-gray); color: white; border: 1px dashed #ccc; }
         
-        /* DÍA ACTUAL RESALTADO CON SOMBRA Y BORDE */
+        /* DÍA ACTUAL RESALTADO (Estilo Moderno) */
         .day.today-marker { 
-            border: 2px solid var(--text-main) !important; 
-            box-shadow: 0 0 0 3px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.15);
+            background: #e0f0ff !important; /* Fondo azul muy suave */
+            color: var(--primary) !important;
             font-weight: 800 !important;
-            z-index: 2;
+            border: 1px solid var(--primary);
         }
         
-        .day.selected-day { border: 2px solid var(--primary); background: white !important; color: var(--primary) !important; font-weight: 700; }
+        .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
         .day.past-empty { color: #d1d1d6; background: transparent; cursor: default; }
         
         .btn-confirm-dates { 
@@ -238,6 +238,10 @@
             </div>
             <div id="nextJobContainer"></div>
 
+            <!-- SECCIÓN ESTA SEMANA RECUPERADA -->
+            <div class="section-title">Esta Semana</div>
+            <div id="upcomingList" style="margin-bottom: 24px;"></div>
+            
             <div class="section-title">Resumen Mensual</div>
             <div class="stats-grid">
                 <div class="stat-card">
@@ -274,7 +278,7 @@
             <div id="allWorksList"></div>
         </div>
 
-        <!-- FINANZAS (Últimos 3 meses) -->
+        <!-- FINANZAS (Últimos 12 meses) -->
         <div id="finances" class="content">
             <div class="section-title">Balance General</div>
             <div class="stats-grid">
@@ -289,7 +293,7 @@
             </div>
             
             <div class="chart-box">
-                <h3 style="font-size:15px; text-align:center; margin-bottom:12px; font-weight:700;">Últimos 3 Meses</h3>
+                <h3 style="font-size:15px; text-align:center; margin-bottom:12px; font-weight:700;">Histórico Anual (12 Meses)</h3>
                 <canvas id="financeChart"></canvas>
             </div>
             
@@ -450,7 +454,7 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // CALENDARIO CON DÍA ACTUAL RESALTADO
+        // CALENDARIO CON DÍA ACTUAL RESALTADO (MODERNO)
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -485,7 +489,7 @@
                 
                 let classes = 'day';
                 
-                // Marcar día actual con sombra y borde
+                // Marcar día actual con estilo moderno
                 if (isToday) classes += ' today-marker';
                 
                 if (works) {
@@ -648,7 +652,6 @@
             let minDiff = Infinity;
 
             works.forEach(w => {
-                // Solo fechas estrictamente posteriores a hoy (mañana en adelante)
                 const futureDates = w.dates.filter(d => new Date(d) >= tomorrow).sort();
                 
                 if (futureDates.length > 0) {
@@ -700,6 +703,32 @@
                 `;
             }
 
+            // Lógica para "Esta Semana" agrupada por lugar
+            const weeklyJobs = [];
+            const nextWeek = new Date(); nextWeek.setDate(now.getDate() + 7);
+
+            works.forEach(w => {
+                const weekDates = w.dates.filter(d => {
+                    const dateObj = new Date(d);
+                    return dateObj >= now && dateObj <= nextWeek;
+                });
+
+                if (weekDates.length > 0) {
+                    weeklyJobs.push({ location: w.location, dates: weekDates, paid: w.paid, firstDate: new Date(weekDates[0]) });
+                }
+            });
+
+            weeklyJobs.sort((a, b) => a.firstDate - b.firstDate);
+            const upcomingContainer = document.getElementById('upcomingList');
+            if (weeklyJobs.length > 0) {
+                upcomingContainer.innerHTML = weeklyJobs.map(job => {
+                    const datesHtml = job.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
+                    return `<div class="card" style="border-left-color:${job.paid ? 'var(--success)' : 'var(--primary)'}; padding:14px;"><div class="card-title">${job.location}</div><div class="dates-compact">${datesHtml}</div></div>`;
+                }).join('');
+            } else {
+                upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:20px; background:white; border-radius:16px; text-align:center;">Sin actividades esta semana</div>';
+            }
+
             const expenses = DB.get('expenses').filter(e => new Date(e.date).getMonth() === now.getMonth()).reduce((s, e) => s + parseFloat(e.amount), 0);
             document.getElementById('earnings').textContent = formatMoney(earnings);
             document.getElementById('days').textContent = totalDays.size;
@@ -707,7 +736,7 @@
             document.getElementById('expensesTotal').textContent = formatMoney(expenses);
         }
 
-        // FINANZAS: ÚLTIMOS 3 MESES
+        // FINANZAS: ÚLTIMOS 12 MESES
         function updateFinances() {
             const expenses = DB.get('expenses');
             const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
@@ -723,9 +752,9 @@
                 </div>
             `).join('');
 
-            // Solo últimos 3 meses
+            // Últimos 12 meses
             const labels = [], incomeData = [], expenseData = [];
-            for (let i = 2; i >= 0; i--) {
+            for (let i = 11; i >= 0; i--) {
                 const d = new Date(); d.setMonth(d.getMonth() - i);
                 labels.push(d.toLocaleDateString('es-CO', { month: 'short' }));
                 

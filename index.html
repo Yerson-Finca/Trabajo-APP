@@ -29,14 +29,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            background: var(--bg); color: var(--text-main); 
-            padding-bottom: 120px; 
-            line-height: 1.5; 
-            overflow-x: hidden; 
-            width: 100%;
-        }
-        
+        body { background: var(--bg); color: var(--text-main); padding-bottom: 120px; line-height: 1.5; overflow-x: hidden; width: 100%; }
         .container { max-width: 100%; margin: 0 auto; min-height: 100vh; position: relative; padding: 0 16px; }
         
         header { 
@@ -54,10 +47,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
-        .stat-card { 
-            background: var(--surface); padding: 16px; border-radius: var(--radius-l); 
-            box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 12px;
-        }
+        .stat-card { background: var(--surface); padding: 16px; border-radius: var(--radius-l); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 12px; }
         .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .stat-icon svg { width: 20px; height: 20px; stroke: white; stroke-width: 2.5; fill: none; }
         .stat-info { display: flex; flex-direction: column; overflow: hidden; }
@@ -71,154 +61,92 @@
         
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
         .day-name { font-size: 10px; color: var(--text-sec); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
-        .day { 
-            aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
-            font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500;
-        }
+        .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500; }
         
-        /* Colores del Calendario */
         .day.has-work-paid { background: var(--success); color: white; }
+        .day.has-work-partial { background: var(--warning); color: white; }
         .day.has-work-pending { background: var(--danger); color: white; }
         .day.has-work-future { background: var(--primary); color: white; }
         .day.has-work-unconfirmed { background: var(--dark-gray); color: white; border: 1px dashed #ccc; }
         
-        /* DÍA ACTUAL RESALTADO (Estilo Moderno) */
-        .day.today-marker { 
-            background: #e0f0ff !important; /* Fondo azul muy suave */
-            color: var(--primary) !important;
-            font-weight: 800 !important;
-            border: 1px solid var(--primary);
-        }
-        
+        .day.today-marker { background: #e0f0ff !important; color: var(--primary) !important; font-weight: 800 !important; border: 1px solid var(--primary); }
         .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
         .day.past-empty { color: #d1d1d6; background: transparent; cursor: default; }
         
-        .btn-confirm-dates { 
-            width: 100%; padding: 12px; background: var(--success); color: white; 
-            border: none; border-radius: 12px; font-weight: 600; margin-top: 16px; 
-            display: none; cursor: pointer; font-size: 14px;
-        }
+        .btn-confirm-dates { width: 100%; padding: 12px; background: var(--success); color: white; border: none; border-radius: 12px; font-weight: 600; margin-top: 16px; display: none; cursor: pointer; font-size: 14px; }
         
         .section-title { font-size: 13px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
         
-        /* Selector de Mes en Finanzas */
-        .month-selector-container {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .month-select {
-            flex: 1;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid #E5E5EA;
-            background: white;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-main);
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-        }
-        
-        /* Tarjeta de Próximo Trabajo Destacada */
-        .next-job-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
-            border: 1px solid #e0e7ff;
-            padding: 18px;
-            border-radius: var(--radius-l);
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .next-job-card { background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%); border: 1px solid #e0e7ff; padding: 18px; border-radius: var(--radius-l); margin-bottom: 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px; }
         .next-job-header { display: flex; justify-content: space-between; align-items: center; }
         .next-job-label { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
         .next-job-date { font-size: 14px; font-weight: 600; color: var(--text-main); background: white; padding: 4px 10px; border-radius: 8px; border: 1px solid #e5e5ea; }
         .next-job-location { font-size: 18px; font-weight: 700; color: var(--text-main); }
         .next-job-status { font-size: 13px; font-weight: 500; }
         
-        .card { 
-            background: var(--surface); padding: 16px; border-radius: var(--radius-m); 
-            margin-bottom: 12px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);
-        }
+        .card { background: var(--surface); padding: 16px; border-radius: var(--radius-m); margin-bottom: 12px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary); }
         .card.unconfirmed { border-left-color: var(--gray); background: #fafafa; opacity: 0.9; }
+        .card.partial { border-left-color: var(--warning); }
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
         .card-title { font-weight: 600; font-size: 15px; color: var(--text-main); word-break: break-word; }
         .card-amount { font-weight: 700; font-size: 15px; color: var(--text-main); white-space: nowrap; margin-left: 8px; }
         
+        .payment-info { display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px; padding: 6px 10px; background: #F2F2F7; border-radius: 6px; }
+        .payment-info .paid { color: var(--success); font-weight: 600; }
+        .payment-info .pending { color: var(--danger); font-weight: 600; }
+        
+        .activity-list { margin: 8px 0; }
+        .activity-item { font-size: 11px; background: #F2F2F7; padding: 4px 8px; border-radius: 6px; color: var(--text-sec); font-weight: 500; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        
         .dates-compact { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; }
         .date-mini { font-size: 11px; background: #F2F2F7; padding: 3px 6px; border-radius: 4px; color: var(--text-sec); font-weight: 500; }
         
-        .quick-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F2F2F7; }
-        .action-btn { 
-            flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 4px;
-        }
+        .quick-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F2F2F7; flex-wrap: wrap; }
+        .action-btn { flex: 1; min-width: 80px; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .action-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.5; fill: none; }
         
         .btn-pay { background: #E8FAF0; color: var(--success); }
+        .btn-abono { background: #FFF4E5; color: var(--warning); border: 1px solid #FCD34D; }
         .btn-confirm { background: #FFF9E6; color: #D97706; border: 1px solid #FCD34D; }
         .btn-edit { background: #F2F2F7; color: var(--text-main); }
         .btn-delete { background: #FFEAEA; color: var(--danger); }
         
         .filter-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; -ms-overflow-style: none; scrollbar-width: none; }
         .filter-container::-webkit-scrollbar { display: none; }
-        .filter-btn { 
-            padding: 6px 14px; border-radius: 16px; border: 1px solid #E5E5EA; 
-            background: white; color: var(--text-sec); font-size: 12px; font-weight: 600; cursor: pointer; 
-            white-space: nowrap;
-        }
+        .filter-btn { padding: 6px 14px; border-radius: 16px; border: 1px solid #E5E5EA; background: white; color: var(--text-sec); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
         .filter-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
 
         .input-field { width: 100%; padding: 14px; border: 1px solid #E5E5EA; border-radius: 12px; font-size: 16px; background: white; margin-bottom: 14px; }
+        .input-small { padding: 10px; font-size: 14px; margin-bottom: 8px; }
         .search-container { position: relative; margin-bottom: 16px; }
         .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sec); }
         .search-bar { width: 100%; padding: 12px 12px 12px 42px; border: none; border-radius: 12px; font-size: 15px; background: #E5E5EA; }
         
-        .bottom-nav { 
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 380px; height: 65px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-            border-radius: 35px; display: flex; justify-content: space-around; align-items: center;
-            box-shadow: var(--shadow-md); z-index: 1000; border: 1px solid rgba(255,255,255,0.6);
-        }
+        .bottom-nav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; height: 65px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: var(--shadow-md); z-index: 1000; border: 1px solid rgba(255,255,255,0.6); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); font-size: 10px; font-weight: 600; cursor: pointer; width: 50px; }
         .nav-item.active { color: var(--primary); }
         .nav-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; margin-bottom: 2px; }
         
         .fab-container { position: relative; top: -26px; }
-        .fab-btn { 
-            width: 58px; height: 58px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; color: white; 
-            box-shadow: 0 8px 16px rgba(0,122,255,0.3); cursor: pointer; border: 4px solid var(--bg);
-        }
+        .fab-btn { width: 58px; height: 58px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 16px rgba(0,122,255,0.3); cursor: pointer; border: 4px solid var(--bg); }
         .fab-menu { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 10px; width: 200px; z-index: 999; }
         .fab-option { background: white; padding: 14px; border-radius: 14px; box-shadow: var(--shadow-md); font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; color: var(--text-main); }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; backdrop-filter: blur(5px); }
-        .modal-content { 
-            background: var(--surface); margin: 15% auto; padding: 24px; border-radius: 24px; 
-            width: 90%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; backdrop-filter: blur(5px); overflow-y: auto; }
+        .modal-content { background: var(--surface); margin: 5% auto; padding: 24px; border-radius: 24px; width: 90%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-title { font-size: 20px; font-weight: 700; }
         .close-btn { width: 32px; height: 32px; border-radius: 50%; background: #F2F2F7; border: none; font-size: 18px; cursor: pointer; color: var(--text-sec); display: flex; align-items: center; justify-content: center; }
         
-        .chart-box { background: white; padding: 20px; border-radius: var(--radius-l); margin-bottom: 20px; box-shadow: var(--shadow-sm); }
-        .calc-total { font-size: 14px; color: var(--primary); font-weight: 700; margin-top: 10px; text-align: right; background: #F0F7FF; padding: 8px; border-radius: 8px; }
+        .month-selector-container { margin-bottom: 20px; display: flex; gap: 10px; }
+        .month-select { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #E5E5EA; background: white; font-size: 16px; font-weight: 600; color: var(--text-main); appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
         
-        .checkbox-wrapper { 
-            background: #F2F2F7; padding: 14px; border-radius: 12px; 
-            display: flex; align-items: center; gap: 12px; margin-bottom: 14px; cursor: pointer;
-        }
+        .chart-box { background: white; padding: 20px; border-radius: var(--radius-l); margin-bottom: 20px; box-shadow: var(--shadow-sm); }
+        
+        .checkbox-wrapper { background: #F2F2F7; padding: 14px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 14px; cursor: pointer; }
         .checkbox-wrapper input { width: 20px; height: 20px; accent-color: var(--primary); }
 
         .detail-item { padding: 12px; background: #F2F2F7; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -227,7 +155,41 @@
         .detail-status { font-size: 12px; font-weight: 500; margin-top: 2px; }
         .status-paid { color: var(--success); }
         .status-pending { color: var(--danger); }
+        .status-partial { color: var(--warning); }
         .status-unconfirmed { color: var(--dark-gray); }
+        
+        /* Estilos para el nuevo modal de trabajo con actividades y abonos */
+        .section-box { background: #F8F9FA; border: 1px solid #E5E5EA; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+        .section-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .section-box-title { font-size: 13px; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.3px; }
+        .btn-add-small { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .btn-add-small svg { width: 12px; height: 12px; stroke: white; stroke-width: 3; fill: none; }
+        
+        .activity-card { background: white; border: 1px solid #E5E5EA; border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+        .activity-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .activity-card-title { font-weight: 600; font-size: 14px; color: var(--text-main); }
+        .btn-remove-activity { background: #FFEAEA; color: var(--danger); border: none; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        .activity-dates { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+        .activity-date-chip { background: #F2F2F7; padding: 3px 8px; border-radius: 4px; font-size: 11px; color: var(--text-sec); display: flex; align-items: center; gap: 4px; }
+        .activity-date-chip button { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+        
+        .payment-card { background: white; border: 1px solid #E5E5EA; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .payment-info-text { display: flex; flex-direction: column; }
+        .payment-amount { font-weight: 700; color: var(--success); font-size: 14px; }
+        .payment-date { font-size: 11px; color: var(--text-sec); }
+        
+        .summary-box { background: linear-gradient(135deg, #f0f7ff 0%, #e0f0ff 100%); border: 1px solid #b3d4ff; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+        .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+        .summary-row.total { border-top: 1px solid #b3d4ff; margin-top: 6px; padding-top: 10px; font-weight: 700; font-size: 16px; }
+        .summary-label { color: var(--text-sec); }
+        .summary-value { color: var(--text-main); font-weight: 600; }
+        .summary-value.pending { color: var(--danger); }
+        .summary-value.paid { color: var(--success); }
+        
+        .inline-add { display: flex; gap: 6px; margin-bottom: 8px; }
+        .inline-add input { flex: 1; margin: 0; padding: 10px; font-size: 14px; }
+        .inline-add button { padding: 0 14px; margin: 0; }
     </style>
 </head>
 <body>
@@ -237,7 +199,6 @@
             <div class="date-badge" id="currentDateDisplay"></div>
         </header>
 
-        <!-- INICIO -->
         <div id="home" class="content active">
             <div class="section-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -253,14 +214,12 @@
                 <button id="confirmRangeBtn" class="btn-confirm-dates" onclick="confirmSelectedDates()">Confirmar Días</button>
             </div>
 
-            <!-- PRÓXIMO TRABAJO (Mañana o el más cercano) -->
             <div class="section-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"></polyline></svg>
                 Próximo Trabajo
             </div>
             <div id="nextJobContainer"></div>
 
-            <!-- SECCIÓN ESTA SEMANA RECUPERADA -->
             <div class="section-title">Esta Semana</div>
             <div id="upcomingList" style="margin-bottom: 24px;"></div>
             
@@ -285,7 +244,6 @@
             </div>
         </div>
 
-        <!-- TRABAJOS -->
         <div id="works" class="content">
             <div class="search-container">
                 <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -294,21 +252,17 @@
             <div class="filter-container">
                 <button class="filter-btn active" onclick="setFilter('upcoming', this)">Próximos</button>
                 <button class="filter-btn" onclick="setFilter('unconfirmed', this)">Sin Confirmar</button>
+                <button class="filter-btn" onclick="setFilter('partial', this)">Abonos</button>
                 <button class="filter-btn" onclick="setFilter('all', this)">Historial</button>
             </div>
             <div class="section-title">Trabajos</div>
             <div id="allWorksList"></div>
         </div>
 
-        <!-- FINANZAS INTERACTIVAS POR MES -->
         <div id="finances" class="content">
             <div class="section-title">Reporte Mensual</div>
-            
-            <!-- Selector de Mes -->
             <div class="month-selector-container">
-                <select id="financeMonthSelect" class="month-select" onchange="updateFinances()">
-                    <!-- Se llena con JS -->
-                </select>
+                <select id="financeMonthSelect" class="month-select" onchange="updateFinances()"></select>
             </div>
 
             <div class="stats-grid">
@@ -339,7 +293,6 @@
             <div id="expensesList"></div>
         </div>
 
-        <!-- CONFIGURACIÓN -->
         <div id="settings" class="content">
             <div class="section-title">Administración</div>
             <div style="background:white; padding:20px; border-radius:var(--radius-l); text-align:center; box-shadow:var(--shadow-sm);">
@@ -352,7 +305,6 @@
         </div>
     </div>
 
-    <!-- MENÚ FLOTANTE -->
     <div class="bottom-nav">
         <div class="nav-item" onclick="showTab('settings', this)">
             <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
@@ -368,7 +320,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </div>
             <div class="fab-menu" id="fabMenu">
-                <div class="fab-option" onclick="openModal('work'); toggleFabMenu()">Nuevo Trabajo</div>
+                <div class="fab-option" onclick="openWorkModal(); toggleFabMenu()">Nuevo Trabajo</div>
                 <div class="fab-option" onclick="openModal('expense'); toggleFabMenu()">Registrar Gasto</div>
             </div>
         </div>
@@ -383,7 +335,6 @@
         </div>
     </div>
 
-    <!-- MODAL DETALLES DEL DÍA -->
     <div id="dayDetailsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -394,28 +345,57 @@
         </div>
     </div>
 
-    <!-- MODAL TRABAJO -->
+    <!-- NUEVO MODAL DE TRABAJO CON ACTIVIDADES Y ABONOS -->
     <div id="workModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2 class="modal-title">Nuevo Trabajo</h2><button class="close-btn" onclick="closeModal('workModal')">&times;</button></div>
+            <div class="modal-header">
+                <h2 class="modal-title" id="workModalTitle">Nuevo Trabajo</h2>
+                <button class="close-btn" onclick="closeModal('workModal')">&times;</button>
+            </div>
             <form onsubmit="saveWork(event)">
                 <input type="hidden" id="wId">
                 <input type="text" id="wLocation" class="input-field" placeholder="Lugar / Finca" required>
-                <input type="number" id="wAmount" class="input-field" placeholder="Tarifa Diaria ($)" step="100" required oninput="updateCalcTotal()">
                 
-                <div style="display:flex; gap:8px; margin-bottom:14px;">
-                    <input type="date" id="wNewDate" class="input-field" style="flex:1; margin:0;">
-                    <button type="button" class="btn btn-primary" onclick="addDateToTempList()" style="width:auto; padding:0 16px; border-radius:12px;">+</button>
+                <!-- SECCIÓN ACTIVIDADES -->
+                <div class="section-box">
+                    <div class="section-box-header">
+                        <span class="section-box-title">Actividades</span>
+                        <button type="button" class="btn-add-small" onclick="addActivity()">
+                            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Agregar
+                        </button>
+                    </div>
+                    <div id="activitiesList"></div>
                 </div>
-                <div id="tempDatesList" class="dates-compact" style="margin-bottom:8px;"></div>
-                <div id="calcTotalDisplay" class="calc-total" style="display:none;"></div>
-                <br>
 
-                <div class="checkbox-wrapper" onclick="document.getElementById('wPaid').click()">
-                    <input type="checkbox" id="wPaid" style="pointer-events:none;">
-                    <label style="pointer-events:none;">¿Ya fue pagado?</label>
+                <!-- SECCIÓN ABONOS -->
+                <div class="section-box">
+                    <div class="section-box-header">
+                        <span class="section-box-title">Abonos</span>
+                        <button type="button" class="btn-add-small" onclick="addPayment()" style="background:var(--warning);">
+                            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Abono
+                        </button>
+                    </div>
+                    <div id="paymentsList"></div>
                 </div>
-                
+
+                <!-- RESUMEN -->
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span class="summary-label">Total trabajo:</span>
+                        <span class="summary-value" id="summaryTotal">$0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Total abonado:</span>
+                        <span class="summary-value paid" id="summaryPaid">$0</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="summary-label">Saldo pendiente:</span>
+                        <span class="summary-value pending" id="summaryPending">$0</span>
+                    </div>
+                </div>
+
                 <div class="checkbox-wrapper" onclick="document.getElementById('wConfirmed').click()" style="background:#FFF9E6; border:1px solid #FCD34D;">
                     <input type="checkbox" id="wConfirmed" style="pointer-events:none;" checked>
                     <label style="pointer-events:none; color:#D97706;">¿Confirmado por el cliente?</label>
@@ -452,11 +432,47 @@
             remove(key, id) { const data = DB.get(key).filter(i => i.id !== id); DB.set(key, data); }
         };
 
+        // MIGRACIÓN: Convertir trabajos antiguos al nuevo formato
+        function migrateOldData() {
+            const works = DB.get('works');
+            let migrated = false;
+            works.forEach(w => {
+                if (!w.activities && w.amount && w.dates) {
+                    // Trabajo antiguo: convertir a nuevo formato
+                    w.activities = [{
+                        id: 'act_' + Date.now(),
+                        description: 'Actividad',
+                        rate: parseFloat(w.amount) / w.dates.length,
+                        dates: [...w.dates]
+                    }];
+                    w.payments = [];
+                    if (w.paid) {
+                        // Si estaba marcado como pagado, crear un abono por el total
+                        w.payments.push({
+                            id: 'pay_' + Date.now(),
+                            date: w.dates[w.dates.length - 1],
+                            amount: parseFloat(w.amount),
+                            note: 'Migración'
+                        });
+                    }
+                    delete w.amount;
+                    delete w.dates;
+                    delete w.paid;
+                    migrated = true;
+                }
+            });
+            if (migrated) DB.set('works', works);
+        }
+
         let currentMonth = new Date();
         let financeChart;
-        let tempDates = [];
-        let selectedRangeDates = [];
         let currentFilter = 'upcoming';
+        let selectedRangeDates = [];
+        
+        // Datos temporales del modal de trabajo
+        let tempActivities = [];
+        let tempPayments = [];
+        let tempActivityDates = {}; // {actId: [dates]}
         
         const today = new Date();
         today.setHours(0,0,0,0);
@@ -464,12 +480,34 @@
         const formatMoney = (amount) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
         const formatDate = (dateStr) => new Date(dateStr + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
 
+        // Funciones auxiliares para cálculos
+        function getWorkTotal(work) {
+            if (!work.activities) return 0;
+            return work.activities.reduce((sum, act) => sum + (parseFloat(act.rate) || 0) * act.dates.length, 0);
+        }
+
+        function getWorkPaid(work) {
+            if (!work.payments) return 0;
+            return work.payments.reduce((sum, pay) => sum + parseFloat(pay.amount), 0);
+        }
+
+        function getWorkPending(work) {
+            return getWorkTotal(work) - getWorkPaid(work);
+        }
+
+        function getAllWorkDates(work) {
+            if (!work.activities) return [];
+            const allDates = [];
+            work.activities.forEach(act => {
+                act.dates.forEach(d => allDates.push(d));
+            });
+            return allDates;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('wNewDate').min = today.toISOString().split('T')[0];
+            migrateOldData();
             document.getElementById('eDate').valueAsDate = new Date();
-            document.getElementById('wNewDate').valueAsDate = new Date();
             document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
-            
             initFinanceSelector();
             renderCalendar();
             updateHome();
@@ -494,7 +532,7 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // CALENDARIO CON DÍA ACTUAL RESALTADO (MODERNO)
+        // CALENDARIO
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -506,13 +544,12 @@
             
             const dayMap = {};
             DB.get('works').forEach(w => {
-                w.dates.forEach(d => {
+                getAllWorkDates(w).forEach(d => {
                     if (!dayMap[d]) dayMap[d] = [];
                     dayMap[d].push(w);
                 });
             });
 
-            // Fecha de hoy como string para comparación exacta
             const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
             let html = '';
@@ -528,21 +565,30 @@
                 const isToday = dateStr === todayStr;
                 
                 let classes = 'day';
-                
-                // Marcar día actual con estilo moderno
                 if (isToday) classes += ' today-marker';
                 
                 if (works) {
                     const hasUnconfirmed = works.some(w => !w.confirmed);
-                    const hasPending = works.some(w => !w.paid && w.confirmed);
                     
                     if (hasUnconfirmed) {
                         classes += ' has-work-unconfirmed';
-                    } else if (isPast && hasPending) {
-                        classes += ' has-work-pending';
                     } else {
-                        if (isPast) classes += ' has-work-paid';
-                        else classes += ' has-work-future';
+                        // Determinar estado de pago del trabajo más relevante
+                        const work = works[0];
+                        const total = getWorkTotal(work);
+                        const paid = getWorkPaid(work);
+                        const isFullyPaid = paid >= total;
+                        const isPartial = paid > 0 && paid < total;
+                        
+                        if (isFullyPaid) {
+                            classes += ' has-work-paid';
+                        } else if (isPartial) {
+                            classes += ' has-work-partial';
+                        } else if (isPast) {
+                            classes += ' has-work-pending';
+                        } else {
+                            classes += ' has-work-future';
+                        }
                     }
                     
                     html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
@@ -567,17 +613,21 @@
         }
 
         function confirmSelectedDates() {
-            openModal('work');
-            selectedRangeDates.forEach(d => { if(!tempDates.includes(d)) tempDates.push(d); });
-            tempDates.sort();
-            renderTempDates();
+            openWorkModal();
+            // Agregar una actividad por defecto con las fechas seleccionadas
+            if (selectedRangeDates.length > 0 && tempActivities.length === 0) {
+                addActivity();
+                const actId = tempActivities[0].id;
+                tempActivityDates[actId] = [...selectedRangeDates];
+                renderActivitiesList();
+            }
             selectedRangeDates = [];
             renderCalendar();
             document.getElementById('confirmRangeBtn').style.display = 'none';
         }
 
         function showDayDetails(dateStr) {
-            const works = DB.get('works').filter(w => w.dates.includes(dateStr));
+            const works = DB.get('works').filter(w => getAllWorkDates(w).includes(dateStr));
             const modal = document.getElementById('dayDetailsModal');
             const title = document.getElementById('detailDateTitle');
             const content = document.getElementById('dayDetailsContent');
@@ -586,11 +636,22 @@
             
             if (works.length > 0) {
                 content.innerHTML = works.map(w => {
+                    // Encontrar qué actividad específica es este día
+                    let activityName = '';
+                    w.activities.forEach(act => {
+                        if (act.dates.includes(dateStr)) {
+                            activityName = act.description || 'Actividad';
+                        }
+                    });
+                    
                     let statusClass = 'status-unconfirmed';
                     let statusText = 'Sin Confirmar';
                     
                     if (w.confirmed) {
-                        if (w.paid) { statusClass = 'status-paid'; statusText = 'Pagado'; }
+                        const total = getWorkTotal(w);
+                        const paid = getWorkPaid(w);
+                        if (paid >= total) { statusClass = 'status-paid'; statusText = 'Pagado'; }
+                        else if (paid > 0) { statusClass = 'status-partial'; statusText = `Abono: ${formatMoney(paid)} / ${formatMoney(total)}`; }
                         else { statusClass = 'status-pending'; statusText = 'Pendiente de Pago'; }
                     }
                     
@@ -598,9 +659,10 @@
                     <div class="detail-item">
                         <div class="detail-info">
                             <div class="detail-location">${w.location}</div>
+                            <div style="font-size:12px; color:var(--text-sec); margin-top:2px;">${activityName}</div>
                             <div class="detail-status ${statusClass}">${statusText}</div>
                         </div>
-                        <div style="font-weight:700;">${formatMoney(w.amount)}</div>
+                        <div style="font-weight:700;">${formatMoney(total)}</div>
                     </div>`;
                 }).join('');
             } else {
@@ -616,7 +678,7 @@
             renderCalendar();
         }
 
-        // FILTROS Y LISTAS
+        // FILTROS
         function setFilter(filterType, btnElement) {
             currentFilter = filterType;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -627,13 +689,24 @@
         function applyFilters() {
             let works = DB.get('works');
             const now = new Date();
+            const allDates = works.map(w => getAllWorkDates(w).flat()).flat();
             
-            works.sort((a,b) => new Date(a.dates[0]) - new Date(b.dates[0]));
+            works.sort((a,b) => {
+                const datesA = getAllWorkDates(a).sort();
+                const datesB = getAllWorkDates(b).sort();
+                return new Date(datesA[0] || 0) - new Date(datesB[0] || 0);
+            });
 
             if (currentFilter === 'unconfirmed') {
                 works = works.filter(w => !w.confirmed);
             } else if (currentFilter === 'upcoming') {
-                works = works.filter(w => w.dates.some(d => new Date(d) >= now));
+                works = works.filter(w => getAllWorkDates(w).some(d => new Date(d) >= now));
+            } else if (currentFilter === 'partial') {
+                works = works.filter(w => {
+                    const total = getWorkTotal(w);
+                    const paid = getWorkPaid(w);
+                    return paid > 0 && paid < total;
+                });
             } else if (currentFilter === 'all') {
                 works = works.filter(w => w.confirmed);
             }
@@ -646,16 +719,35 @@
                 container.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:30px;">No hay resultados</div>';
             } else {
                 container.innerHTML = works.map(w => {
-                    const datesHtml = w.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
+                    const allDates = getAllWorkDates(w).sort();
+                    const datesHtml = allDates.map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
+                    const total = getWorkTotal(w);
+                    const paid = getWorkPaid(w);
+                    const pending = total - paid;
+                    
                     const isUnconfirmed = !w.confirmed;
-                    const cardClass = isUnconfirmed ? 'card unconfirmed' : 'card';
-                    const statusColor = w.paid ? 'var(--success)' : (isUnconfirmed ? 'var(--gray)' : 'var(--danger)');
+                    const isFullyPaid = paid >= total && total > 0;
+                    const isPartial = paid > 0 && paid < total;
+                    
+                    let cardClass = 'card';
+                    if (isUnconfirmed) cardClass += ' unconfirmed';
+                    else if (isPartial) cardClass += ' partial';
+                    
+                    const statusColor = isFullyPaid ? 'var(--success)' : (isPartial ? 'var(--warning)' : (isUnconfirmed ? 'var(--gray)' : 'var(--danger)'));
+                    
+                    // Actividades resumen
+                    const activitiesHtml = w.activities.map(act => 
+                        `<div class="activity-item">
+                            <span>${act.description || 'Actividad'} (${act.dates.length}d)</span>
+                            <span>${formatMoney(parseFloat(act.rate) * act.dates.length)}</span>
+                        </div>`
+                    ).join('');
                     
                     let actions = '';
                     if (isUnconfirmed) {
                         actions = `<button class="action-btn btn-confirm" onclick="confirmWork(${w.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Confirmar</button>`;
-                    } else {
-                        actions = `${!w.paid ? `<button class="action-btn btn-pay" onclick="quickPay(${w.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Pagado</button>` : ''}`;
+                    } else if (!isFullyPaid) {
+                        actions = `<button class="action-btn btn-abono" onclick="quickAbono(${w.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Abonar</button>`;
                     }
                     
                     actions += `
@@ -667,24 +759,49 @@
                     <div class="${cardClass}" style="border-left-color:${statusColor}">
                         <div class="card-header">
                             <div class="card-title">${w.location} ${isUnconfirmed ? '(Sin Confirmar)' : ''}</div>
-                            <div class="card-amount">${formatMoney(w.amount)}</div>
+                            <div class="card-amount">${formatMoney(total)}</div>
                         </div>
+                        <div class="activity-list">${activitiesHtml}</div>
                         <div class="dates-compact">${datesHtml}</div>
+                        ${!isUnconfirmed ? `
+                        <div class="payment-info">
+                            <span class="paid">Abonado: ${formatMoney(paid)}</span>
+                            <span class="pending">Falta: ${formatMoney(pending)}</span>
+                        </div>` : ''}
                         <div class="quick-actions">${actions}</div>
                     </div>`;
                 }).join('');
             }
         }
 
-        function quickPay(id) { DB.update('works', id, { paid: true }); refreshAll(); }
-        function confirmWork(id) { DB.update('works', id, { confirmed: true }); refreshAll(); }
+        function confirmWork(id) {
+            DB.update('works', id, { confirmed: true });
+            refreshAll();
+        }
+
+        function quickAbono(id) {
+            const amount = prompt('Monto del abono ($):');
+            if (!amount || isNaN(amount) || parseFloat(amount) <= 0) return;
+            
+            const work = DB.get('works').find(w => w.id == id);
+            if (!work) return;
+            
+            if (!work.payments) work.payments = [];
+            work.payments.push({
+                id: 'pay_' + Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                amount: parseFloat(amount),
+                note: 'Abono rápido'
+            });
+            DB.update('works', id, { payments: work.payments });
+            refreshAll();
+        }
 
         function updateHome() {
             const now = new Date();
             const works = DB.get('works').filter(w => w.confirmed);
             let earnings = 0, pending = 0, totalDays = new Set();
             
-            // Buscar trabajo de MAÑANA o el más cercano DESPUÉS de hoy
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
             
@@ -692,36 +809,41 @@
             let minDiff = Infinity;
 
             works.forEach(w => {
-                const futureDates = w.dates.filter(d => new Date(d) >= tomorrow).sort();
+                const allDates = getAllWorkDates(w);
+                const futureDates = allDates.filter(d => new Date(d) >= tomorrow).sort();
                 
                 if (futureDates.length > 0) {
                     const closestDate = new Date(futureDates[0]);
                     const diff = closestDate - tomorrow;
-                    
                     if (diff < minDiff) {
                         minDiff = diff;
                         nextJob = {
                             location: w.location,
                             date: futureDates[0],
-                            paid: w.paid
+                            total: getWorkTotal(w),
+                            paid: getWorkPaid(w)
                         };
                     }
                 }
 
-                // Cálculos mensuales
-                const datesInMonth = w.dates.filter(d => new Date(d).getMonth() === now.getMonth() && new Date(d).getFullYear() === now.getFullYear());
+                const datesInMonth = allDates.filter(d => new Date(d).getMonth() === now.getMonth() && new Date(d).getFullYear() === now.getFullYear());
                 if (datesInMonth.length > 0) {
-                    earnings += parseFloat(w.amount);
-                    if (!w.paid) pending += parseFloat(w.amount);
+                    const workTotal = getWorkTotal(w);
+                    const totalDates = allDates.length;
+                    const monthEarning = (workTotal / totalDates) * datesInMonth.length;
+                    earnings += monthEarning;
+                    const workPending = getWorkPending(w);
+                    const monthPending = (workPending / totalDates) * datesInMonth.length;
+                    if (workPending > 0) pending += monthPending;
                     datesInMonth.forEach(d => totalDays.add(d));
                 }
             });
 
-            // Renderizar tarjeta de próximo trabajo
             const nextContainer = document.getElementById('nextJobContainer');
             if (nextJob) {
-                const statusColor = nextJob.paid ? 'var(--success)' : 'var(--danger)';
-                const statusText = nextJob.paid ? 'Pagado' : 'Pendiente';
+                const isFullyPaid = nextJob.paid >= nextJob.total;
+                const statusColor = isFullyPaid ? 'var(--success)' : (nextJob.paid > 0 ? 'var(--warning)' : 'var(--danger)');
+                const statusText = isFullyPaid ? 'Pagado' : (nextJob.paid > 0 ? `Abono: ${formatMoney(nextJob.paid)}` : 'Pendiente');
                 const isTomorrow = new Date(nextJob.date).toDateString() === tomorrow.toDateString();
                 const label = isTomorrow ? 'Mañana' : formatDate(nextJob.date);
                 
@@ -732,29 +854,34 @@
                             <span class="next-job-date">${label}</span>
                         </div>
                         <div class="next-job-location">${nextJob.location}</div>
-                        <div class="next-job-status" style="color:${statusColor}">● ${statusText}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="next-job-status" style="color:${statusColor}">● ${statusText}</div>
+                            <div style="font-weight:700;">${formatMoney(nextJob.total)}</div>
+                        </div>
                     </div>
                 `;
             } else {
-                nextContainer.innerHTML = `
-                    <div class="next-job-card" style="background:white; border:1px dashed #ccc; text-align:center;">
-                        <div style="color:var(--text-sec); font-size:14px;">No hay trabajos próximos confirmados</div>
-                    </div>
-                `;
+                nextContainer.innerHTML = `<div class="next-job-card" style="background:white; border:1px dashed #ccc; text-align:center;"><div style="color:var(--text-sec); font-size:14px;">No hay trabajos próximos confirmados</div></div>`;
             }
 
-            // Lógica para "Esta Semana" agrupada por lugar
             const weeklyJobs = [];
             const nextWeek = new Date(); nextWeek.setDate(now.getDate() + 7);
 
             works.forEach(w => {
-                const weekDates = w.dates.filter(d => {
+                const allDates = getAllWorkDates(w);
+                const weekDates = allDates.filter(d => {
                     const dateObj = new Date(d);
                     return dateObj >= now && dateObj <= nextWeek;
                 });
 
                 if (weekDates.length > 0) {
-                    weeklyJobs.push({ location: w.location, dates: weekDates, paid: w.paid, firstDate: new Date(weekDates[0]) });
+                    weeklyJobs.push({ 
+                        location: w.location, 
+                        dates: weekDates, 
+                        total: getWorkTotal(w),
+                        paid: getWorkPaid(w),
+                        firstDate: new Date(weekDates.sort()[0]) 
+                    });
                 }
             });
 
@@ -763,7 +890,9 @@
             if (weeklyJobs.length > 0) {
                 upcomingContainer.innerHTML = weeklyJobs.map(job => {
                     const datesHtml = job.dates.sort().map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
-                    return `<div class="card" style="border-left-color:${job.paid ? 'var(--success)' : 'var(--primary)'}; padding:14px;"><div class="card-title">${job.location}</div><div class="dates-compact">${datesHtml}</div></div>`;
+                    const isFullyPaid = job.paid >= job.total;
+                    const borderColor = isFullyPaid ? 'var(--success)' : (job.paid > 0 ? 'var(--warning)' : 'var(--primary)');
+                    return `<div class="card" style="border-left-color:${borderColor}; padding:14px;"><div class="card-title">${job.location}</div><div class="dates-compact">${datesHtml}</div></div>`;
                 }).join('');
             } else {
                 upcomingContainer.innerHTML = '<div style="color:var(--text-sec); font-size:14px; padding:20px; background:white; border-radius:16px; text-align:center;">Sin actividades esta semana</div>';
@@ -776,33 +905,27 @@
             document.getElementById('expensesTotal').textContent = formatMoney(expenses);
         }
 
-        // INICIALIZAR SELECTOR DE FINANZAS
         function initFinanceSelector() {
             const select = document.getElementById('financeMonthSelect');
             const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
             const now = new Date();
-            
-            // Generar opciones para los últimos 12 meses hacia atrás
             for (let i = 0; i < 12; i++) {
                 const d = new Date();
                 d.setMonth(now.getMonth() - i);
                 const value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
                 const text = `${months[d.getMonth()]} ${d.getFullYear()}`;
-                
                 const option = document.createElement('option');
                 option.value = value;
                 option.textContent = text;
-                if (i === 0) option.selected = true; // Seleccionar mes actual por defecto
+                if (i === 0) option.selected = true;
                 select.appendChild(option);
             }
         }
 
-        // FINANZAS DINÁMICAS POR MES SELECCIONADO
         function updateFinances() {
             const selectedValue = document.getElementById('financeMonthSelect').value;
             const [selYear, selMonth] = selectedValue.split('-').map(Number);
             
-            // Filtrar datos por mes seleccionado
             const works = DB.get('works').filter(w => w.confirmed);
             const expenses = DB.get('expenses');
             
@@ -810,21 +933,21 @@
             let mExpense = 0;
             let mDays = new Set();
             
-            // Calcular Ingresos y Días
             works.forEach(w => {
-                const daysInM = w.dates.filter(dt => {
+                const allDates = getAllWorkDates(w);
+                const daysInM = allDates.filter(dt => {
                     const d = new Date(dt);
                     return d.getMonth() === (selMonth - 1) && d.getFullYear() === selYear;
                 });
                 
                 if (daysInM.length > 0) {
-                    const dailyRate = parseFloat(w.amount) / w.dates.length;
+                    const total = getWorkTotal(w);
+                    const dailyRate = total / allDates.length;
                     mIncome += dailyRate * daysInM.length;
                     daysInM.forEach(d => mDays.add(d));
                 }
             });
             
-            // Calcular Gastos
             expenses.forEach(e => {
                 const ed = new Date(e.date);
                 if (ed.getMonth() === (selMonth - 1) && ed.getFullYear() === selYear) {
@@ -832,13 +955,11 @@
                 }
             });
             
-            // Actualizar UI
             document.getElementById('finIncome').textContent = formatMoney(mIncome);
             document.getElementById('finExpense').textContent = formatMoney(mExpense);
             document.getElementById('finDays').textContent = mDays.size;
             document.getElementById('finNet').textContent = formatMoney(mIncome - mExpense);
             
-            // Lista de gastos del mes
             const monthExpenses = expenses.filter(e => {
                 const ed = new Date(e.date);
                 return ed.getMonth() === (selMonth - 1) && ed.getFullYear() === selYear;
@@ -851,7 +972,6 @@
                 </div>
             `).join('') : '<div style="text-align:center;color:var(--text-sec);padding:20px;">Sin gastos este mes</div>';
 
-            // Gráfico del mes
             if(financeChart) financeChart.destroy();
             financeChart = new Chart(document.getElementById('financeChart'), { 
                 type: 'bar', 
@@ -862,77 +982,222 @@
                         { label: 'Gastos', data: [mExpense], backgroundColor: '#FF9500', borderRadius: 6, barPercentage: 0.4 }
                     ] 
                 },
-                options: { 
-                    responsive: true, 
-                    plugins: { legend: { position: 'bottom' } }, 
-                    scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } 
-                }
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
             });
         }
 
-        // GESTIÓN DE DATOS
-        function updateCalcTotal() {
-            const rate = parseFloat(document.getElementById('wAmount').value) || 0;
-            const days = tempDates.length;
-            const total = rate * days;
-            const display = document.getElementById('calcTotalDisplay');
-            if (days > 0 && rate > 0) {
-                display.textContent = `Total: ${formatMoney(total)} (${days} días)`;
-                display.style.display = 'block';
-            } else {
-                display.style.display = 'none';
+        // ============ NUEVO SISTEMA DE ACTIVIDADES Y ABONOS ============
+        
+        function openWorkModal() {
+            tempActivities = [];
+            tempPayments = [];
+            tempActivityDates = {};
+            document.getElementById('wId').value = '';
+            document.getElementById('wLocation').value = '';
+            document.getElementById('wConfirmed').checked = true;
+            document.getElementById('workModalTitle').textContent = 'Nuevo Trabajo';
+            renderActivitiesList();
+            renderPaymentsList();
+            updateSummary();
+            document.getElementById('workModal').style.display = 'block';
+        }
+
+        function addActivity() {
+            const actId = 'act_' + Date.now() + '_' + Math.random();
+            tempActivities.push({
+                id: actId,
+                description: '',
+                rate: 0
+            });
+            tempActivityDates[actId] = [];
+            renderActivitiesList();
+        }
+
+        function removeActivity(actId) {
+            tempActivities = tempActivities.filter(a => a.id !== actId);
+            delete tempActivityDates[actId];
+            renderActivitiesList();
+            updateSummary();
+        }
+
+        function updateActivityField(actId, field, value) {
+            const act = tempActivities.find(a => a.id === actId);
+            if (act) {
+                act[field] = field === 'rate' ? parseFloat(value) || 0 : value;
+                updateSummary();
             }
         }
 
-        function addDateToTempList() {
-            const date = document.getElementById('wNewDate').value;
-            if (date < today.toISOString().split('T')[0]) { alert('No se permiten fechas pasadas.'); return; }
-            if (date && !tempDates.includes(date)) { 
-                tempDates.push(date); tempDates.sort(); renderTempDates(); updateCalcTotal();
-            }
+        function addDateToActivity(actId) {
+            const input = document.getElementById(`dateInput_${actId}`);
+            const date = input.value;
+            const todayStr = today.toISOString().split('T')[0];
+            
+            if (date < todayStr) { alert('No se permiten fechas pasadas.'); return; }
+            if (!date) return;
+            if (tempActivityDates[actId].includes(date)) { alert('Esta fecha ya está agregada.'); return; }
+            
+            tempActivityDates[actId].push(date);
+            tempActivityDates[actId].sort();
+            input.value = '';
+            renderActivitiesList();
+            updateSummary();
         }
 
-        function renderTempDates() {
-            document.getElementById('tempDatesList').innerHTML = tempDates.map(d => `<span class="date-mini" style="cursor:pointer; background:#FFEAEA; color:red;" onclick="removeTempDate('${d}')">${formatDate(d)} ×</span>`).join('');
+        function removeDateFromActivity(actId, date) {
+            tempActivityDates[actId] = tempActivityDates[actId].filter(d => d !== date);
+            renderActivitiesList();
+            updateSummary();
         }
 
-        function removeTempDate(date) { tempDates = tempDates.filter(d => d !== date); renderTempDates(); updateCalcTotal(); }
-
-        function openModal(type) {
-            tempDates = [];
-            document.getElementById('tempDatesList').innerHTML = '';
-            document.getElementById('calcTotalDisplay').style.display = 'none';
-            if (type === 'work') {
-                document.getElementById('wId').value = '';
-                document.getElementById('wLocation').value = '';
-                document.getElementById('wAmount').value = '';
-                document.getElementById('wPaid').checked = false;
-                document.getElementById('wConfirmed').checked = true;
+        function renderActivitiesList() {
+            const container = document.getElementById('activitiesList');
+            if (tempActivities.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:var(--text-sec); padding:10px; font-size:13px;">Sin actividades. Agrega una para comenzar.</div>';
+                return;
             }
-            document.getElementById(type + 'Modal').style.display = 'block';
+            
+            container.innerHTML = tempActivities.map(act => {
+                const dates = tempActivityDates[act.id] || [];
+                const subtotal = (parseFloat(act.rate) || 0) * dates.length;
+                const datesHtml = dates.map(d => 
+                    `<span class="activity-date-chip">
+                        ${formatDate(d)}
+                        <button type="button" onclick="removeDateFromActivity('${act.id}', '${d}')">×</button>
+                    </span>`
+                ).join('');
+                
+                return `
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <input type="text" class="input-field input-small" style="flex:1; margin:0; margin-right:8px;" 
+                            placeholder="Descripción (ej: Poda)" value="${act.description}" 
+                            onchange="updateActivityField('${act.id}', 'description', this.value)">
+                        <button type="button" class="btn-remove-activity" onclick="removeActivity('${act.id}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
+                        </button>
+                    </div>
+                    <div class="inline-add">
+                        <input type="number" class="input-field input-small" placeholder="Tarifa/día ($)" 
+                            value="${act.rate || ''}" step="100"
+                            onchange="updateActivityField('${act.id}', 'rate', this.value)">
+                    </div>
+                    <div class="inline-add">
+                        <input type="date" id="dateInput_${actId(act.id)}" class="input-field input-small" min="${today.toISOString().split('T')[0]}" style="flex:1; margin:0;">
+                        <button type="button" class="btn-add-small" onclick="addDateToActivity('${act.id}')">+</button>
+                    </div>
+                    ${dates.length > 0 ? `<div class="activity-dates">${datesHtml}</div>` : ''}
+                    ${dates.length > 0 ? `<div style="text-align:right; font-size:12px; color:var(--primary); font-weight:600; margin-top:6px;">Subtotal: ${formatMoney(subtotal)}</div>` : ''}
+                </div>`;
+            }).join('');
+        }
+        
+        // Helper para generar IDs seguros para inputs
+        function actId(id) { return id.replace(/[^a-zA-Z0-9]/g, '_'); }
+
+        function addPayment() {
+            const amount = prompt('Monto del abono ($):');
+            if (!amount || isNaN(amount) || parseFloat(amount) <= 0) return;
+            
+            const note = prompt('Nota (opcional):') || 'Abono';
+            
+            tempPayments.push({
+                id: 'pay_' + Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                amount: parseFloat(amount),
+                note: note
+            });
+            renderPaymentsList();
+            updateSummary();
+        }
+
+        function removePayment(payId) {
+            tempPayments = tempPayments.filter(p => p.id !== payId);
+            renderPaymentsList();
+            updateSummary();
+        }
+
+        function renderPaymentsList() {
+            const container = document.getElementById('paymentsList');
+            if (tempPayments.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:var(--text-sec); padding:10px; font-size:13px;">Sin abonos registrados.</div>';
+                return;
+            }
+            
+            container.innerHTML = tempPayments.map(p => `
+                <div class="payment-card">
+                    <div class="payment-info-text">
+                        <span class="payment-amount">${formatMoney(p.amount)}</span>
+                        <span class="payment-date">${formatDate(p.date)} • ${p.note}</span>
+                    </div>
+                    <button type="button" class="btn-remove-activity" onclick="removePayment('${p.id}')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateSummary() {
+            let total = 0;
+            tempActivities.forEach(act => {
+                const dates = tempActivityDates[act.id] || [];
+                total += (parseFloat(act.rate) || 0) * dates.length;
+            });
+            
+            const paid = tempPayments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+            const pending = total - paid;
+            
+            document.getElementById('summaryTotal').textContent = formatMoney(total);
+            document.getElementById('summaryPaid').textContent = formatMoney(paid);
+            document.getElementById('summaryPending').textContent = formatMoney(pending);
         }
 
         function editWork(id) {
             const work = DB.get('works').find(w => w.id == id);
             if (!work) return;
+            
+            document.getElementById('workModalTitle').textContent = 'Editar Trabajo';
             document.getElementById('wId').value = work.id;
             document.getElementById('wLocation').value = work.location;
-            document.getElementById('wAmount').value = parseFloat(work.amount) / work.dates.length;
-            document.getElementById('wPaid').checked = work.paid;
             document.getElementById('wConfirmed').checked = work.confirmed;
-            tempDates = [...work.dates];
-            renderTempDates();
-            updateCalcTotal();
+            
+            tempActivities = work.activities ? JSON.parse(JSON.stringify(work.activities)) : [];
+            tempPayments = work.payments ? JSON.parse(JSON.stringify(work.payments)) : [];
+            
+            tempActivityDates = {};
+            tempActivities.forEach(act => {
+                tempActivityDates[act.id] = [...act.dates];
+            });
+            
+            renderActivitiesList();
+            renderPaymentsList();
+            updateSummary();
             document.getElementById('workModal').style.display = 'block';
         }
 
         function saveWork(e) {
             e.preventDefault();
-            if (tempDates.length === 0) { alert('Agrega al menos una fecha'); return; }
-            const rate = parseFloat(document.getElementById('wAmount').value) || 0;
-            const totalAmount = rate * tempDates.length;
+            
+            if (tempActivities.length === 0) { alert('Agrega al menos una actividad'); return; }
+            
+            // Validar que cada actividad tenga al menos una fecha
+            const invalidActs = tempActivities.filter(act => !tempActivityDates[act.id] || tempActivityDates[act.id].length === 0);
+            if (invalidActs.length > 0) { alert('Cada actividad debe tener al menos una fecha'); return; }
+            
+            // Actualizar fechas en las actividades
+            const activities = tempActivities.map(act => ({
+                ...act,
+                dates: tempActivityDates[act.id] || []
+            }));
+            
             const id = document.getElementById('wId').value;
-            const data = { location: document.getElementById('wLocation').value, amount: totalAmount, paid: document.getElementById('wPaid').checked, confirmed: document.getElementById('wConfirmed').checked, dates: tempDates };
+            const data = {
+                location: document.getElementById('wLocation').value,
+                confirmed: document.getElementById('wConfirmed').checked,
+                activities: activities,
+                payments: tempPayments
+            };
+            
             id ? DB.update('works', id, data) : DB.add('works', data);
             closeModal('workModal');
             refreshAll();
@@ -943,6 +1208,10 @@
             DB.add('expenses', { date: document.getElementById('eDate').value, description: document.getElementById('eDesc').value, amount: document.getElementById('eAmount').value });
             closeModal('expenseModal');
             refreshAll();
+        }
+
+        function openModal(type) {
+            document.getElementById(type + 'Modal').style.display = 'block';
         }
 
         function deleteItem(type, id) { if (confirm('¿Eliminar?')) { DB.remove(type, id); refreshAll(); } }
@@ -964,6 +1233,7 @@
                     const data = JSON.parse(e.target.result);
                     if(confirm('¿Reemplazar datos?')) {
                         DB.set('works', data.works); DB.set('expenses', data.expenses);
+                        migrateOldData();
                         refreshAll(); alert('Datos restaurados');
                     }
                 } catch (err) { alert('Error'); }

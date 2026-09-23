@@ -106,7 +106,7 @@
         .action-btn { flex: 1; min-width: 80px; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .action-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.5; fill: none; }
         
-        .btn-pay { background: #E8FAF0; color: var(--success); }
+        .btn-pay { background: #E8FAF0; color: var(--success); font-weight: 700; }
         .btn-abono { background: #FFF4E5; color: var(--warning); border: 1px solid #FCD34D; }
         .btn-confirm { background: #FFF9E6; color: #D97706; border: 1px solid #FCD34D; }
         .btn-edit { background: #F2F2F7; color: var(--text-main); }
@@ -149,16 +149,19 @@
         .checkbox-wrapper { background: #F2F2F7; padding: 14px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 14px; cursor: pointer; }
         .checkbox-wrapper input { width: 20px; height: 20px; accent-color: var(--primary); }
 
-        .detail-item { padding: 12px; background: #F2F2F7; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .detail-info { display: flex; flex-direction: column; }
+        .detail-item { padding: 12px; background: #F2F2F7; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .detail-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .detail-info { display: flex; flex-direction: column; flex: 1; }
         .detail-location { font-weight: 600; font-size: 15px; }
+        .detail-activity { font-size: 12px; color: var(--text-sec); margin-top: 2px; font-style: italic; }
         .detail-status { font-size: 12px; font-weight: 500; margin-top: 2px; }
         .status-paid { color: var(--success); }
         .status-pending { color: var(--danger); }
         .status-partial { color: var(--warning); }
         .status-unconfirmed { color: var(--dark-gray); }
+        .detail-edit-btn { background: var(--primary); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .detail-edit-btn svg { width: 14px; height: 14px; stroke: white; stroke-width: 2.5; fill: none; }
         
-        /* Estilos para el nuevo modal de trabajo con actividades y abonos */
         .section-box { background: #F8F9FA; border: 1px solid #E5E5EA; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
         .section-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .section-box-title { font-size: 13px; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.3px; }
@@ -166,9 +169,8 @@
         .btn-add-small svg { width: 12px; height: 12px; stroke: white; stroke-width: 3; fill: none; }
         
         .activity-card { background: white; border: 1px solid #E5E5EA; border-radius: 10px; padding: 12px; margin-bottom: 8px; }
-        .activity-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .activity-card-title { font-weight: 600; font-size: 14px; color: var(--text-main); }
-        .btn-remove-activity { background: #FFEAEA; color: var(--danger); border: none; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .activity-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+        .btn-remove-activity { background: #FFEAEA; color: var(--danger); border: none; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         
         .activity-dates { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
         .activity-date-chip { background: #F2F2F7; padding: 3px 8px; border-radius: 4px; font-size: 11px; color: var(--text-sec); display: flex; align-items: center; gap: 4px; }
@@ -250,10 +252,10 @@
                 <input type="text" id="searchInput" class="search-bar" placeholder="Buscar lugar..." onkeyup="applyFilters()">
             </div>
             <div class="filter-container">
-                <button class="filter-btn active" onclick="setFilter('upcoming', this)">Próximos</button>
+                <button class="filter-btn active" onclick="setFilter('all', this)">Todos</button>
+                <button class="filter-btn" onclick="setFilter('upcoming', this)">Próximos</button>
                 <button class="filter-btn" onclick="setFilter('unconfirmed', this)">Sin Confirmar</button>
                 <button class="filter-btn" onclick="setFilter('partial', this)">Abonos</button>
-                <button class="filter-btn" onclick="setFilter('all', this)">Historial</button>
             </div>
             <div class="section-title">Trabajos</div>
             <div id="allWorksList"></div>
@@ -345,7 +347,6 @@
         </div>
     </div>
 
-    <!-- NUEVO MODAL DE TRABAJO CON ACTIVIDADES Y ABONOS -->
     <div id="workModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -356,7 +357,6 @@
                 <input type="hidden" id="wId">
                 <input type="text" id="wLocation" class="input-field" placeholder="Lugar / Finca" required>
                 
-                <!-- SECCIÓN ACTIVIDADES -->
                 <div class="section-box">
                     <div class="section-box-header">
                         <span class="section-box-title">Actividades</span>
@@ -368,7 +368,6 @@
                     <div id="activitiesList"></div>
                 </div>
 
-                <!-- SECCIÓN ABONOS -->
                 <div class="section-box">
                     <div class="section-box-header">
                         <span class="section-box-title">Abonos</span>
@@ -380,7 +379,6 @@
                     <div id="paymentsList"></div>
                 </div>
 
-                <!-- RESUMEN -->
                 <div class="summary-box">
                     <div class="summary-row">
                         <span class="summary-label">Total trabajo:</span>
@@ -432,22 +430,19 @@
             remove(key, id) { const data = DB.get(key).filter(i => i.id !== id); DB.set(key, data); }
         };
 
-        // MIGRACIÓN: Convertir trabajos antiguos al nuevo formato
         function migrateOldData() {
             const works = DB.get('works');
             let migrated = false;
             works.forEach(w => {
                 if (!w.activities && w.amount && w.dates) {
-                    // Trabajo antiguo: convertir a nuevo formato
                     w.activities = [{
-                        id: 'act_' + Date.now(),
+                        id: 'act_' + Date.now() + '_' + Math.random().toString(36).substr(2,5),
                         description: 'Actividad',
                         rate: parseFloat(w.amount) / w.dates.length,
                         dates: [...w.dates]
                     }];
                     w.payments = [];
                     if (w.paid) {
-                        // Si estaba marcado como pagado, crear un abono por el total
                         w.payments.push({
                             id: 'pay_' + Date.now(),
                             date: w.dates[w.dates.length - 1],
@@ -466,13 +461,11 @@
 
         let currentMonth = new Date();
         let financeChart;
-        let currentFilter = 'upcoming';
+        let currentFilter = 'all';
         let selectedRangeDates = [];
-        
-        // Datos temporales del modal de trabajo
         let tempActivities = [];
         let tempPayments = [];
-        let tempActivityDates = {}; // {actId: [dates]}
+        let tempActivityDates = {};
         
         const today = new Date();
         today.setHours(0,0,0,0);
@@ -480,7 +473,6 @@
         const formatMoney = (amount) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
         const formatDate = (dateStr) => new Date(dateStr + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
 
-        // Funciones auxiliares para cálculos
         function getWorkTotal(work) {
             if (!work.activities) return 0;
             return work.activities.reduce((sum, act) => sum + (parseFloat(act.rate) || 0) * act.dates.length, 0);
@@ -532,7 +524,6 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // CALENDARIO
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -573,7 +564,6 @@
                     if (hasUnconfirmed) {
                         classes += ' has-work-unconfirmed';
                     } else {
-                        // Determinar estado de pago del trabajo más relevante
                         const work = works[0];
                         const total = getWorkTotal(work);
                         const paid = getWorkPaid(work);
@@ -614,12 +604,12 @@
 
         function confirmSelectedDates() {
             openWorkModal();
-            // Agregar una actividad por defecto con las fechas seleccionadas
             if (selectedRangeDates.length > 0 && tempActivities.length === 0) {
                 addActivity();
                 const actId = tempActivities[0].id;
                 tempActivityDates[actId] = [...selectedRangeDates];
                 renderActivitiesList();
+                updateSummary();
             }
             selectedRangeDates = [];
             renderCalendar();
@@ -636,7 +626,6 @@
             
             if (works.length > 0) {
                 content.innerHTML = works.map(w => {
-                    // Encontrar qué actividad específica es este día
                     let activityName = '';
                     w.activities.forEach(act => {
                         if (act.dates.includes(dateStr)) {
@@ -657,12 +646,18 @@
                     
                     return `
                     <div class="detail-item">
-                        <div class="detail-info">
-                            <div class="detail-location">${w.location}</div>
-                            <div style="font-size:12px; color:var(--text-sec); margin-top:2px;">${activityName}</div>
-                            <div class="detail-status ${statusClass}">${statusText}</div>
+                        <div class="detail-top">
+                            <div class="detail-info">
+                                <div class="detail-location">${w.location}</div>
+                                <div class="detail-activity">${activityName}</div>
+                                <div class="detail-status ${statusClass}">${statusText}</div>
+                            </div>
+                            <div style="font-weight:700;">${formatMoney(getWorkTotal(w))}</div>
                         </div>
-                        <div style="font-weight:700;">${formatMoney(total)}</div>
+                        <button class="detail-edit-btn" onclick="editWork(${w.id}); closeModal('dayDetailsModal');">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                        </button>
                     </div>`;
                 }).join('');
             } else {
@@ -678,7 +673,6 @@
             renderCalendar();
         }
 
-        // FILTROS
         function setFilter(filterType, btnElement) {
             currentFilter = filterType;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -689,11 +683,11 @@
         function applyFilters() {
             let works = DB.get('works');
             const now = new Date();
-            const allDates = works.map(w => getAllWorkDates(w).flat()).flat();
             
+            // Ordenar por fecha más reciente primero
             works.sort((a,b) => {
-                const datesA = getAllWorkDates(a).sort();
-                const datesB = getAllWorkDates(b).sort();
+                const datesA = getAllWorkDates(a).sort().reverse();
+                const datesB = getAllWorkDates(b).sort().reverse();
                 return new Date(datesA[0] || 0) - new Date(datesB[0] || 0);
             });
 
@@ -708,7 +702,7 @@
                     return paid > 0 && paid < total;
                 });
             } else if (currentFilter === 'all') {
-                works = works.filter(w => w.confirmed);
+                // Mostrar todos
             }
 
             const term = document.getElementById('searchInput').value.toLowerCase();
@@ -735,7 +729,6 @@
                     
                     const statusColor = isFullyPaid ? 'var(--success)' : (isPartial ? 'var(--warning)' : (isUnconfirmed ? 'var(--gray)' : 'var(--danger)'));
                     
-                    // Actividades resumen
                     const activitiesHtml = w.activities.map(act => 
                         `<div class="activity-item">
                             <span>${act.description || 'Actividad'} (${act.dates.length}d)</span>
@@ -743,11 +736,15 @@
                         </div>`
                     ).join('');
                     
+                    // ACCIONES RÁPIDAS: Pagado primero, luego Abonar, Editar, Borrar
                     let actions = '';
                     if (isUnconfirmed) {
                         actions = `<button class="action-btn btn-confirm" onclick="confirmWork(${w.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Confirmar</button>`;
                     } else if (!isFullyPaid) {
-                        actions = `<button class="action-btn btn-abono" onclick="quickAbono(${w.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Abonar</button>`;
+                        // Botón principal: PAGADO (marca todo como pagado)
+                        actions = `<button class="action-btn btn-pay" onclick="markAsPaid(${w.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Pagado</button>`;
+                        // Botón secundario: ABONAR
+                        actions += `<button class="action-btn btn-abono" onclick="quickAbono(${w.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Abonar</button>`;
                     }
                     
                     actions += `
@@ -776,6 +773,30 @@
 
         function confirmWork(id) {
             DB.update('works', id, { confirmed: true });
+            refreshAll();
+        }
+
+        // NUEVA FUNCIÓN: Marcar como PAGADO (crea abono por el saldo pendiente)
+        function markAsPaid(id) {
+            const work = DB.get('works').find(w => w.id == id);
+            if (!work) return;
+            
+            const pending = getWorkPending(work);
+            if (pending <= 0) {
+                alert('Este trabajo ya está pagado.');
+                return;
+            }
+            
+            if (!confirm(`¿Marcar como PAGADO?\n\nSe registrará un abono de ${formatMoney(pending)} para completar el pago.`)) return;
+            
+            if (!work.payments) work.payments = [];
+            work.payments.push({
+                id: 'pay_' + Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                amount: pending,
+                note: 'Pago completo'
+            });
+            DB.update('works', id, { payments: work.payments });
             refreshAll();
         }
 
@@ -986,7 +1007,7 @@
             });
         }
 
-        // ============ NUEVO SISTEMA DE ACTIVIDADES Y ABONOS ============
+        // ============ SISTEMA DE ACTIVIDADES Y ABONOS ============
         
         function openWorkModal() {
             tempActivities = [];
@@ -1003,7 +1024,7 @@
         }
 
         function addActivity() {
-            const actId = 'act_' + Date.now() + '_' + Math.random();
+            const actId = 'act_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
             tempActivities.push({
                 id: actId,
                 description: '',
@@ -1029,12 +1050,14 @@
         }
 
         function addDateToActivity(actId) {
-            const input = document.getElementById(`dateInput_${actId}`);
+            const input = document.getElementById('dateInput_' + actId);
+            if (!input) return;
             const date = input.value;
             const todayStr = today.toISOString().split('T')[0];
             
             if (date < todayStr) { alert('No se permiten fechas pasadas.'); return; }
             if (!date) return;
+            if (!tempActivityDates[actId]) tempActivityDates[actId] = [];
             if (tempActivityDates[actId].includes(date)) { alert('Esta fecha ya está agregada.'); return; }
             
             tempActivityDates[actId].push(date);
@@ -1057,6 +1080,8 @@
                 return;
             }
             
+            const todayStr = today.toISOString().split('T')[0];
+            
             container.innerHTML = tempActivities.map(act => {
                 const dates = tempActivityDates[act.id] || [];
                 const subtotal = (parseFloat(act.rate) || 0) * dates.length;
@@ -1070,7 +1095,7 @@
                 return `
                 <div class="activity-card">
                     <div class="activity-card-header">
-                        <input type="text" class="input-field input-small" style="flex:1; margin:0; margin-right:8px;" 
+                        <input type="text" class="input-field input-small" style="flex:1; margin:0;" 
                             placeholder="Descripción (ej: Poda)" value="${act.description}" 
                             onchange="updateActivityField('${act.id}', 'description', this.value)">
                         <button type="button" class="btn-remove-activity" onclick="removeActivity('${act.id}')">
@@ -1083,7 +1108,7 @@
                             onchange="updateActivityField('${act.id}', 'rate', this.value)">
                     </div>
                     <div class="inline-add">
-                        <input type="date" id="dateInput_${actId(act.id)}" class="input-field input-small" min="${today.toISOString().split('T')[0]}" style="flex:1; margin:0;">
+                        <input type="date" id="dateInput_${act.id}" class="input-field input-small" min="${todayStr}" style="flex:1; margin:0;">
                         <button type="button" class="btn-add-small" onclick="addDateToActivity('${act.id}')">+</button>
                     </div>
                     ${dates.length > 0 ? `<div class="activity-dates">${datesHtml}</div>` : ''}
@@ -1091,9 +1116,6 @@
                 </div>`;
             }).join('');
         }
-        
-        // Helper para generar IDs seguros para inputs
-        function actId(id) { return id.replace(/[^a-zA-Z0-9]/g, '_'); }
 
         function addPayment() {
             const amount = prompt('Monto del abono ($):');
@@ -1180,11 +1202,9 @@
             
             if (tempActivities.length === 0) { alert('Agrega al menos una actividad'); return; }
             
-            // Validar que cada actividad tenga al menos una fecha
             const invalidActs = tempActivities.filter(act => !tempActivityDates[act.id] || tempActivityDates[act.id].length === 0);
             if (invalidActs.length > 0) { alert('Cada actividad debe tener al menos una fecha'); return; }
             
-            // Actualizar fechas en las actividades
             const activities = tempActivities.map(act => ({
                 ...act,
                 dates: tempActivityDates[act.id] || []

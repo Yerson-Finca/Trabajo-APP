@@ -101,6 +101,13 @@
         }
         .day.selected-day { border: 2px solid var(--text-main); background: white !important; color: var(--text-main) !important; font-weight: 700; }
         .day.past-empty { color: #d1d1d6; background: transparent; cursor: default; }
+        .day.past-selectable { 
+            color: var(--text-sec); 
+            background: #f8f9fa; 
+            border: 1px dashed #d1d1d6;
+            cursor: pointer;
+        }
+        .day.past-selectable:hover { background: #e9ecef; }
         
         .btn-confirm-dates { 
             width: 100%; padding: 12px; background: var(--success); color: white; 
@@ -176,6 +183,11 @@
             transition: all 0.2s ease;
         }
         .date-mini:active { background: #e5e5ea; transform: scale(0.95); }
+        .date-mini.past-date {
+            background: var(--warning-light);
+            color: var(--warning);
+            border: 1px dashed #FCD34D;
+        }
         
         .quick-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F2F2F7; flex-wrap: wrap; }
         .action-btn { 
@@ -387,6 +399,11 @@
             transition: all 0.2s ease;
         }
         .activity-date-chip:active { background: #cce5ff; transform: scale(0.95); }
+        .activity-date-chip.past-date { 
+            background: var(--warning-light); 
+            color: var(--warning); 
+            border: 1px dashed #FCD34D;
+        }
         .activity-date-chip button { 
             background: none; border: none; color: var(--danger); cursor: pointer; 
             font-size: 14px; line-height: 1; padding: 0; font-weight: 700;
@@ -421,7 +438,6 @@
         .inline-add input { flex: 1; margin: 0; padding: 10px; font-size: 14px; }
         .inline-add button { padding: 0 14px; margin: 0; }
         
-        /* Estados vacíos mejorados */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -702,6 +718,24 @@
             remove(key, id) { const data = DB.get(key).filter(i => i.id !== id); DB.set(key, data); }
         };
 
+        // ZONA HORARIA COLOMBIA (UTC-5)
+        function getColombiaDate() {
+            return new Intl.DateTimeFormat('en-CA', { 
+                timeZone: 'America/Bogota',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }).format(new Date());
+        }
+
+        function getColombiaNow() {
+            const colombiaStr = getColombiaDate();
+            return new Date(colombiaStr + 'T00:00:00');
+        }
+
+        const todayStr = getColombiaDate();
+        const today = getColombiaNow();
+
         function migrateOldData() {
             const works = DB.get('works');
             let migrated = false;
@@ -738,9 +772,6 @@
         let tempActivities = [];
         let tempPayments = [];
         let tempActivityDates = {};
-        
-        const today = new Date();
-        today.setHours(0,0,0,0);
 
         const formatMoney = (amount) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
         const formatDate = (dateStr) => new Date(dateStr + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
@@ -771,7 +802,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             migrateOldData();
             document.getElementById('eDate').valueAsDate = new Date();
-            document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
+            document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('es-CO', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long',
+                timeZone: 'America/Bogota'
+            });
             initFinanceSelector();
             renderCalendar();
             updateHome();
@@ -813,8 +849,6 @@
                 });
             });
 
-            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
             let html = '';
             ['D','L','M','M','J','V','S'].forEach(d => html += `<div class="day-name">${d}</div>`);
             for (let i = 0; i < firstDay; i++) html += '<div></div>';
@@ -855,13 +889,10 @@
                     
                     html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
                 } else {
-                    if (isPast) {
-                        classes += ' past-empty';
-                        html += `<div class="${classes}">${day}</div>`;
-                    } else {
-                        if (isSelected) classes += ' selected-day';
-                        html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
-                    }
+                    if (isSelected) classes += ' selected-day';
+                    // Permitir selección incluso en días pasados
+                    if (isPast && !isSelected) classes += ' past-selectable';
+                    html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
                 }
             }
             document.getElementById('calGrid').innerHTML = html;
@@ -980,10 +1011,13 @@
             let works = DB.get('works');
             const now = new Date();
             
-            works.sort((a,b) => {
-                const datesA = getAllWorkDates(a).sort().reverse();
-                const datesB = getAllWorkDates(b).sort().reverse();
-                return new Date(datesA[0] || 0) - new Date(datesB[0] || 0);
+            // ORDENAMIENTO: Del más reciente al más antiguo
+            works.sort((a, b) => {
+                const datesA = getAllWorkDates(a).sort();
+                const datesB = getAllWorkDates(b).sort();
+                const lastDateA = datesA.length > 0 ? new Date(datesA[datesA.length - 1]) : new Date(0);
+                const lastDateB = datesB.length > 0 ? new Date(datesB[datesB.length - 1]) : new Date(0);
+                return lastDateB - lastDateA;
             });
 
             if (currentFilter === 'unconfirmed') {
@@ -1014,7 +1048,10 @@
             } else {
                 container.innerHTML = works.map(w => {
                     const allDates = getAllWorkDates(w).sort();
-                    const datesHtml = allDates.map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
+                    const datesHtml = allDates.map(d => {
+                        const isPastDate = d < todayStr;
+                        return `<span class="date-mini ${isPastDate ? 'past-date' : ''}">${isPastDate ? '⚠️ ' : ''}${formatDate(d)}</span>`;
+                    }).join('');
                     const total = getWorkTotal(w);
                     const paid = getWorkPaid(w);
                     const pending = total - paid;
@@ -1094,7 +1131,7 @@
             if (!work.payments) work.payments = [];
             work.payments.push({
                 id: 'pay_' + Date.now(),
-                date: new Date().toISOString().split('T')[0],
+                date: todayStr,
                 amount: pending,
                 note: 'Pago completo'
             });
@@ -1112,7 +1149,7 @@
             if (!work.payments) work.payments = [];
             work.payments.push({
                 id: 'pay_' + Date.now(),
-                date: new Date().toISOString().split('T')[0],
+                date: todayStr,
                 amount: parseFloat(amount),
                 note: 'Abono rápido'
             });
@@ -1386,12 +1423,28 @@
             const input = document.getElementById('dateInput_' + actId);
             if (!input) return;
             const date = input.value;
-            const todayStr = today.toISOString().split('T')[0];
             
-            if (date < todayStr) { alert('No se permiten fechas pasadas.'); return; }
             if (!date) return;
             if (!tempActivityDates[actId]) tempActivityDates[actId] = [];
-            if (tempActivityDates[actId].includes(date)) { alert('Esta fecha ya está agregada.'); return; }
+            if (tempActivityDates[actId].includes(date)) { 
+                alert('Esta fecha ya está agregada.'); 
+                return; 
+            }
+            
+            // VERIFICAR SI ES FECHA PASADA
+            const isPast = date < todayStr;
+            
+            if (isPast) {
+                const confirmed = confirm(
+                    '⚠️ FECHA PASADA\n\n' +
+                    'Estás agregando una fecha que ya pasó (' + formatDate(date) + ').\n\n' +
+                    '¿Deseas continuar de todos modos?'
+                );
+                if (!confirmed) {
+                    input.value = '';
+                    return;
+                }
+            }
             
             tempActivityDates[actId].push(date);
             tempActivityDates[actId].sort();
@@ -1420,17 +1473,18 @@
                 return;
             }
             
-            const todayStr = today.toISOString().split('T')[0];
-            
             container.innerHTML = tempActivities.map(act => {
                 const dates = tempActivityDates[act.id] || [];
                 const subtotal = (parseFloat(act.rate) || 0) * dates.length;
-                const datesHtml = dates.map(d => 
-                    `<span class="activity-date-chip">
-                        ${formatDate(d)}
-                        <button type="button" onclick="removeDateFromActivity('${act.id}', '${d}')">×</button>
-                    </span>`
-                ).join('');
+                const datesHtml = dates.map(d => {
+                    const isPastDate = d < todayStr;
+                    const chipClass = isPastDate ? 'activity-date-chip past-date' : 'activity-date-chip';
+                    return `
+                        <span class="${chipClass}">
+                            ${isPastDate ? '⚠️ ' : ''}${formatDate(d)}
+                            <button type="button" onclick="removeDateFromActivity('${act.id}', '${d}')">×</button>
+                        </span>`;
+                }).join('');
                 
                 return `
                 <div class="activity-card">
@@ -1448,7 +1502,7 @@
                             onchange="updateActivityField('${act.id}', 'rate', this.value)">
                     </div>
                     <div class="inline-add">
-                        <input type="date" id="dateInput_${act.id}" class="input-field input-small" min="${todayStr}" style="flex:1; margin:0;">
+                        <input type="date" id="dateInput_${act.id}" class="input-field input-small" style="flex:1; margin:0;">
                         <button type="button" class="btn-add-small" onclick="addDateToActivity('${act.id}')">+</button>
                     </div>
                     ${dates.length > 0 ? `<div class="activity-dates">${datesHtml}</div>` : ''}
@@ -1465,7 +1519,7 @@
             
             tempPayments.push({
                 id: 'pay_' + Date.now(),
-                date: new Date().toISOString().split('T')[0],
+                date: todayStr,
                 amount: parseFloat(amount),
                 note: note
             });
@@ -1588,7 +1642,7 @@
         function exportBackup() {
             const data = { works: DB.get('works'), expenses: DB.get('expenses') };
             const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `respaldo_${today.toISOString().split('T')[0]}.json`; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `respaldo_${todayStr}.json`; a.click();
         }
 
         function importBackup(input) {

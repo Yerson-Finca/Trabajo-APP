@@ -183,11 +183,6 @@
             transition: all 0.2s ease;
         }
         .date-mini:active { background: #e5e5ea; transform: scale(0.95); }
-        .date-mini.past-date {
-            background: var(--warning-light);
-            color: var(--warning);
-            border: 1px dashed #FCD34D;
-        }
         
         .quick-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F2F2F7; flex-wrap: wrap; }
         .action-btn { 
@@ -399,11 +394,6 @@
             transition: all 0.2s ease;
         }
         .activity-date-chip:active { background: #cce5ff; transform: scale(0.95); }
-        .activity-date-chip.past-date { 
-            background: var(--warning-light); 
-            color: var(--warning); 
-            border: 1px dashed #FCD34D;
-        }
         .activity-date-chip button { 
             background: none; border: none; color: var(--danger); cursor: pointer; 
             font-size: 14px; line-height: 1; padding: 0; font-weight: 700;
@@ -718,7 +708,6 @@
             remove(key, id) { const data = DB.get(key).filter(i => i.id !== id); DB.set(key, data); }
         };
 
-        // ZONA HORARIA COLOMBIA (UTC-5)
         function getColombiaDate() {
             return new Intl.DateTimeFormat('en-CA', { 
                 timeZone: 'America/Bogota',
@@ -890,7 +879,6 @@
                     html += `<div class="${classes}" onclick="showDayDetails('${dateStr}')">${day}</div>`;
                 } else {
                     if (isSelected) classes += ' selected-day';
-                    // Permitir selección incluso en días pasados
                     if (isPast && !isSelected) classes += ' past-selectable';
                     html += `<div class="${classes}" onclick="toggleDateSelection('${dateStr}')">${day}</div>`;
                 }
@@ -1011,7 +999,6 @@
             let works = DB.get('works');
             const now = new Date();
             
-            // ORDENAMIENTO: Del más reciente al más antiguo
             works.sort((a, b) => {
                 const datesA = getAllWorkDates(a).sort();
                 const datesB = getAllWorkDates(b).sort();
@@ -1048,10 +1035,7 @@
             } else {
                 container.innerHTML = works.map(w => {
                     const allDates = getAllWorkDates(w).sort();
-                    const datesHtml = allDates.map(d => {
-                        const isPastDate = d < todayStr;
-                        return `<span class="date-mini ${isPastDate ? 'past-date' : ''}">${isPastDate ? '⚠️ ' : ''}${formatDate(d)}</span>`;
-                    }).join('');
+                    const datesHtml = allDates.map(d => `<span class="date-mini">${formatDate(d)}</span>`).join('');
                     const total = getWorkTotal(w);
                     const paid = getWorkPaid(w);
                     const pending = total - paid;
@@ -1431,12 +1415,11 @@
                 return; 
             }
             
-            // VERIFICAR SI ES FECHA PASADA
             const isPast = date < todayStr;
             
             if (isPast) {
                 const confirmed = confirm(
-                    '⚠️ FECHA PASADA\n\n' +
+                    'FECHA PASADA\n\n' +
                     'Estás agregando una fecha que ya pasó (' + formatDate(date) + ').\n\n' +
                     '¿Deseas continuar de todos modos?'
                 );
@@ -1476,15 +1459,12 @@
             container.innerHTML = tempActivities.map(act => {
                 const dates = tempActivityDates[act.id] || [];
                 const subtotal = (parseFloat(act.rate) || 0) * dates.length;
-                const datesHtml = dates.map(d => {
-                    const isPastDate = d < todayStr;
-                    const chipClass = isPastDate ? 'activity-date-chip past-date' : 'activity-date-chip';
-                    return `
-                        <span class="${chipClass}">
-                            ${isPastDate ? '⚠️ ' : ''}${formatDate(d)}
-                            <button type="button" onclick="removeDateFromActivity('${act.id}', '${d}')">×</button>
-                        </span>`;
-                }).join('');
+                const datesHtml = dates.map(d => 
+                    `<span class="activity-date-chip">
+                        ${formatDate(d)}
+                        <button type="button" onclick="removeDateFromActivity('${act.id}', '${d}')">×</button>
+                    </span>`
+                ).join('');
                 
                 return `
                 <div class="activity-card">
